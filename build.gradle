@@ -20,7 +20,7 @@ javadoc.options.encoding = UTF_8
 
 def appName = 'pomodorotime'
 def prettyAppName = 'PomodoroTime'
-def mainName = 'App'
+def mainName = 'Launcher'
 group 'com.matteoveroni'
 version '1.0'
 
