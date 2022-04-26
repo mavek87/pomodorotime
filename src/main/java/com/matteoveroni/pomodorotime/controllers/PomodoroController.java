@@ -1,0 +1,146 @@
+package com.matteoveroni.pomodorotime.controllers;
+
+import com.dlsc.formsfx.model.structure.*;
+import com.dlsc.formsfx.model.util.BindingMode;
+import com.dlsc.formsfx.model.validators.CustomValidator;
+import com.dlsc.formsfx.view.renderer.FormRenderer;
+import com.dlsc.formsfx.view.util.ColSpan;
+import javafx.animation.KeyFrame;
+import javafx.animation.KeyValue;
+import javafx.animation.Timeline;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
+import javafx.beans.value.ChangeListener;
+import javafx.event.ActionEvent;
+import javafx.fxml.FXML;
+import javafx.fxml.Initializable;
+import javafx.scene.control.Menu;
+import javafx.scene.control.MenuBar;
+import javafx.scene.control.ProgressIndicator;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.media.Media;
+import javafx.scene.media.MediaPlayer;
+import javafx.util.Duration;
+import java.net.URL;
+import java.util.ResourceBundle;
+import java.util.concurrent.TimeUnit;
+
+public class PomodoroController implements Initializable {
+
+    @FXML private ProgressIndicator progressIndicator;
+    //    @FXML private StackPane stackPaneCenter;
+    @FXML private BorderPane paneForm;
+    @FXML private HBox paneActions;
+    @FXML private MenuBar menuBar;
+    @FXML private Menu menuItemFile;
+
+    private final StringProperty elapsedTimeStringProperty = new SimpleStringProperty("1");
+    private final StringProperty remainingTimeStringProperty = new SimpleStringProperty("1");
+    private final ChangeListener<Duration> durationTimeChangeListener = (observable, oldDuration, currentDuration) -> {
+        elapsedTimeStringProperty.set(formatElapsedDurationTime(currentDuration));
+        remainingTimeStringProperty.set(formatRemainingDurationTime(currentDuration));
+    };
+    private final MediaPlayer mediaPlayer;
+    private final DoubleField fieldAlarmTimeMinutes = Field.ofDoubleType(1)
+            .required(true)
+            .validate(CustomValidator.forPredicate(doubleValue -> doubleValue > 0, "The amount of minutes must be more than 0"))
+            .placeholder("Insert an amount of time in minutes")
+            .span(ColSpan.HALF)
+            .label("Alarm time (minutes)");
+    private final StringField fieldRemainingTime = Field.ofStringType(remainingTimeStringProperty.get())
+            .bind(remainingTimeStringProperty)
+            .editable(false)
+            .span(ColSpan.HALF)
+            .label("Remaining time");
+
+    private final StringField fieldElapsedTime = Field.ofStringType("0")
+            .bind(elapsedTimeStringProperty)
+            .editable(false)
+            .span(ColSpan.HALF)
+            .label("Elapsed time");
+
+    private Timeline timeline;
+
+    public PomodoroController() {
+        Media alarmSound = new Media(getClass().getClassLoader().getResource("alarm.mp3").toString());
+        mediaPlayer = new MediaPlayer(alarmSound);
+        mediaPlayer.setOnEndOfMedia(() -> {
+            mediaPlayer.seek(Duration.ONE);
+            mediaPlayer.play();
+        });
+    }
+
+    private Form buildForm() {
+        return Form.of(
+                Section.of(fieldAlarmTimeMinutes)
+                        .title("Alarm settings")
+                        .collapsible(false)
+        );
+    }
+
+    private Form buildFormElapsedTime() {
+        return Form.of(
+                Group.of(fieldRemainingTime, fieldElapsedTime)
+        );
+    }
+
+    @Override
+    public void initialize(URL url, ResourceBundle resourceBundle) {
+        progressIndicator.setMaxSize(640, 480);
+        paneForm.setCenter(new FormRenderer(buildForm()));
+        paneForm.setBottom(new FormRenderer(buildFormElapsedTime()));
+        fieldRemainingTime.setBindingMode(BindingMode.CONTINUOUS);
+        fieldElapsedTime.setBindingMode(BindingMode.CONTINUOUS);
+    }
+
+    @FXML
+    void onStartAction(ActionEvent event) {
+        fieldAlarmTimeMinutes.persist();
+        if (fieldAlarmTimeMinutes.isValid()) {
+            startTimer();
+            fieldAlarmTimeMinutes.editable(false);
+        }
+    }
+
+    @FXML
+    void onStopAction(ActionEvent event) {
+        if (timeline != null) {
+            timeline.stop();
+        }
+        mediaPlayer.stop();
+        progressIndicator.setProgress(0);
+        fieldAlarmTimeMinutes.editable(true);
+        fieldAlarmTimeMinutes.reset();
+    }
+
+    private void startTimer() {
+        timeline = new Timeline(
+                new KeyFrame(Duration.ZERO, new KeyValue(progressIndicator.progressProperty(), 0)),
+                new KeyFrame(Duration.minutes(fieldAlarmTimeMinutes.getValue()), e -> {
+                    // do anything you need here on completion...
+                    System.out.println("Minute over");
+                    mediaPlayer.play();
+                    timeline.currentTimeProperty().removeListener(durationTimeChangeListener);
+                }, new KeyValue(progressIndicator.progressProperty(), 1))
+        );
+
+        timeline.currentTimeProperty().addListener(durationTimeChangeListener);
+        timeline.play();
+    }
+
+    private String formatElapsedDurationTime(Duration duration) {
+        return convertSecondsToHHMMSS((long) duration.toSeconds());
+    }
+
+    private String formatRemainingDurationTime(Duration duration) {
+        return convertSecondsToHHMMSS((long) ((fieldAlarmTimeMinutes.getValue() * 60) - duration.toSeconds()));
+    }
+
+    private String convertSecondsToHHMMSS(long seconds) {
+        final long HH = TimeUnit.SECONDS.toHours(seconds);
+        final long MM = TimeUnit.SECONDS.toMinutes(seconds) % 60;
+        final long SS = TimeUnit.SECONDS.toSeconds(seconds) % 60;
+        return String.format("%02d:%02d:%02d", HH, MM, SS);
+    }
+}

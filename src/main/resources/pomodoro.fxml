@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Menu?>
+<?import javafx.scene.control.MenuBar?>
+<?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.control.ProgressIndicator?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.matteoveroni.pomodorotime.controllers.PomodoroController">
+   <center>
+      <BorderPane prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+         <top>
+            <BorderPane fx:id="paneForm" BorderPane.alignment="CENTER" />
+         </top>
+         <bottom>
+            <HBox fx:id="paneActions" alignment="CENTER" prefHeight="100.0" prefWidth="200.0" spacing="50.0" BorderPane.alignment="CENTER">
+               <children>
+                  <Button minHeight="50.0" minWidth="100.0" mnemonicParsing="false" onAction="#onStartAction" prefHeight="50.0" prefWidth="100.0" text="Start" />
+                  <Button minHeight="50.0" minWidth="100.0" mnemonicParsing="false" onAction="#onStopAction" prefHeight="50.0" prefWidth="100.0" text="Stop" />
+               </children>
+               <BorderPane.margin>
+                  <Insets />
+               </BorderPane.margin>
+               <padding>
+                  <Insets bottom="50.0" top="50.0" />
+               </padding>
+            </HBox>
+         </bottom>
+         <center>
+            <ProgressIndicator fx:id="progressIndicator" progress="0.0" BorderPane.alignment="CENTER">
+               <padding>
+                  <Insets bottom="50.0" top="50.0" />
+               </padding>
+            </ProgressIndicator>
+         </center>
+      </BorderPane>
+   </center>
+   <top>
+      <MenuBar fx:id="menuBar" BorderPane.alignment="CENTER">
+        <menus>
+          <Menu fx:id="menuItemFile" mnemonicParsing="false" text="File">
+            <items>
+              <MenuItem mnemonicParsing="false" text="Close" />
+            </items>
+          </Menu>
+          <Menu mnemonicParsing="false" text="Edit">
+            <items>
+              <MenuItem mnemonicParsing="false" text="Delete" />
+            </items>
+          </Menu>
+          <Menu mnemonicParsing="false" text="Help">
+            <items>
+              <MenuItem mnemonicParsing="false" text="About" />
+            </items>
+          </Menu>
+        </menus>
+      </MenuBar>
+   </top>
+</BorderPane>
