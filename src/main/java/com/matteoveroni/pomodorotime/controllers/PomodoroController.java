@@ -18,11 +18,8 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
-import javafx.scene.control.Menu;
-import javafx.scene.control.MenuBar;
 import javafx.scene.control.ProgressIndicator;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.HBox;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.util.Duration;
@@ -33,11 +30,8 @@ import java.util.concurrent.TimeUnit;
 public class PomodoroController implements Initializable {
 
     @FXML private ProgressIndicator progressIndicator;
-    //    @FXML private StackPane stackPaneCenter;
-    @FXML private BorderPane paneForm;
-    @FXML private HBox paneActions;
-    @FXML private MenuBar menuBar;
-    @FXML private Menu menuItemFile;
+    @FXML private BorderPane paneFormAlertSettings;
+    @FXML private BorderPane paneFormAlertTimer;
     @FXML private Button btnStart;
     @FXML private Button btnStop;
 
@@ -48,7 +42,6 @@ public class PomodoroController implements Initializable {
         elapsedTimeStringProperty.set(formatElapsedDurationTime(currentDuration));
         remainingTimeStringProperty.set(formatRemainingDurationTime(currentDuration));
     };
-    private final MediaPlayer mediaPlayer;
     private final DoubleField fieldAlarmTimeMinutes = Field.ofDoubleType(1)
             .required(true)
             .validate(CustomValidator.forPredicate(doubleValue -> doubleValue > 0, "The amount of minutes must be more than 0"))
@@ -60,12 +53,12 @@ public class PomodoroController implements Initializable {
             .editable(false)
             .span(ColSpan.HALF)
             .label("Remaining time");
-
     private final StringField fieldElapsedTime = Field.ofStringType("0")
             .bind(elapsedTimeStringProperty)
             .editable(false)
             .span(ColSpan.HALF)
             .label("Elapsed time");
+    private final MediaPlayer mediaPlayer;
 
     private Timeline timeline;
 
@@ -80,12 +73,14 @@ public class PomodoroController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        progressIndicator.setMaxSize(640, 480);
-//        paneTimerData.setCenter(new FormRenderer(buildFormAlarmSettings()));
-        paneForm.setCenter(new FormRenderer(buildFormElapsedTime()));
         fieldRemainingTime.setBindingMode(BindingMode.CONTINUOUS);
         fieldElapsedTime.setBindingMode(BindingMode.CONTINUOUS);
-        paneForm.visibleProperty().bind(isAlertTimerStartedBooleanProperty);
+        progressIndicator.setMaxSize(640, 480);
+        progressIndicator.visibleProperty().bind(isAlertTimerStartedBooleanProperty);
+        paneFormAlertSettings.setCenter(new FormRenderer(buildFormAlarmSettings()));
+        paneFormAlertSettings.visibleProperty().bind(Bindings.not(isAlertTimerStartedBooleanProperty));
+        paneFormAlertTimer.setCenter(new FormRenderer(buildFormElapsedTime()));
+        paneFormAlertTimer.visibleProperty().bind(isAlertTimerStartedBooleanProperty);
         btnStart.disableProperty().bind(isAlertTimerStartedBooleanProperty);
         btnStop.disableProperty().bind(Bindings.not(isAlertTimerStartedBooleanProperty));
     }
@@ -102,13 +97,15 @@ public class PomodoroController implements Initializable {
     @FXML
     void onStopAction(ActionEvent event) {
         stopAlert();
+        progressIndicator.setProgress(0);
+        mediaPlayer.stop();
     }
 
     private void startAlertTimer() {
         timeline = new Timeline(
                 new KeyFrame(Duration.ZERO, new KeyValue(progressIndicator.progressProperty(), 0)),
                 new KeyFrame(Duration.minutes(fieldAlarmTimeMinutes.getValue()), onCompletionEvent -> {
-                    stopAlert();
+                    mediaPlayer.play();
                 }, new KeyValue(progressIndicator.progressProperty(), 1))
         );
         timeline.currentTimeProperty().addListener(durationTimeChangeListener);
@@ -122,8 +119,6 @@ public class PomodoroController implements Initializable {
             timeline.currentTimeProperty().removeListener(durationTimeChangeListener);
         }
         isAlertTimerStartedBooleanProperty.setValue(false);
-        mediaPlayer.stop();
-        progressIndicator.setProgress(0);
         fieldAlarmTimeMinutes.editable(true);
         fieldAlarmTimeMinutes.reset();
     }
@@ -138,7 +133,9 @@ public class PomodoroController implements Initializable {
 
     private Form buildFormElapsedTime() {
         return Form.of(
-                Group.of(fieldRemainingTime, fieldElapsedTime)
+                Section.of(fieldElapsedTime, fieldRemainingTime)
+                        .title("Alarm")
+                        .collapsible(false)
         );
     }
 
