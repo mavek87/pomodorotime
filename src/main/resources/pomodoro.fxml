@@ -18,8 +18,8 @@
          <bottom>
             <HBox fx:id="paneActions" alignment="CENTER" prefHeight="100.0" prefWidth="200.0" spacing="50.0" BorderPane.alignment="CENTER">
                <children>
-                  <Button minHeight="50.0" minWidth="100.0" mnemonicParsing="false" onAction="#onStartAction" prefHeight="50.0" prefWidth="100.0" text="Start" />
-                  <Button minHeight="50.0" minWidth="100.0" mnemonicParsing="false" onAction="#onStopAction" prefHeight="50.0" prefWidth="100.0" text="Stop" />
+                  <Button fx:id="btnStart" minHeight="50.0" minWidth="100.0" mnemonicParsing="false" onAction="#onStartAction" prefHeight="50.0" prefWidth="100.0" text="Start" />
+                  <Button fx:id="btnStop" minHeight="50.0" minWidth="100.0" mnemonicParsing="false" onAction="#onStopAction" prefHeight="50.0" prefWidth="100.0" text="Stop" />
                </children>
                <BorderPane.margin>
                   <Insets />

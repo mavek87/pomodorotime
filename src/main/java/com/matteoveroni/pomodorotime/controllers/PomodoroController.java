@@ -8,12 +8,16 @@ import com.dlsc.formsfx.view.util.ColSpan;
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
+import javafx.beans.binding.Bindings;
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.Button;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.ProgressIndicator;
@@ -34,7 +38,10 @@ public class PomodoroController implements Initializable {
     @FXML private HBox paneActions;
     @FXML private MenuBar menuBar;
     @FXML private Menu menuItemFile;
+    @FXML private Button btnStart;
+    @FXML private Button btnStop;
 
+    private final BooleanProperty isAlertTimerStartedBooleanProperty = new SimpleBooleanProperty(false);
     private final StringProperty elapsedTimeStringProperty = new SimpleStringProperty("1");
     private final StringProperty remainingTimeStringProperty = new SimpleStringProperty("1");
     private final ChangeListener<Duration> durationTimeChangeListener = (observable, oldDuration, currentDuration) -> {
@@ -71,7 +78,57 @@ public class PomodoroController implements Initializable {
         });
     }
 
-    private Form buildForm() {
+    @Override
+    public void initialize(URL url, ResourceBundle resourceBundle) {
+        progressIndicator.setMaxSize(640, 480);
+//        paneTimerData.setCenter(new FormRenderer(buildFormAlarmSettings()));
+        paneForm.setCenter(new FormRenderer(buildFormElapsedTime()));
+        fieldRemainingTime.setBindingMode(BindingMode.CONTINUOUS);
+        fieldElapsedTime.setBindingMode(BindingMode.CONTINUOUS);
+        paneForm.visibleProperty().bind(isAlertTimerStartedBooleanProperty);
+        btnStart.disableProperty().bind(isAlertTimerStartedBooleanProperty);
+        btnStop.disableProperty().bind(Bindings.not(isAlertTimerStartedBooleanProperty));
+    }
+
+    @FXML
+    void onStartAction(ActionEvent event) {
+        if (fieldAlarmTimeMinutes.isValid()) {
+            fieldAlarmTimeMinutes.persist();
+            startAlertTimer();
+            fieldAlarmTimeMinutes.editable(false);
+        }
+    }
+
+    @FXML
+    void onStopAction(ActionEvent event) {
+        stopAlert();
+    }
+
+    private void startAlertTimer() {
+        timeline = new Timeline(
+                new KeyFrame(Duration.ZERO, new KeyValue(progressIndicator.progressProperty(), 0)),
+                new KeyFrame(Duration.minutes(fieldAlarmTimeMinutes.getValue()), onCompletionEvent -> {
+                    stopAlert();
+                }, new KeyValue(progressIndicator.progressProperty(), 1))
+        );
+        timeline.currentTimeProperty().addListener(durationTimeChangeListener);
+        timeline.play();
+        isAlertTimerStartedBooleanProperty.setValue(true);
+    }
+
+    private void stopAlert() {
+        if (timeline != null) {
+            timeline.stop();
+            timeline.currentTimeProperty().removeListener(durationTimeChangeListener);
+        }
+        isAlertTimerStartedBooleanProperty.setValue(false);
+        mediaPlayer.stop();
+        progressIndicator.setProgress(0);
+        fieldAlarmTimeMinutes.editable(true);
+        fieldAlarmTimeMinutes.reset();
+    }
+
+    private Form buildFormAlarmSettings() {
         return Form.of(
                 Section.of(fieldAlarmTimeMinutes)
                         .title("Alarm settings")
@@ -83,50 +140,6 @@ public class PomodoroController implements Initializable {
         return Form.of(
                 Group.of(fieldRemainingTime, fieldElapsedTime)
         );
-    }
-
-    @Override
-    public void initialize(URL url, ResourceBundle resourceBundle) {
-        progressIndicator.setMaxSize(640, 480);
-        paneForm.setCenter(new FormRenderer(buildForm()));
-        paneForm.setBottom(new FormRenderer(buildFormElapsedTime()));
-        fieldRemainingTime.setBindingMode(BindingMode.CONTINUOUS);
-        fieldElapsedTime.setBindingMode(BindingMode.CONTINUOUS);
-    }
-
-    @FXML
-    void onStartAction(ActionEvent event) {
-        fieldAlarmTimeMinutes.persist();
-        if (fieldAlarmTimeMinutes.isValid()) {
-            startTimer();
-            fieldAlarmTimeMinutes.editable(false);
-        }
-    }
-
-    @FXML
-    void onStopAction(ActionEvent event) {
-        if (timeline != null) {
-            timeline.stop();
-        }
-        mediaPlayer.stop();
-        progressIndicator.setProgress(0);
-        fieldAlarmTimeMinutes.editable(true);
-        fieldAlarmTimeMinutes.reset();
-    }
-
-    private void startTimer() {
-        timeline = new Timeline(
-                new KeyFrame(Duration.ZERO, new KeyValue(progressIndicator.progressProperty(), 0)),
-                new KeyFrame(Duration.minutes(fieldAlarmTimeMinutes.getValue()), e -> {
-                    // do anything you need here on completion...
-                    System.out.println("Minute over");
-                    mediaPlayer.play();
-                    timeline.currentTimeProperty().removeListener(durationTimeChangeListener);
-                }, new KeyValue(progressIndicator.progressProperty(), 1))
-        );
-
-        timeline.currentTimeProperty().addListener(durationTimeChangeListener);
-        timeline.play();
     }
 
     private String formatElapsedDurationTime(Duration duration) {
