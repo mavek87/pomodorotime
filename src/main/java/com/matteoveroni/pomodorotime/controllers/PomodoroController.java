@@ -58,17 +58,17 @@ public class PomodoroController implements Initializable {
             .editable(false)
             .span(ColSpan.HALF)
             .label("Elapsed time");
-    private final MediaPlayer mediaPlayer;
+//    private MediaPlayer mediaPlayer;
 
     private Timeline timeline;
 
     public PomodoroController() {
-        Media alarmSound = new Media(getClass().getClassLoader().getResource("alarm.mp3").toString());
-        mediaPlayer = new MediaPlayer(alarmSound);
-        mediaPlayer.setOnEndOfMedia(() -> {
-            mediaPlayer.seek(Duration.ONE);
-            mediaPlayer.play();
-        });
+//        Media alarmSound = new Media(getClass().getClassLoader().getResource("alarm.mp3").toString());
+//        mediaPlayer = new MediaPlayer(alarmSound);
+//        mediaPlayer.setOnEndOfMedia(() -> {
+//            mediaPlayer.seek(Duration.ONE);
+//            mediaPlayer.play();
+//        });
     }
 
     @Override
@@ -98,14 +98,14 @@ public class PomodoroController implements Initializable {
     void onStopAction(ActionEvent event) {
         stopAlert();
         progressIndicator.setProgress(0);
-        mediaPlayer.stop();
+//        mediaPlayer.stop();
     }
 
     private void startAlertTimer() {
         timeline = new Timeline(
                 new KeyFrame(Duration.ZERO, new KeyValue(progressIndicator.progressProperty(), 0)),
                 new KeyFrame(Duration.minutes(fieldAlarmTimeMinutes.getValue()), onCompletionEvent -> {
-                    mediaPlayer.play();
+//                    mediaPlayer.play();
                 }, new KeyValue(progressIndicator.progressProperty(), 1))
         );
         timeline.currentTimeProperty().addListener(durationTimeChangeListener);

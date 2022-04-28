@@ -1,8 +1,31 @@
 import java.nio.charset.StandardCharsets
 
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath 'io.github.fvarrui:javapackager:1.6.2'
+    }
+    configurations.all {
+        resolutionStrategy {
+            cacheChangingModulesFor 0, 'seconds'
+            cacheDynamicVersionsFor 0, 'seconds'
+        }
+    }
+}
+
 plugins {
-    id "org.openjfx.javafxplugin" version "0.0.12"
-    id 'org.beryx.runtime' version '1.12.7'
+    id "application"
+    id 'com.github.johnrengelman.shadow' version '6.1.0'
+    id 'org.jreleaser.jdks' version '0.8.0'
+}
+apply plugin: 'io.github.fvarrui.javapackager.plugin'
+
+application {
+    run {
+        args = ["--Djdk.gtk.verbose=true"]
+    }
 }
 
 configurations.all {
@@ -10,17 +33,22 @@ configurations.all {
     resolutionStrategy.cacheDynamicVersionsFor 0, 'seconds'
 }
 
-sourceCompatibility = JavaVersion.VERSION_17
-targetCompatibility = JavaVersion.VERSION_17
+ext {
+    appName = 'pomodorotime'
+    prettyAppName = 'PomodoroTime'
+    mainName = 'App'
+    author = 'Matteo Veroni'
+    UTF_8 = StandardCharsets.UTF_8.name()
+    logbackVersion = '1.2.11'
+    jupiterVersion = '5.8.2'
+}
 
-def UTF_8 = StandardCharsets.UTF_8.name()
+sourceCompatibility = JavaVersion.VERSION_1_8
+targetCompatibility = JavaVersion.VERSION_1_8
 compileJava.options.encoding = UTF_8
 compileTestJava.options.encoding = UTF_8
 javadoc.options.encoding = UTF_8
 
-def appName = 'pomodorotime'
-def prettyAppName = 'PomodoroTime'
-def mainName = 'Launcher'
 group 'com.matteoveroni'
 version '1.0'
 
@@ -39,14 +67,27 @@ repositories {
 
 dependencies {
     implementation fileTree(dir: 'libs', include: '*.jar')
-    implementation 'com.dlsc.formsfx:formsfx-core:11.5.0'
-    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.2'
-    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.2'
+
+    // Logging - Sl4j, logback
+    implementation 'org.slf4j:slf4j-api:1.7.36'
+    implementation "ch.qos.logback:logback-core:${logbackVersion}"
+    implementation "ch.qos.logback:logback-classic:${logbackVersion}"
+
+    // TrayBar
+    implementation 'com.dorkbox:SystemTray:4.1'
+    implementation 'com.dorkbox:Utilities:1.9'
+
+    // Formsfx
+    implementation 'com.dlsc.formsfx:formsfx-core:8.4.0'
+
+    // Test
+    testImplementation "org.junit.jupiter:junit-jupiter-api:${jupiterVersion}"
+    testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:${jupiterVersion}"
 }
 
 jar {
     manifest.attributes(
-            'Built-By': 'Matteo Veroni',
+            'Built-By': "${author}",
             'Created-By': System.properties['java.version']
                     + " (" + System.properties['java.vendor']
                     + " " + System.properties['java.vm.version'] + ")",
@@ -58,52 +99,24 @@ jar {
     )
 }
 
+shadowJar {
+    archiveClassifier.set('')
+}
+
 test {
     useJUnitPlatform()
 }
 
-javafx {
-    version = "17"
-    modules = ['javafx.controls', 'javafx.fxml', 'javafx.media']
+javapackager {
+    // mandatory
+    mainClass = application.getMainClassName()
+    // optional
+    name = application.getApplicationName()
+    displayName = prettyAppName
+    organizationName = author
+    generateInstaller = true
+    administratorRequired = false
+    bundleJre = true
+    assetsDir = file("${projectDir}/assets")
+    runnableJar = shadowJar.getArchiveFile().get().asFile
 }
-//
-//jlink {
-//    options = ['--strip-debug', '--compress', '2', '--no-header-files', '--no-man-pages']
-//    launcher {
-//        name = "${prettyAppName}"
-//        mainClass = "${project.group}.${appName}.App"
-//        noConsole = true
-//    }
-//    addExtraDependencies("javafx")
-//
-//    targetPlatform('linux-x64') {
-//        jdkHome = jdkDownload("https://cdn.azul.com/zulu/bin/zulu17.32.13-ca-jdk17.0.2-linux_x64.zip")
-//    }
-//
-//    jpackage {
-//        def currentOs = org.gradle.internal.os.OperatingSystem.current()
-//        targetPlatformName = currentOs.isWindows() ? "win" : "linux-x64"
-//        installerOptions += [
-//                '--vendor', 'Matteo Veroni',
-//                '--app-version', version.replace('-', '.'),
-//                '--description', 'A \'pomodoro-time\' software to schedule tasks',
-//                '--verbose',
-//        ]
-//        if (currentOs.isWindows()) {
-//            installerOptions += [
-//                    '--win-per-user-install',
-//                    '--win-dir-chooser',
-//                    '--win-menu',
-//                    '--win-shortcut'
-//            ]
-//            installerType = 'msi'
-//        } else if (currentOs.isLinux()) {
-//            installerOptions += [
-//                    '--resource-dir', buildDir.toString() + "/jpackage/${prettyAppName}/lib",
-//                    '--linux-shortcut',
-//                    '--linux-deb-maintainer', 'matver87@gmail.com',
-//                    '--linux-rpm-license-type', 'MIT'
-//            ]
-//        }
-//    }
-//}

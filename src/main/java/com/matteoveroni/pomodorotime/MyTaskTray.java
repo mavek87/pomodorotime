@@ -1,12 +1,22 @@
 package com.matteoveroni.pomodorotime;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.image.BufferedImage;
+import java.io.File;
 import java.io.IOException;
 
+@Deprecated
+// This is just a class for test purposes...
 public class MyTaskTray {
+
+    private static TrayIcon trayIcon;
+
     public static void main(String arg[]) throws IOException {
         final Frame frame = new Frame();
         frame.setUndecorated(true);
@@ -16,7 +26,7 @@ public class MyTaskTray {
             return;
         }
 
-        final TrayIcon trayIcon = new TrayIcon(Toolkit.getDefaultToolkit().getImage(ClassLoader.getSystemClassLoader().getResource("tomato.png")), "Library Drop");
+        final TrayIcon trayIcon = new TrayIcon(Toolkit.getDefaultToolkit().getImage(ClassLoader.getSystemClassLoader().getResource("icons/tomato.png")), "Library Drop");
         final SystemTray tray = SystemTray.getSystemTray();
 
         // add the application tray icon to the system tray.
@@ -77,5 +87,56 @@ public class MyTaskTray {
         displayMenu.add(noneItem);
         popup.add(exitItem);
         return popup;
+    }
+
+
+
+    public static void addToTray() {
+        try {
+            setSwingNimbusLookAndFeel();
+            System.out.println(ClassLoader.getSystemClassLoader().getResource("icons/tomato.png"));
+            BufferedImage trayImg = ImageIO.read(new File(ClassLoader.getSystemClassLoader().getResource("icons/tomato.png").getFile()));
+            ImageIcon ii = new ImageIcon(trayImg);
+            final TrayIcon trayIcon = new TrayIcon(ii.getImage(), "Geqo", null);
+
+            JPopupMenu jpopup = new JPopupMenu();
+            JMenuItem miExit = new JMenuItem("Exit");
+            jpopup.add(miExit);
+
+            miExit.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent evt) {
+                    SystemTray.getSystemTray().remove(trayIcon);
+                    System.exit(0);
+                }
+            });
+
+            trayIcon.addMouseListener(new MouseAdapter() {
+                public void mouseReleased(MouseEvent e) {
+                    if (e.isPopupTrigger()) {
+                        jpopup.setLocation(e.getX(), e.getY());
+                        jpopup.setInvoker(jpopup);
+                        jpopup.setVisible(true);
+                    }
+                }
+            });
+
+            trayIcon.setImageAutoSize(true);
+            SystemTray.getSystemTray().add(trayIcon);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private static void setSwingNimbusLookAndFeel() {
+        try {
+            for (UIManager.LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {
+                if ("Nimbus".equals(info.getName())) {
+                    UIManager.setLookAndFeel(info.getClassName());
+                    break;
+                }
+            }
+        } catch (Exception e) {
+            // If Nimbus is not available do nothing and use the default swing look and feel (metal).
+        }
     }
 }
