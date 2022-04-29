@@ -1,5 +1,7 @@
 package com.matteoveroni.pomodorotime;
 
+import com.google.gson.Gson;
+import com.matteoveroni.pomodorotime.configs.Config;
 import javafx.application.Application;
 import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
@@ -17,16 +19,17 @@ import javafx.stage.WindowEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import java.lang.management.ManagementFactory;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.Optional;
 
 public class App extends Application {
 
-    public static final String APP_TITLE = "Pomodoro-Time";
-    private static final double WINDOW_HEIGHT = 1024;
-    private static final double WINDOW_WIDTH = 768;
     private static final Logger log = LoggerFactory.getLogger(App.class);
 
     private final Stage stage = new Stage();
+    private final Gson gson = new Gson();
+    private Config config;
 
     public static final void main(String... args) {
         System.setProperty("javafx.preloader", AppPreloader.class.getCanonicalName());
@@ -40,6 +43,9 @@ public class App extends Application {
         log.info("javaVmName: {}", System.getProperty("java.vm.name"));
         log.info("javaVendor: {}", System.getProperty("java.vendor"));
         log.info("vmVersion: {}", ManagementFactory.getRuntimeMXBean().getVmVersion());
+
+        log.info("Reading file config");
+        config = gson.fromJson(Files.readString(Paths.get("config/config.json")), Config.class);
     }
 
     @Override
@@ -47,7 +53,7 @@ public class App extends Application {
         FXMLLoader fxmlLoader = new FXMLLoader(ClassLoader.getSystemClassLoader().getResource("pomodoro.fxml"));
         Pane pane = fxmlLoader.load();
         stage.setScene(new Scene(pane));
-        stage.setTitle(APP_TITLE);
+        stage.setTitle(config.getAppName());
         stage.getIcons().add(new Image(getClass().getClassLoader().getResourceAsStream("icons/tomato.png")));
         stage.setResizable(false);
         stage.addEventHandler(WindowEvent.WINDOW_SHOWN, event -> {
@@ -55,8 +61,8 @@ public class App extends Application {
             stage.setX((screenBounds.getWidth() - stage.getWidth()) / 2);
             stage.setY((screenBounds.getHeight() - stage.getHeight()) / 2);
         });
-        stage.setWidth(WINDOW_HEIGHT);
-        stage.setHeight(WINDOW_WIDTH);
+        stage.setWidth(config.getWindowWidth());
+        stage.setHeight(config.getWindowHeight());
         stage.show();
 
         stage.setOnCloseRequest(confirmCloseEventHandler);

@@ -75,6 +75,9 @@ dependencies {
     // Formsfx
     implementation 'com.dlsc.formsfx:formsfx-core:11.5.0'
 
+    // Gson
+    implementation 'com.google.code.gson:gson:2.9.0'
+
     // Test
     testImplementation "org.junit.jupiter:junit-jupiter-api:${jupiterVersion}"
     testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:${jupiterVersion}"
