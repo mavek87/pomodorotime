@@ -1,10 +1,6 @@
 package com.matteoveroni.pomodorotime;
 
-import com.matteoveroni.pomodorotime.services.ImageService;
-import com.matteoveroni.pomodorotime.traybar.TrayBar;
-import com.matteoveroni.pomodorotime.traybar.builder.CrossPlatformTrayBarBuilder;
 import javafx.application.Application;
-import javafx.application.Platform;
 import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Rectangle2D;
@@ -12,6 +8,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
+import javafx.scene.image.Image;
 import javafx.scene.layout.Pane;
 import javafx.stage.Modality;
 import javafx.stage.Screen;
@@ -28,12 +25,8 @@ public class App extends Application {
     private static final double WINDOW_HEIGHT = 1024;
     private static final double WINDOW_WIDTH = 768;
     private static final Logger log = LoggerFactory.getLogger(App.class);
-    private static boolean isAppUsingTrayBar = false;
 
     private final Stage stage = new Stage();
-//    private final CrossPlatformTrayBarBuilder trayBarBuilder = new CrossPlatformTrayBarBuilder(stage);
-
-//    private TrayBar trayBar;
 
     public static final void main(String... args) {
         launch(args);
@@ -41,8 +34,6 @@ public class App extends Application {
 
     @Override
     public void init() throws Exception {
-//        trayBarBuilder.build().ifPresent(trayBarCostruita -> trayBar = trayBarCostruita);
-//        isAppUsingTrayBar = trayBar != null;
         log.info("javaVersion: {}", System.getProperty("java.version"));
         log.info("javaVersionDate: " + System.getProperty("java.version.date"));
         log.info("javaVmName: " + System.getProperty("java.vm.name"));
@@ -56,23 +47,18 @@ public class App extends Application {
         Pane pane = fxmlLoader.load();
         stage.setScene(new Scene(pane));
         stage.setTitle(APP_TITLE);
-        stage.getIcons().add(ImageService.APP_LOGO_ICON_IMAGE);
+        stage.getIcons().add(new Image(getClass().getClassLoader().getResourceAsStream("icons/tomato.png")));
         stage.setResizable(false);
         stage.addEventHandler(WindowEvent.WINDOW_SHOWN, event -> {
             Rectangle2D screenBounds = Screen.getPrimary().getVisualBounds();
             stage.setX((screenBounds.getWidth() - stage.getWidth()) / 2);
             stage.setY((screenBounds.getHeight() - stage.getHeight()) / 2);
         });
-//        stage.setOnHiding(event -> trayBar.closeWindow());
         stage.setWidth(WINDOW_HEIGHT);
         stage.setHeight(WINDOW_WIDTH);
         stage.show();
 
-        if (isAppUsingTrayBar) {
-            Platform.setImplicitExit(false);
-        } else {
-            stage.setOnCloseRequest(confirmCloseEventHandler);
-        }
+        stage.setOnCloseRequest(confirmCloseEventHandler);
     }
 
     private final EventHandler<WindowEvent> confirmCloseEventHandler = event -> {

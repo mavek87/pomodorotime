@@ -60,12 +60,12 @@ public class PomodoroController implements Initializable {
             .editable(false)
             .span(ColSpan.HALF)
             .label("Elapsed time");
-    private MediaPlayer mediaPlayer;
+    private final MediaPlayer mediaPlayer;
 
     private Timeline timeline;
 
     public PomodoroController() {
-        Media alarmSound = new Media(getClass().getClassLoader().getResource("alarm.mp3").toString());
+        Media alarmSound = new Media(getClass().getClassLoader().getResource("sounds/alarm.mp3").toString());
         mediaPlayer = new MediaPlayer(alarmSound);
         mediaPlayer.setOnEndOfMedia(() -> {
             mediaPlayer.seek(Duration.ONE);
