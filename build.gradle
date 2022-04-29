@@ -121,17 +121,3 @@ runtime {
         }
     }
 }
-
-//javapackager {
-//    // mandatory
-//    mainClass = application.getMainClassName()
-//    // optional
-//    name = application.getApplicationName()
-//    displayName = prettyAppName
-//    organizationName = author
-//    generateInstaller = true
-//    administratorRequired = false
-//    bundleJre = true
-//    assetsDir = file("${projectDir}/assets")
-//    runnableJar = shadowJar.getArchiveFile().get().asFile
-//}
