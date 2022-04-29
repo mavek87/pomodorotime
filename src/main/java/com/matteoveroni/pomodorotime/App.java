@@ -36,8 +36,8 @@ public class App extends Application {
     @Override
     public void init() throws Exception {
         log.info("javaVersion: {}", System.getProperty("java.version"));
-        log.info("javaVersionDate: " + System.getProperty("java.version.date"));
-        log.info("javaVmName: " + System.getProperty("java.vm.name"));
+        log.info("javaVersionDate: {}", System.getProperty("java.version.date"));
+        log.info("javaVmName: {}", System.getProperty("java.vm.name"));
         log.info("javaVendor: {}", System.getProperty("java.vendor"));
         log.info("vmVersion: {}", ManagementFactory.getRuntimeMXBean().getVmVersion());
     }
