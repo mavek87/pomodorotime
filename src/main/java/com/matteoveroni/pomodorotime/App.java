@@ -19,6 +19,7 @@ import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import java.lang.management.ManagementFactory;
 import java.util.Optional;
 
 public class App extends Application {
@@ -30,9 +31,9 @@ public class App extends Application {
     private static boolean isAppUsingTrayBar = false;
 
     private final Stage stage = new Stage();
-    private final CrossPlatformTrayBarBuilder trayBarBuilder = new CrossPlatformTrayBarBuilder(stage);
+//    private final CrossPlatformTrayBarBuilder trayBarBuilder = new CrossPlatformTrayBarBuilder(stage);
 
-    private TrayBar trayBar;
+//    private TrayBar trayBar;
 
     public static final void main(String... args) {
         launch(args);
@@ -40,16 +41,19 @@ public class App extends Application {
 
     @Override
     public void init() throws Exception {
-        trayBarBuilder.build().ifPresent(trayBarCostruita -> trayBar = trayBarCostruita);
-        isAppUsingTrayBar = trayBar != null;
+//        trayBarBuilder.build().ifPresent(trayBarCostruita -> trayBar = trayBarCostruita);
+//        isAppUsingTrayBar = trayBar != null;
+        log.info("javaVersion: {}", System.getProperty("java.version"));
+        log.info("javaVersionDate: " + System.getProperty("java.version.date"));
+        log.info("javaVmName: " + System.getProperty("java.vm.name"));
+        log.info("javaVendor: {}", System.getProperty("java.vendor"));
+        log.info("vmVersion: {}", ManagementFactory.getRuntimeMXBean().getVmVersion());
     }
 
     @Override
     public void start(Stage unusedStage) throws Exception {
         FXMLLoader fxmlLoader = new FXMLLoader(ClassLoader.getSystemClassLoader().getResource("pomodoro.fxml"));
         Pane pane = fxmlLoader.load();
-////        BorderPane p = new BorderPane();
-////        p.setCenter(new Button("ciao"));
         stage.setScene(new Scene(pane));
         stage.setTitle(APP_TITLE);
         stage.getIcons().add(ImageService.APP_LOGO_ICON_IMAGE);
@@ -59,10 +63,9 @@ public class App extends Application {
             stage.setX((screenBounds.getWidth() - stage.getWidth()) / 2);
             stage.setY((screenBounds.getHeight() - stage.getHeight()) / 2);
         });
-        stage.setOnHiding(event -> trayBar.closeWindow());
+//        stage.setOnHiding(event -> trayBar.closeWindow());
         stage.setWidth(WINDOW_HEIGHT);
         stage.setHeight(WINDOW_WIDTH);
-        stage.setAlwaysOnTop(true);
         stage.show();
 
         if (isAppUsingTrayBar) {

@@ -8,6 +8,7 @@ import com.dlsc.formsfx.view.util.ColSpan;
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
+import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
@@ -17,6 +18,7 @@ import javafx.beans.value.ChangeListener;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ProgressIndicator;
 import javafx.scene.layout.BorderPane;
@@ -58,17 +60,17 @@ public class PomodoroController implements Initializable {
             .editable(false)
             .span(ColSpan.HALF)
             .label("Elapsed time");
-//    private MediaPlayer mediaPlayer;
+    private MediaPlayer mediaPlayer;
 
     private Timeline timeline;
 
     public PomodoroController() {
-//        Media alarmSound = new Media(getClass().getClassLoader().getResource("alarm.mp3").toString());
-//        mediaPlayer = new MediaPlayer(alarmSound);
-//        mediaPlayer.setOnEndOfMedia(() -> {
-//            mediaPlayer.seek(Duration.ONE);
-//            mediaPlayer.play();
-//        });
+        Media alarmSound = new Media(getClass().getClassLoader().getResource("alarm.mp3").toString());
+        mediaPlayer = new MediaPlayer(alarmSound);
+        mediaPlayer.setOnEndOfMedia(() -> {
+            mediaPlayer.seek(Duration.ONE);
+            mediaPlayer.play();
+        });
     }
 
     @Override
@@ -98,14 +100,21 @@ public class PomodoroController implements Initializable {
     void onStopAction(ActionEvent event) {
         stopAlert();
         progressIndicator.setProgress(0);
-//        mediaPlayer.stop();
+        mediaPlayer.stop();
     }
 
     private void startAlertTimer() {
         timeline = new Timeline(
                 new KeyFrame(Duration.ZERO, new KeyValue(progressIndicator.progressProperty(), 0)),
                 new KeyFrame(Duration.minutes(fieldAlarmTimeMinutes.getValue()), onCompletionEvent -> {
-//                    mediaPlayer.play();
+                    mediaPlayer.play();
+                    Platform.runLater(() -> {
+                        Alert alertDialog = new Alert(Alert.AlertType.WARNING);
+                        alertDialog.setTitle("Alert");
+                        alertDialog.setHeaderText("Alert fired");
+                        alertDialog.setContentText("It's time to stop!");
+                        alertDialog.showAndWait();
+                    });
                 }, new KeyValue(progressIndicator.progressProperty(), 1))
         );
         timeline.currentTimeProperty().addListener(durationTimeChangeListener);
