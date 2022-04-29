@@ -1,8 +1,21 @@
 import java.nio.charset.StandardCharsets
 
+/**
+ * How to turn on java modules:
+ *
+ * 1) switch from org.beryx.runtime to org.beryx.jlink in the "plugin" block
+ * 2) uncomment java modularity in the "java" block
+ * 3) change jvmArgs = ['--add-exports=javafx.graphics/com.sun.glass.ui=ALL-UNNAMED'] | probably must be open to app module
+ * 4) rename module-info.java
+ * 5) set the application main module in the "application" block
+ * 6) switch from runtime block to jlink block in the end of this file
+ *
+ */
+
 plugins {
     id "org.openjfx.javafxplugin" version "0.0.12"
     id 'org.beryx.runtime' version '1.12.7'
+//    id 'org.beryx.jlink' version '2.25.0'
 }
 
 group 'com.matteoveroni'
@@ -28,10 +41,16 @@ wrapper {
     gradleVersion = '7.4.2'
 }
 
+//java {
+//    modularity.inferModulePath.set(true)
+//}
+
 application {
+//    mainModule = "${project.group}.${appName}"
     setApplicationName("$appName")
     mainClass.set("${project.group}.${appName}.${mainName}")
     run {
+        jvmArgs = ['--add-exports=javafx.graphics/com.sun.glass.ui=ALL-UNNAMED']
         args += '-Djdk.gtk.version=2'
     }
 }
@@ -83,6 +102,48 @@ jar {
 test {
     useJUnitPlatform()
 }
+
+//jlink {
+//    options = ['--strip-debug', '--compress', '2', '--no-header-files', '--no-man-pages']
+//    launcher {
+//        name = "${prettyAppName}"
+//        mainClass = "${project.group}.${appName}.${mainName}"
+//        noConsole = true
+//    }
+//    addExtraDependencies("javafx")
+//
+//    targetPlatform('linux-x64') {
+//        jdkHome = jdkDownload("https://cdn.azul.com/zulu/bin/zulu17.32.13-ca-jdk17.0.2-linux_x64.zip")
+//    }
+//
+//    jpackage {
+//        def currentOs = org.gradle.internal.os.OperatingSystem.current()
+//        targetPlatformName = currentOs.isWindows() ? "win" : "linux-x64"
+//        installerOptions += [
+//                '--vendor', "${author}",
+//                '--app-version', version.replace('-', '.'),
+//                '--description', 'A software to set alarms',
+//                '--verbose',
+//        ]
+//        if (currentOs.isWindows()) {
+//            installerOptions += [
+//                    '--win-per-user-install',
+//                    '--win-dir-chooser',
+//                    '--win-menu',
+//                    '--win-shortcut'
+//            ]
+//            installerType = 'msi'
+//        } else if (currentOs.isLinux()) {
+//            //                    '--resource-dir', buildDir.toString() + '/jpackage/kanbango/lib',
+//            installerOptions += [
+//                    '--resource-dir', 'src/main/resources',
+//                    '--linux-shortcut',
+//                    '--linux-deb-maintainer', 'matver87@gmail.com',
+//                    '--linux-rpm-license-type', 'MIT'
+//            ]
+//        }
+//    }
+//}
 
 runtime {
     options = ['--strip-debug', '--compress', '2', '--no-header-files', '--no-man-pages']

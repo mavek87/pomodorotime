@@ -29,7 +29,8 @@ public class App extends Application {
     private final Stage stage = new Stage();
 
     public static final void main(String... args) {
-        launch(args);
+        System.setProperty("javafx.preloader", AppPreloader.class.getCanonicalName());
+        Application.launch(App.class, args);
     }
 
     @Override
