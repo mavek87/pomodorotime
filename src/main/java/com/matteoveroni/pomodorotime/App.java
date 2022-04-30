@@ -1,7 +1,10 @@
 package com.matteoveroni.pomodorotime;
 
-import com.google.gson.Gson;
 import com.matteoveroni.pomodorotime.configs.Config;
+import com.matteoveroni.pomodorotime.producers.ConfigProducer;
+import com.matteoveroni.pomodorotime.utils.JavaVMSpecsPrinter;
+import jakarta.enterprise.inject.se.SeContainer;
+import jakarta.enterprise.inject.se.SeContainerInitializer;
 import javafx.application.Application;
 import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
@@ -16,19 +19,19 @@ import javafx.stage.Modality;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import java.lang.management.ManagementFactory;
-import java.nio.file.Files;
-import java.nio.file.Paths;
+import java.util.Objects;
 import java.util.Optional;
 
 public class App extends Application {
 
-    private static final Logger log = LoggerFactory.getLogger(App.class);
+    public static final SeContainer context = SeContainerInitializer.newInstance()
+            .disableDiscovery()
+            .addPackages(true, App.class)
+            .initialize();
 
-    private final Stage stage = new Stage();
-    private final Gson gson = new Gson();
+    private final ClassLoader classLoader = ClassLoader.getSystemClassLoader();
+
+    private Stage stage;
     private Config config;
 
     public static final void main(String... args) {
@@ -38,23 +41,21 @@ public class App extends Application {
 
     @Override
     public void init() throws Exception {
-        log.info("javaVersion: {}", System.getProperty("java.version"));
-        log.info("javaVersionDate: {}", System.getProperty("java.version.date"));
-        log.info("javaVmName: {}", System.getProperty("java.vm.name"));
-        log.info("javaVendor: {}", System.getProperty("java.vendor"));
-        log.info("vmVersion: {}", ManagementFactory.getRuntimeMXBean().getVmVersion());
+        JavaVMSpecsPrinter.printSpecs();
 
-        log.info("Reading file config");
-        config = gson.fromJson(Files.readString(Paths.get("config/config.json")), Config.class);
+        ConfigProducer configProducer = context.select(ConfigProducer.class).get();
+        config = configProducer.getConfig();
     }
 
     @Override
-    public void start(Stage unusedStage) throws Exception {
-        FXMLLoader fxmlLoader = new FXMLLoader(ClassLoader.getSystemClassLoader().getResource("pomodoro.fxml"));
+    public void start(Stage stage) throws Exception {
+        this.stage = stage;
+
+        FXMLLoader fxmlLoader = new FXMLLoader(classLoader.getResource("pomodoro.fxml"));
         Pane pane = fxmlLoader.load();
         stage.setScene(new Scene(pane));
         stage.setTitle(config.getAppName());
-        stage.getIcons().add(new Image(getClass().getClassLoader().getResourceAsStream("icons/tomato.png")));
+        stage.getIcons().add(new Image(Objects.requireNonNull(classLoader.getResourceAsStream("icons/tomato.png"))));
         stage.setResizable(false);
         stage.addEventHandler(WindowEvent.WINDOW_SHOWN, event -> {
             Rectangle2D screenBounds = Screen.getPrimary().getVisualBounds();
@@ -73,6 +74,7 @@ public class App extends Application {
                 Alert.AlertType.CONFIRMATION,
                 "Are you sure you want to quit?"
         );
+        closeConfirmation.setTitle(config.getAppName());
         closeConfirmation.setHeaderText("Exit confirmation");
         closeConfirmation.initModality(Modality.APPLICATION_MODAL);
         closeConfirmation.initOwner(stage);

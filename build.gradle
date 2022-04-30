@@ -23,9 +23,10 @@ version '1.0'
 
 ext {
     appName = 'pomodorotime'
-    prettyAppName = 'PomodoroTime'
+    prettyAppName = 'Pomodoro-Time'
     mainName = 'Launcher'
     author = 'Matteo Veroni'
+    website = 'www.matteoveroni.com'
     UTF_8 = StandardCharsets.UTF_8.name()
     logbackVersion = '1.2.11'
     jupiterVersion = '5.8.2'
@@ -52,6 +53,7 @@ application {
     run {
         jvmArgs = ['--add-exports=javafx.graphics/com.sun.glass.ui=ALL-UNNAMED']
         args += '-Djdk.gtk.version=2'
+        args += 'prova'
     }
 }
 
@@ -77,6 +79,9 @@ dependencies {
 
     // Gson
     implementation 'com.google.code.gson:gson:2.9.0'
+
+    // Weld
+    implementation group: 'org.jboss.weld.se', name: 'weld-se-shaded', version: '5.0.0.Final'
 
     // Test
     testImplementation "org.junit.jupiter:junit-jupiter-api:${jupiterVersion}"
@@ -151,12 +156,14 @@ test {
 runtime {
     options = ['--strip-debug', '--compress', '2', '--no-header-files', '--no-man-pages']
     launcher {
-        noConsole = true
+        noConsole = false
     }
     targetPlatform('linux-x64') {
         jdkHome = jdkDownload("https://cdn.azul.com/zulu/bin/zulu17.32.13-ca-jdk17.0.2-linux_x64.zip")
     }
     jpackage {
+        jvmArgs = ['-splash:$APPDIR/splash.png']
+
         def currentOs = org.gradle.internal.os.OperatingSystem.current()
 
         targetPlatformName = currentOs.isWindows() ? "win" : "linux-x64"
@@ -164,7 +171,10 @@ runtime {
                 '--vendor', "${author}",
                 '--app-version', version.replace('-', '.'),
                 '--description', 'A software to set alarms',
-                '--verbose',
+//                '--name', "${prettyAppName}",
+                '--icon', 'src/main/resources/icons/tomato.png',
+                '--about-url', "${website}",
+                '--verbose'
         ]
         if (currentOs.isWindows()) {
             installerOptions += [
@@ -175,13 +185,48 @@ runtime {
             ]
             installerType = 'msi'
         } else if (currentOs.isLinux()) {
-            //                    '--resource-dir', buildDir.toString() + '/jpackage/kanbango/lib',
             installerOptions += [
                     '--resource-dir', 'src/main/resources',
                     '--linux-shortcut',
                     '--linux-deb-maintainer', 'matver87@gmail.com',
                     '--linux-rpm-license-type', 'MIT'
+//                    '--install-dir', '/opt/',
+//                    '--linux-package-name', 'xxx'
             ]
         }
     }
 }
+
+tasks.jpackageImage.doLast {
+    copy {
+        from "config"
+        into "$buildDir/jpackage/$project.name/lib/config"
+    }
+}
+
+//
+//task copyShRemovePomodoroToJpackage(type: Copy) {
+//    from "scripts/rm-pomodoro.sh"
+//    into "$buildDir/jpackage/"
+//}
+//
+//task copyConfigFolder(type: Copy) {
+//    from "config"
+////    into "$buildDir/jpackage/$project.name/config"
+//    into "$buildDir/install/$project.name/lib/config"
+//}
+//
+//jpackageImage.dependsOn(copyConfigFolder)
+//
+//jpackage.finalizedBy(copyShRemovePomodoroToJpackage)
+//jpackageImage.finalizedBy(copyConfigFolder)
+
+//jpackageImage.finalizedBy(copyConfigFolder)
+//
+//tasks.jpackageImage.doLast {
+//    copy {
+//        from "src/main/resources"
+//        include "splash.png"
+//        into "build/jpackage/$project.name/bin"
+//    }
+//}
