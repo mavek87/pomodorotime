@@ -10,7 +10,7 @@ public class ExternalFolderPath {
 
     private static final Logger log = LoggerFactory.getLogger(ExternalFolderPath.class);
 
-    private static boolean isDevEnv;
+    private static boolean isRunningFromDevelopment;
     private static String DEV_BASE_PATH;
     private static String PROD_BASE_PATH;
 
@@ -19,11 +19,11 @@ public class ExternalFolderPath {
             Path jarPath = Paths.get(ExternalFolderPath.class.getProtectionDomain().getCodeSource().getLocation().toURI());
             log.info("jarPath: {}", jarPath);
             if (jarPath.toString().endsWith(".jar")) {
-                isDevEnv = false;
+                isRunningFromDevelopment = false;
                 PROD_BASE_PATH = jarPath.getParent().toString();
                 log.info("PROD_BASE_PATH {}", PROD_BASE_PATH);
             } else {
-                isDevEnv = true;
+                isRunningFromDevelopment = true;
                 DEV_BASE_PATH = "";
             }
         } catch (Exception ex) {
@@ -33,15 +33,12 @@ public class ExternalFolderPath {
 
     public static Path getPath(String... pathPiece) throws IOException {
         Path path;
-        if (isDevEnv) {
-            log.info("IS DEV");
+        if (isRunningFromDevelopment) {
             path = Paths.get(DEV_BASE_PATH, pathPiece);
         } else {
-            log.info("IS PROD");
             path = Paths.get(PROD_BASE_PATH, pathPiece);
         }
-        log.info("path: {}", path);
-        return path;
+        return path.toAbsolutePath();
     }
 
     // https://stackoverflow.com/questions/320542/how-to-get-the-path-of-a-running-jar-file

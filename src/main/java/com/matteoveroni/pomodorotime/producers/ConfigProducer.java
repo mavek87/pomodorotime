@@ -14,13 +14,14 @@ import java.nio.file.Path;
 @ApplicationScoped
 public class ConfigProducer {
 
+    private static final Logger log = LoggerFactory.getLogger(ConfigProducer.class);
+
     private final Config config;
 
     @Inject
     public ConfigProducer(Gson gson) throws Exception {
         Path configPath = ExternalFolderPath.getPath("config", "config.json");
-        Logger log = LoggerFactory.getLogger(getClass());
-        log.info("configPath {}", configPath);
+        log.info("config path: {}", configPath);
         this.config = gson.fromJson(Files.readString(configPath), Config.class);
     }
 
