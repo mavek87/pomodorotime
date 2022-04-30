@@ -1,12 +1,10 @@
 package com.matteoveroni.pomodorotime.utils;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import java.lang.management.ManagementFactory;
 
+@Slf4j
 public class JavaVMSpecsPrinter {
-
-    private static final Logger log = LoggerFactory.getLogger(JavaVMSpecsPrinter.class);
 
     public static final void printSpecs() {
         log.info("javaVersion: {}", System.getProperty("java.version"));

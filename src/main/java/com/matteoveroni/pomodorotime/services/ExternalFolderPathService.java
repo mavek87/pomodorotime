@@ -1,22 +1,21 @@
-package com.matteoveroni.pomodorotime.utils;
+package com.matteoveroni.pomodorotime.services;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import java.io.IOException;
+import jakarta.enterprise.context.ApplicationScoped;
+import lombok.extern.slf4j.Slf4j;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-public class ExternalFolderPath {
+@ApplicationScoped
+@Slf4j
+public class ExternalFolderPathService {
 
-    private static final Logger log = LoggerFactory.getLogger(ExternalFolderPath.class);
+    private final boolean isRunningFromDevelopment;
+    private String DEV_BASE_PATH;
+    private String PROD_BASE_PATH;
 
-    private static boolean isRunningFromDevelopment;
-    private static String DEV_BASE_PATH;
-    private static String PROD_BASE_PATH;
-
-    static {
+    public ExternalFolderPathService() {
         try {
-            Path jarPath = Paths.get(ExternalFolderPath.class.getProtectionDomain().getCodeSource().getLocation().toURI());
+            Path jarPath = Paths.get(ExternalFolderPathService.class.getProtectionDomain().getCodeSource().getLocation().toURI());
             log.info("jarPath: {}", jarPath);
             if (jarPath.toString().endsWith(".jar")) {
                 isRunningFromDevelopment = false;
@@ -31,7 +30,7 @@ public class ExternalFolderPath {
         }
     }
 
-    public static Path getPath(String... pathPiece) throws IOException {
+    public Path getPath(String... pathPiece) {
         Path path;
         if (isRunningFromDevelopment) {
             path = Paths.get(DEV_BASE_PATH, pathPiece);
