@@ -41,8 +41,6 @@ public class App extends Application {
 
     @Override
     public void init() throws Exception {
-        JavaVMSpecsPrinter.printSpecs();
-
         ConfigProducer configProducer = context.select(ConfigProducer.class).get();
         config = configProducer.getConfig();
     }

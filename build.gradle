@@ -53,7 +53,6 @@ application {
     run {
         jvmArgs = ['--add-exports=javafx.graphics/com.sun.glass.ui=ALL-UNNAMED']
         args += '-Djdk.gtk.version=2'
-        args += 'prova'
     }
 }
 
@@ -200,33 +199,6 @@ runtime {
 tasks.jpackageImage.doLast {
     copy {
         from "config"
-        into "$buildDir/jpackage/$project.name/lib/config"
+        into "$buildDir/jpackage/$project.name/lib/app/config"
     }
 }
-
-//
-//task copyShRemovePomodoroToJpackage(type: Copy) {
-//    from "scripts/rm-pomodoro.sh"
-//    into "$buildDir/jpackage/"
-//}
-//
-//task copyConfigFolder(type: Copy) {
-//    from "config"
-////    into "$buildDir/jpackage/$project.name/config"
-//    into "$buildDir/install/$project.name/lib/config"
-//}
-//
-//jpackageImage.dependsOn(copyConfigFolder)
-//
-//jpackage.finalizedBy(copyShRemovePomodoroToJpackage)
-//jpackageImage.finalizedBy(copyConfigFolder)
-
-//jpackageImage.finalizedBy(copyConfigFolder)
-//
-//tasks.jpackageImage.doLast {
-//    copy {
-//        from "src/main/resources"
-//        include "splash.png"
-//        into "build/jpackage/$project.name/bin"
-//    }
-//}
