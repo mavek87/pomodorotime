@@ -104,8 +104,6 @@ public class PomodoroController implements Initializable {
     @FXML
     void onStopAction(ActionEvent event) {
         stopAlert();
-        progressIndicator.setProgress(0);
-        mediaPlayer.stop();
     }
 
     private void startAlertTimer() {
@@ -119,6 +117,7 @@ public class PomodoroController implements Initializable {
                         alertDialog.setHeaderText("Alert fired");
                         alertDialog.setContentText("It's time to stop!");
                         alertDialog.showAndWait();
+                        stopAlert();
                     });
                 }, new KeyValue(progressIndicator.progressProperty(), 1))
         );
@@ -135,6 +134,8 @@ public class PomodoroController implements Initializable {
         isAlertTimerStartedBooleanProperty.setValue(false);
         fieldAlarmTimeMinutes.editable(true);
         fieldAlarmTimeMinutes.reset();
+        progressIndicator.setProgress(0);
+        mediaPlayer.stop();
     }
 
     private Form buildFormAlarmSettings() {
