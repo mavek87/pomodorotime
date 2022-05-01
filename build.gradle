@@ -32,6 +32,7 @@ ext {
     logbackVersion = '1.2.11'
     jupiterVersion = '5.8.2'
     lombokVersion = '1.18.24'
+    ikonliVersion = '12.3.1'
 }
 
 sourceCompatibility = JavaVersion.VERSION_17
@@ -69,20 +70,16 @@ configurations.all {
 }
 
 dependencies {
-    implementation 'org.kordamp.ikonli:ikonli-javafx:12.3.1'
-    implementation 'org.kordamp.ikonli:ikonli-fontawesome5-pack:12.3.1'
-    implementation 'org.kordamp.ikonli:ikonli-typicons-pack:12.3.1'
-
     // Libraries added manually
-    implementation fileTree(dir: 'libs', include: '*.jar')
+    // implementation fileTree(dir: 'libs', include: '*.jar')
     // Logging - Sl4j, logback
     implementation 'org.slf4j:slf4j-api:1.7.36'
-    implementation "ch.qos.logback:logback-core:${logbackVersion}"
-    implementation "ch.qos.logback:logback-classic:${logbackVersion}"
+    implementation "ch.qos.logback:logback-core:$logbackVersion"
+    implementation "ch.qos.logback:logback-classic:$logbackVersion"
     // Lombok
-    compileOnly "org.projectlombok:lombok:${lombokVersion}"
-    testCompileOnly "org.projectlombok:lombok:${lombokVersion}"
-    annotationProcessor "org.projectlombok:lombok:${lombokVersion}"
+    compileOnly "org.projectlombok:lombok:$lombokVersion"
+    testCompileOnly "org.projectlombok:lombok:$lombokVersion"
+    annotationProcessor "org.projectlombok:lombok:$lombokVersion"
     // Weld
     implementation 'org.jboss.weld.se:weld-se-shaded:5.0.0.Final'
     // Gson
@@ -91,20 +88,15 @@ dependencies {
     implementation 'com.dlsc.formsfx:formsfx-core:11.5.0'
     // PreferencesFX
     implementation 'com.dlsc.preferencesfx:preferencesfx-core:11.9.0'
-    // FontAwesome
-//    implementation 'de.jensd:fontawesomefx:8.9'
-//    implementation 'org.controlsfx:controlsfx:11.1.1'
-    // JFoenix (Google Material Design)
-//    implementation 'com.jfoenix:jfoenix:9.0.10'
-//    implementation 'org.jfxtras:jmetro:11.6.14'
-//    implementation 'de.jensd:fontawesomefx:9.1.2'
-    implementation 'de.jensd:fontawesomefx-commons:9.1.2'
-    implementation 'de.jensd:fontawesomefx-controls:9.1.2'
+    // Ikonli icons
+    implementation "org.kordamp.ikonli:ikonli-javafx:$ikonliVersion"
+    implementation "org.kordamp.ikonli:ikonli-fontawesome5-pack:$ikonliVersion"
+    implementation "org.kordamp.ikonli:ikonli-typicons-pack:$ikonliVersion"
     // Tray Icon
     // implementation 'com.dustinredmond.fxtrayicon:FXTrayIcon:3.1.2'
     // Test
-    testImplementation "org.junit.jupiter:junit-jupiter-api:${jupiterVersion}"
-    testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:${jupiterVersion}"
+    testImplementation "org.junit.jupiter:junit-jupiter-api:$jupiterVersion"
+    testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:$jupiterVersion"
 }
 
 javafx {
@@ -180,7 +172,6 @@ tasks.jpackageImage.doLast {
         into "$buildDir/jpackage/$project.name/lib/app/config"
     }
 }
-
 
 //jlink {
 //    options = ['--strip-debug', '--compress', '2', '--no-header-files', '--no-man-pages']
