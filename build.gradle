@@ -60,6 +60,7 @@ application {
 
 repositories {
     mavenCentral()
+    maven { url 'https://jitpack.io' }
 }
 
 configurations.all {
@@ -68,6 +69,10 @@ configurations.all {
 }
 
 dependencies {
+    implementation 'org.kordamp.ikonli:ikonli-javafx:12.3.1'
+    implementation 'org.kordamp.ikonli:ikonli-fontawesome5-pack:12.3.1'
+    implementation 'org.kordamp.ikonli:ikonli-typicons-pack:12.3.1'
+
     // Libraries added manually
     implementation fileTree(dir: 'libs', include: '*.jar')
     // Logging - Sl4j, logback
@@ -93,8 +98,8 @@ dependencies {
 //    implementation 'com.jfoenix:jfoenix:9.0.10'
 //    implementation 'org.jfxtras:jmetro:11.6.14'
 //    implementation 'de.jensd:fontawesomefx:9.1.2'
-//    implementation 'de.jensd:fontawesomefx-commons:9.1.2'
-//    implementation 'de.jensd:fontawesomefx-controls:9.1.2'
+    implementation 'de.jensd:fontawesomefx-commons:9.1.2'
+    implementation 'de.jensd:fontawesomefx-controls:9.1.2'
     // Tray Icon
     // implementation 'com.dustinredmond.fxtrayicon:FXTrayIcon:3.1.2'
     // Test

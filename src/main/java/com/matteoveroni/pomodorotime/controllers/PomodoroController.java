@@ -21,6 +21,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ProgressIndicator;
+import javafx.scene.control.Tooltip;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
@@ -75,6 +76,10 @@ public class PomodoroController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
+        btnStart.setTooltip(new Tooltip("Start the pomodoro timer"));
+        btnStart.setFocusTraversable(false);
+        btnStop.setTooltip(new Tooltip("Stop the pomodoro timer"));
+        btnStop.setFocusTraversable(false);
         fieldRemainingTime.setBindingMode(BindingMode.CONTINUOUS);
         fieldElapsedTime.setBindingMode(BindingMode.CONTINUOUS);
         progressIndicator.setMaxSize(640, 480);

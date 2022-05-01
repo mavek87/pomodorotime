@@ -48,7 +48,8 @@ public class App extends Application {
     public void start(Stage stage) throws Exception {
         this.stage = stage;
 
-        FXMLLoader fxmlLoader = new FXMLLoader(resourcesService.getSettingsFXMLViewURL());
+//        FXMLLoader fxmlLoader = new FXMLLoader(resourcesService.getSettingsFXMLViewURL());
+        FXMLLoader fxmlLoader = new FXMLLoader(resourcesService.getPomodoroFXMLViewURL());
         Pane pane = fxmlLoader.load();
 
         Scene scene = new Scene(pane);
@@ -56,10 +57,10 @@ public class App extends Application {
         stage.setTitle(config.getAppName());
         stage.getIcons().add(new Image(Objects.requireNonNull(resourcesService.getLogoIconURL().openStream())));
         stage.setResizable(false);
-        stage.addEventHandler(WindowEvent.WINDOW_SHOWN, event -> FXGraphicsUtils.centerStage(stage));
         stage.setWidth(config.getWindowWidth());
         stage.setHeight(config.getWindowHeight());
         stage.setOnCloseRequest(confirmCloseEventHandler);
+        stage.addEventHandler(WindowEvent.WINDOW_SHOWN, event -> FXGraphicsUtils.centerStage(stage));
         stage.show();
 
 //        FXTrayIcon icon = new FXTrayIcon(this.stage, resourcesService.getLogoIconURL());
