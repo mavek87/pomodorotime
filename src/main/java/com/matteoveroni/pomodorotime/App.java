@@ -48,10 +48,11 @@ public class App extends Application {
     public void start(Stage stage) throws Exception {
         this.stage = stage;
 
-        FXMLLoader fxmlLoader = new FXMLLoader(resourcesService.getPomodoroFXMLViewURL());
+        FXMLLoader fxmlLoader = new FXMLLoader(resourcesService.getSettingsFXMLViewURL());
         Pane pane = fxmlLoader.load();
 
-        stage.setScene(new Scene(pane));
+        Scene scene = new Scene(pane);
+        stage.setScene(scene);
         stage.setTitle(config.getAppName());
         stage.getIcons().add(new Image(Objects.requireNonNull(resourcesService.getLogoIconURL().openStream())));
         stage.setResizable(false);

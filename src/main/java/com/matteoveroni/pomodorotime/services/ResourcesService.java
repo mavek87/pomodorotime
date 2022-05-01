@@ -24,4 +24,8 @@ public class ResourcesService {
     public URL getPomodoroFXMLViewURL() {
         return classLoader.getResource(FXML_FOLDER + "pomodoro.fxml");
     }
+
+    public URL getSettingsFXMLViewURL() {
+        return classLoader.getResource(FXML_FOLDER + "settings.fxml");
+    }
 }
