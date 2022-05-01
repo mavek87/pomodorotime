@@ -1,11 +1,9 @@
 package com.matteoveroni.pomodorotime.utils;
 
 import javafx.geometry.Rectangle2D;
-import javafx.scene.control.Alert;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.stage.Window;
-import javafx.stage.WindowEvent;
 
 public class FXGraphicsUtils {
 

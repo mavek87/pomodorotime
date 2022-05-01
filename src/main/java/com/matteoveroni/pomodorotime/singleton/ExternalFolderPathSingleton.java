@@ -1,21 +1,21 @@
-package com.matteoveroni.pomodorotime.services;
+package com.matteoveroni.pomodorotime.singleton;
 
-import jakarta.enterprise.context.ApplicationScoped;
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-@ApplicationScoped
-@Slf4j
-public class ExternalFolderPathService {
+public enum ExternalFolderPathSingleton {
+    INSTANCE;
 
     private final boolean isRunningFromDevelopment;
     private String DEV_BASE_PATH;
     private String PROD_BASE_PATH;
 
-    public ExternalFolderPathService() {
+    ExternalFolderPathSingleton() {
         try {
-            Path jarPath = Paths.get(ExternalFolderPathService.class.getProtectionDomain().getCodeSource().getLocation().toURI());
+            Logger log = LoggerFactory.getLogger(ExternalFolderPathSingleton.class);
+            Path jarPath = Paths.get(ExternalFolderPathSingleton.class.getProtectionDomain().getCodeSource().getLocation().toURI());
             log.info("jarPath: {}", jarPath);
             if (jarPath.toString().endsWith(".jar")) {
                 isRunningFromDevelopment = false;

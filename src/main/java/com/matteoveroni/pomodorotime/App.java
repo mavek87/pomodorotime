@@ -1,11 +1,10 @@
 package com.matteoveroni.pomodorotime;
 
 import com.matteoveroni.pomodorotime.configs.Config;
-import com.matteoveroni.pomodorotime.producers.ConfigProducer;
+import com.matteoveroni.pomodorotime.singleton.ConfigSingleton;
+import com.matteoveroni.pomodorotime.factories.ControllersFactory;
 import com.matteoveroni.pomodorotime.services.ResourcesService;
 import com.matteoveroni.pomodorotime.utils.FXGraphicsUtils;
-import jakarta.enterprise.inject.se.SeContainer;
-import jakarta.enterprise.inject.se.SeContainerInitializer;
 import javafx.application.Application;
 import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
@@ -23,12 +22,8 @@ import java.util.Optional;
 
 public class App extends Application {
 
-    public static final SeContainer context = SeContainerInitializer.newInstance()
-            .disableDiscovery()
-            .addPackages(true, App.class)
-            .initialize();
-
     private ResourcesService resourcesService;
+    private ControllersFactory controllersFactory;
     private Stage stage;
     private Config config;
 
@@ -39,17 +34,18 @@ public class App extends Application {
 
     @Override
     public void init() {
-        resourcesService = context.select(ResourcesService.class).get();
-        ConfigProducer configProducer = context.select(ConfigProducer.class).get();
-        config = configProducer.getConfig();
+        resourcesService = new ResourcesService();
+        config = ConfigSingleton.INSTANCE.getConfig();
     }
 
     @Override
     public void start(Stage stage) throws Exception {
         this.stage = stage;
+        this.controllersFactory = new ControllersFactory(stage, resourcesService);
 
 //        FXMLLoader fxmlLoader = new FXMLLoader(resourcesService.getSettingsFXMLViewURL());
         FXMLLoader fxmlLoader = new FXMLLoader(resourcesService.getPomodoroFXMLViewURL());
+        fxmlLoader.setControllerFactory(controllersFactory);
         Pane pane = fxmlLoader.load();
 
         Scene scene = new Scene(pane);

@@ -4,7 +4,6 @@ import com.dlsc.preferencesfx.PreferencesFx;
 import com.dlsc.preferencesfx.model.Category;
 import com.dlsc.preferencesfx.model.Group;
 import com.dlsc.preferencesfx.model.Setting;
-import jakarta.annotation.PreDestroy;
 import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -106,10 +105,6 @@ public class SettingsController {
 //        navbar_pane.getChildren().add(new ControlNavBar(localizationService));
 
         root.setCenter(preferencesFx.getView());
-    }
-
-    @PreDestroy
-    private void dispose() {
     }
 
 //     TODO: just a stub method. clean the mess

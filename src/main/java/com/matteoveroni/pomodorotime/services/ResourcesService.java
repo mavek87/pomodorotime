@@ -1,9 +1,7 @@
 package com.matteoveroni.pomodorotime.services;
 
-import jakarta.enterprise.context.ApplicationScoped;
 import java.net.URL;
 
-@ApplicationScoped
 public class ResourcesService {
 
     private static final Class<ResourcesService> clazz = ResourcesService.class;
@@ -24,6 +22,6 @@ public class ResourcesService {
     }
 
     public URL getAlarmAudioURL() {
-        return clazz.getResource(AUDIO_FOLDER + "/alarm.mp3");
+        return clazz.getResource(AUDIO_FOLDER + "alarm.mp3");
     }
 }
