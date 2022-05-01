@@ -5,6 +5,12 @@ import com.dlsc.formsfx.model.util.BindingMode;
 import com.dlsc.formsfx.model.validators.CustomValidator;
 import com.dlsc.formsfx.view.renderer.FormRenderer;
 import com.dlsc.formsfx.view.util.ColSpan;
+import com.matteoveroni.pomodorotime.services.ResourcesService;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.enterprise.context.RequestScoped;
+import jakarta.enterprise.inject.Default;
+import jakarta.inject.Inject;
+import jakarta.inject.Named;
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
@@ -26,11 +32,14 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.util.Duration;
+import org.jboss.weld.context.ejb.Ejb;
 import java.net.URL;
 import java.util.ResourceBundle;
 import java.util.concurrent.TimeUnit;
 
-public class PomodoroController implements Initializable {
+//public class PomodoroController implements Initializable {
+@RequestScoped
+public class PomodoroController {
 
     @FXML private ProgressIndicator progressIndicator;
     @FXML private BorderPane paneFormAlertSettings;
@@ -61,12 +70,13 @@ public class PomodoroController implements Initializable {
             .editable(false)
             .span(ColSpan.HALF)
             .label("Elapsed time");
-    private final MediaPlayer mediaPlayer;
+    private MediaPlayer mediaPlayer;
 
     private Timeline timeline;
 
-    public PomodoroController() {
-        Media alarmSound = new Media(getClass().getClassLoader().getResource("sounds/alarm.mp3").toString());
+    @Inject
+    public PomodoroController(ResourcesService resourcesService) {
+        Media alarmSound = new Media(resourcesService.getAlarmAudioURL().toString());
         mediaPlayer = new MediaPlayer(alarmSound);
         mediaPlayer.setOnEndOfMedia(() -> {
             mediaPlayer.seek(Duration.ONE);
@@ -74,22 +84,24 @@ public class PomodoroController implements Initializable {
         });
     }
 
-    @Override
-    public void initialize(URL url, ResourceBundle resourceBundle) {
+    //    @Override
+//    public void initialize(URL url, ResourceBundle resourceBundle) {
+    @FXML
+    private void initialize() {
         btnStart.setTooltip(new Tooltip("Start the pomodoro timer"));
         btnStart.setFocusTraversable(false);
         btnStop.setTooltip(new Tooltip("Stop the pomodoro timer"));
         btnStop.setFocusTraversable(false);
-        fieldRemainingTime.setBindingMode(BindingMode.CONTINUOUS);
-        fieldElapsedTime.setBindingMode(BindingMode.CONTINUOUS);
-        progressIndicator.setMaxSize(640, 480);
-        progressIndicator.visibleProperty().bind(isAlertTimerStartedBooleanProperty);
-        paneFormAlertSettings.setCenter(new FormRenderer(buildFormAlarmSettings()));
-        paneFormAlertSettings.visibleProperty().bind(Bindings.not(isAlertTimerStartedBooleanProperty));
-        paneFormAlertTimer.setCenter(new FormRenderer(buildFormElapsedTime()));
-        paneFormAlertTimer.visibleProperty().bind(isAlertTimerStartedBooleanProperty);
-        btnStart.disableProperty().bind(isAlertTimerStartedBooleanProperty);
-        btnStop.disableProperty().bind(Bindings.not(isAlertTimerStartedBooleanProperty));
+//        fieldRemainingTime.setBindingMode(BindingMode.CONTINUOUS);
+//        fieldElapsedTime.setBindingMode(BindingMode.CONTINUOUS);
+//        progressIndicator.setMaxSize(640, 480);
+//        progressIndicator.visibleProperty().bind(isAlertTimerStartedBooleanProperty);
+//        paneFormAlertSettings.setCenter(new FormRenderer(buildFormAlarmSettings()));
+//        paneFormAlertSettings.visibleProperty().bind(Bindings.not(isAlertTimerStartedBooleanProperty));
+//        paneFormAlertTimer.setCenter(new FormRenderer(buildFormElapsedTime()));
+//        paneFormAlertTimer.visibleProperty().bind(isAlertTimerStartedBooleanProperty);
+//        btnStart.disableProperty().bind(isAlertTimerStartedBooleanProperty);
+//        btnStop.disableProperty().bind(Bindings.not(isAlertTimerStartedBooleanProperty));
     }
 
     @FXML

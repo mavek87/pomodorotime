@@ -1,31 +1,29 @@
 package com.matteoveroni.pomodorotime.services;
 
 import jakarta.enterprise.context.ApplicationScoped;
-import jakarta.inject.Inject;
 import java.net.URL;
 
 @ApplicationScoped
 public class ResourcesService {
 
-    private static final String FXML_FOLDER = "";
-    private static final String ICONS_FOLDER = "icons/";
-
-    private final ClassLoader classLoader;
-
-    @Inject
-    public ResourcesService(ClassLoader classLoader) {
-        this.classLoader = classLoader;
-    }
+    private static final Class<ResourcesService> clazz = ResourcesService.class;
+    private static final String FXML_FOLDER = "/fxml/";
+    private static final String ICONS_FOLDER = "/icons/";
+    private static final String AUDIO_FOLDER = "/audio/";
 
     public URL getLogoIconURL() {
-        return classLoader.getResource(ICONS_FOLDER + "tomato.png");
+        return clazz.getResource(ICONS_FOLDER + "tomato.png");
     }
 
     public URL getPomodoroFXMLViewURL() {
-        return classLoader.getResource(FXML_FOLDER + "pomodoro.fxml");
+        return clazz.getResource(FXML_FOLDER + "pomodoro.fxml");
     }
 
     public URL getSettingsFXMLViewURL() {
-        return classLoader.getResource(FXML_FOLDER + "settings.fxml");
+        return clazz.getResource(FXML_FOLDER + "settings.fxml");
+    }
+
+    public URL getAlarmAudioURL() {
+        return clazz.getResource(AUDIO_FOLDER + "/alarm.mp3");
     }
 }
