@@ -41,7 +41,7 @@ public class App extends Application {
     @Override
     public void start(Stage stage) throws Exception {
         this.stage = stage;
-        this.controllersFactory = new ControllersFactory(stage, resourcesService);
+        this.controllersFactory = new ControllersFactory(stage, resourcesService, config);
 
 //        FXMLLoader fxmlLoader = new FXMLLoader(resourcesService.getSettingsFXMLViewURL());
         FXMLLoader fxmlLoader = new FXMLLoader(resourcesService.getPomodoroFXMLViewURL());

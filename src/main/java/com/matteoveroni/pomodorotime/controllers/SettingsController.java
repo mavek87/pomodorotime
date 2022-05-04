@@ -4,6 +4,7 @@ import com.dlsc.preferencesfx.PreferencesFx;
 import com.dlsc.preferencesfx.model.Category;
 import com.dlsc.preferencesfx.model.Group;
 import com.dlsc.preferencesfx.model.Setting;
+import com.matteoveroni.pomodorotime.configs.Config;
 import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -18,6 +19,7 @@ import java.util.Arrays;
 public class SettingsController {
 
 //    private final FXLocalizationService localizationService;
+    private final Config config;
 
     @FXML private BorderPane root;
     @FXML private AnchorPane navbar_pane;
@@ -26,10 +28,9 @@ public class SettingsController {
 //    private final ListProperty<Locale> localesListProperty = new SimpleListProperty<>(FXCollections.observableArrayList(locales));
 //    private final ObjectProperty<Locale> selectedLocalesProperty = new SimpleObjectProperty<>(locales.get(0));
 
-//    @Inject
-//    public SettingsController(FXLocalizationService localizationService) {
-//        this.localizationService = localizationService;
-//    }
+    public SettingsController(Config config) {
+        this.config = config;
+    }
 
     private final IntegerProperty pomodoroDurationProperty = new SimpleIntegerProperty(30);
     private final IntegerProperty pomodoroPauseProperty = new SimpleIntegerProperty(5);
