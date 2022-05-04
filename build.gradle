@@ -85,6 +85,8 @@ dependencies {
 //    implementation 'org.jboss.weld.se:weld-se-shaded:5.0.0.Final'
     // Gson
     implementation 'com.google.code.gson:gson:2.9.0'
+    // JavaFX router
+    implementation 'com.github.mavek87:RouterFX:1.2.9'
     // FormsFX
     implementation 'com.dlsc.formsfx:formsfx-core:11.5.0'
     // PreferencesFX

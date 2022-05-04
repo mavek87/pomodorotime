@@ -1,19 +1,20 @@
 package com.matteoveroni.pomodorotime;
 
 import com.matteoveroni.pomodorotime.configs.Config;
-import com.matteoveroni.pomodorotime.singleton.ConfigSingleton;
 import com.matteoveroni.pomodorotime.factories.ControllersFactory;
+import com.matteoveroni.pomodorotime.routes.Route;
+import com.matteoveroni.pomodorotime.factories.RouterFXRoutesFactory;
 import com.matteoveroni.pomodorotime.services.ResourcesService;
-import com.matteoveroni.pomodorotime.utils.FXGraphicsUtils;
+import com.matteoveroni.pomodorotime.singleton.ConfigSingleton;
+import com.matteoveroni.routerfx.core.RoutedWindow;
+import com.matteoveroni.routerfx.core.RouterFX;
+import com.matteoveroni.routerfx.dto.WindowSize;
 import javafx.application.Application;
 import javafx.event.EventHandler;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.image.Image;
-import javafx.scene.layout.Pane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
@@ -43,21 +44,19 @@ public class App extends Application {
         this.stage = stage;
         this.controllersFactory = new ControllersFactory(stage, resourcesService, config);
 
-//        FXMLLoader fxmlLoader = new FXMLLoader(resourcesService.getSettingsFXMLViewURL());
-        FXMLLoader fxmlLoader = new FXMLLoader(resourcesService.getPomodoroFXMLViewURL());
-        fxmlLoader.setControllerFactory(controllersFactory);
-        Pane pane = fxmlLoader.load();
-
-        Scene scene = new Scene(pane);
-        stage.setScene(scene);
-        stage.setTitle(config.getAppName());
         stage.getIcons().add(new Image(Objects.requireNonNull(resourcesService.getLogoIconURL().openStream())));
-        stage.setResizable(false);
-        stage.setWidth(config.getWindowWidth());
-        stage.setHeight(config.getWindowHeight());
         stage.setOnCloseRequest(confirmCloseEventHandler);
-        stage.addEventHandler(WindowEvent.WINDOW_SHOWN, event -> FXGraphicsUtils.centerStage(stage));
-        stage.show();
+
+        RoutedWindow routedWindow = RoutedWindow.builder(stage)
+                .title(config.getAppName())
+                .resizableByDefault(false)
+                .windowSize(new WindowSize(config.getWindowWidth(), config.getWindowHeight()))
+                .centerWindowsOnShown(true)
+                .build();
+
+        RouterFX.init(routedWindow, controllersFactory);
+        RouterFXRoutesFactory.createRoutes(resourcesService);
+        RouterFX.goTo(Route.POMODORO_VIEW.getId());
 
 //        FXTrayIcon icon = new FXTrayIcon(this.stage, resourcesService.getLogoIconURL());
 //        icon.show();
