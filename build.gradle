@@ -13,7 +13,7 @@ import java.nio.charset.StandardCharsets
  */
 
 plugins {
-    id "org.openjfx.javafxplugin" version "0.0.12"
+    id 'org.openjfx.javafxplugin' version '0.0.12'
     id 'org.beryx.runtime' version '1.12.7'
 //    id 'org.beryx.jlink' version '2.25.0'
     id 'pl.allegro.tech.build.axion-release' version '1.13.6'
@@ -103,7 +103,7 @@ dependencies {
 }
 
 javafx {
-    version = "17.0.2"
+    version = '17.0.2'
     modules = ['javafx.controls', 'javafx.fxml', 'javafx.media']
 }
 
@@ -111,8 +111,8 @@ jar {
     manifest.attributes(
             'Built-By': "${author}",
             'Created-By': System.properties['java.version']
-                    + " (" + System.properties['java.vendor']
-                    + " " + System.properties['java.vm.version'] + ")",
+                    + ' (' + System.properties['java.vendor']
+                    + ' ' + System.properties['java.vm.version'] + ')',
             'Specification-Title': project.name,
             'Specification-Version': project.version,
             'Implementation-Title': project.name,
@@ -131,14 +131,14 @@ runtime {
         noConsole = false
     }
     targetPlatform('linux-x64') {
-        jdkHome = jdkDownload("https://cdn.azul.com/zulu/bin/zulu17.32.13-ca-jdk17.0.2-linux_x64.zip")
+        jdkHome = jdkDownload('https://cdn.azul.com/zulu/bin/zulu17.32.13-ca-jdk17.0.2-linux_x64.zip')
     }
     jpackage {
         jvmArgs = ['-splash:$APPDIR/splash.png']
 
         def currentOs = org.gradle.internal.os.OperatingSystem.current()
 
-        targetPlatformName = currentOs.isWindows() ? "win" : "linux-x64"
+        targetPlatformName = currentOs.isWindows() ? 'win' : 'linux-x64'
         installerOptions += [
                 '--vendor', "${author}",
                 '--app-version', version.replace('-', '.'),
@@ -171,7 +171,7 @@ runtime {
 
 tasks.jpackageImage.doLast {
     copy {
-        from "config"
+        from 'config'
         into "$buildDir/jpackage/$project.name/lib/app/config"
     }
 }
