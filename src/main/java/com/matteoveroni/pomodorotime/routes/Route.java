@@ -1,8 +1,8 @@
 package com.matteoveroni.pomodorotime.routes;
 
 public enum Route {
-    POMODORO_VIEW("pomodoro", "route-title_main_menu_key"),
-    SETTINGS_VIEW("settings", "route-title_settings_key");
+    POMODORO_VIEW("pomodoro", "route-view_pomodoro_title_key"),
+    SETTINGS_VIEW("settings", "route-view_settings_title_key");
 
     private final String id;
     private final String localizedTitleKey;
