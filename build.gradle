@@ -16,10 +16,11 @@ plugins {
     id "org.openjfx.javafxplugin" version "0.0.12"
     id 'org.beryx.runtime' version '1.12.7'
 //    id 'org.beryx.jlink' version '2.25.0'
+    id 'pl.allegro.tech.build.axion-release' version '1.13.6'
 }
 
 group 'com.matteoveroni'
-version '1.0'
+version = scmVersion.version
 
 ext {
     appName = 'pomodorotime'
