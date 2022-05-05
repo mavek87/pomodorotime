@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.StackPane?>
+
+<BorderPane prefHeight="768" prefWidth="1024.0" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.matteoveroni.pomodorotime.gui.controllers.AppViewController">
+    <top>
+        <BorderPane fx:id="pane_for_control_app_file_menu" minHeight="50.0"/>
+    </top>
+    <center>
+        <BorderPane fx:id="pane_for_control_view">
+            <center>
+            </center>
+        </BorderPane>
+    </center>
+
+</BorderPane>

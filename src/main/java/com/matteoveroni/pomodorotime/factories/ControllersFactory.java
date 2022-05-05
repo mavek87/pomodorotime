@@ -1,8 +1,9 @@
 package com.matteoveroni.pomodorotime.factories;
 
 import com.matteoveroni.pomodorotime.configs.Config;
-import com.matteoveroni.pomodorotime.controllers.PomodoroController;
-import com.matteoveroni.pomodorotime.controllers.SettingsController;
+import com.matteoveroni.pomodorotime.gui.control.ControlPomodoro;
+import com.matteoveroni.pomodorotime.gui.control.ControlSettings;
+import com.matteoveroni.pomodorotime.gui.controllers.AppViewController;
 import com.matteoveroni.pomodorotime.services.ResourcesService;
 import javafx.stage.Stage;
 import javafx.util.Callback;
@@ -14,20 +15,22 @@ public class ControllersFactory implements Callback<Class<?>, Object> {
     private final Stage stage;
     private final ResourcesService resourcesService;
     private final Config config;
+    private final ControlPomodoro controlPomodoro;
+    private final ControlSettings controlSettings;
 
-    public ControllersFactory(Stage stage, ResourcesService resourcesService, Config config) {
+    public ControllersFactory(Stage stage, ResourcesService resourcesService, Config config, ControlPomodoro controlPomodoro, ControlSettings controlSettings) {
         this.stage = stage;
         this.resourcesService = resourcesService;
         this.config = config;
+        this.controlPomodoro = controlPomodoro;
+        this.controlSettings = controlSettings;
     }
 
     @Override
     public Object call(Class<?> controllerClass) {
         log.info("Building controller for => " + controllerClass);
-        if (controllerClass.isAssignableFrom(PomodoroController.class)) {
-            return new PomodoroController(stage, resourcesService);
-        } else if(controllerClass.isAssignableFrom(SettingsController.class)) {
-            return new SettingsController(config);
+        if (controllerClass.isAssignableFrom(AppViewController.class)) {
+            return new AppViewController(resourcesService, controlPomodoro, controlSettings);
         } else {
             throw new RuntimeException("Unknown controller class");
         }

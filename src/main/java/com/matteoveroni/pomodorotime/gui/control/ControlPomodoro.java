@@ -1,4 +1,4 @@
-package com.matteoveroni.pomodorotime.controllers;
+package com.matteoveroni.pomodorotime.gui.control;
 
 import com.dlsc.formsfx.model.structure.*;
 import com.dlsc.formsfx.model.util.BindingMode;
@@ -29,11 +29,13 @@ import javafx.scene.media.MediaPlayer;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.util.Duration;
+import lombok.extern.slf4j.Slf4j;
 import java.net.URL;
 import java.util.ResourceBundle;
 import java.util.concurrent.TimeUnit;
 
-public class PomodoroController implements Initializable {
+@Slf4j
+public class ControlPomodoro extends BorderPane implements Initializable, LoadableControl {
 
     @FXML private ProgressIndicator progressIndicator;
     @FXML private BorderPane paneFormAlertSettings;
@@ -64,12 +66,12 @@ public class PomodoroController implements Initializable {
             .editable(false)
             .span(ColSpan.HALF)
             .label("Elapsed time");
-    private MediaPlayer mediaPlayer;
+    private final MediaPlayer mediaPlayer;
+    private final Stage stage;
 
     private Timeline timeline;
-    private Stage stage;
 
-    public PomodoroController(Stage stage, ResourcesService resourcesService) {
+    public ControlPomodoro(Stage stage, ResourcesService resourcesService) {
         this.stage = stage;
         Media alarmSound = new Media(resourcesService.getAlarmAudioURL().toString());
         mediaPlayer = new MediaPlayer(alarmSound);
@@ -77,10 +79,12 @@ public class PomodoroController implements Initializable {
             mediaPlayer.seek(Duration.ONE);
             mediaPlayer.play();
         });
+        loadControl(resourcesService, Control.POMODORO);
     }
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
+        log.debug("INITIALIZE " + getClass().getSimpleName());
         btnStart.setTooltip(new Tooltip("Start the pomodoro timer"));
         btnStart.setFocusTraversable(false);
         btnStop.setTooltip(new Tooltip("Stop the pomodoro timer"));
