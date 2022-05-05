@@ -62,7 +62,6 @@ application {
 
 repositories {
     mavenCentral()
-    maven { url 'https://jitpack.io' }
 }
 
 configurations.all {
@@ -85,12 +84,12 @@ dependencies {
 //    implementation 'org.jboss.weld.se:weld-se-shaded:5.0.0.Final'
     // Gson
     implementation 'com.google.code.gson:gson:2.9.0'
-    // JavaFX router
-    implementation 'com.github.mavek87:RouterFX:1.2.9'
     // FormsFX
     implementation 'com.dlsc.formsfx:formsfx-core:11.5.0'
     // PreferencesFX
-    implementation 'com.dlsc.preferencesfx:preferencesfx-core:11.9.0'
+    implementation('com.dlsc.preferencesfx:preferencesfx-core:11.9.0') {
+        exclude group: 'org.openjfx', module: 'javafx-web'
+    }
     // Ikonli icons
     implementation "org.kordamp.ikonli:ikonli-javafx:$ikonliVersion"
     implementation "org.kordamp.ikonli:ikonli-fontawesome5-pack:$ikonliVersion"
@@ -140,12 +139,12 @@ runtime {
 
         targetPlatformName = currentOs.isWindows() ? 'win' : 'linux-x64'
         installerOptions += [
-                '--vendor', "${author}",
+                '--vendor', author,
                 '--app-version', version.replace('-', '.'),
                 '--description', 'A software to set alarms',
 //                '--name', "${prettyAppName}",
                 '--icon', 'src/main/resources/icons/tomato.png',
-                '--about-url', "${website}",
+                '--about-url', website,
                 '--verbose'
         ]
         if (currentOs.isWindows()) {
