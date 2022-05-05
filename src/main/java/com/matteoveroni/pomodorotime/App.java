@@ -1,15 +1,15 @@
 package com.matteoveroni.pomodorotime;
 
 import com.matteoveroni.pomodorotime.configs.Config;
+import com.matteoveroni.pomodorotime.configs.ConfigManager;
+import com.matteoveroni.pomodorotime.factories.ControllersFactory;
 import com.matteoveroni.pomodorotime.gui.control.ControlPomodoro;
 import com.matteoveroni.pomodorotime.gui.control.ControlSettings;
-import com.matteoveroni.pomodorotime.factories.ControllersFactory;
-import com.matteoveroni.pomodorotime.utils.FXGraphicsUtils;
 import com.matteoveroni.pomodorotime.gui.views.View;
 import com.matteoveroni.pomodorotime.services.ResourcesService;
-import com.matteoveroni.pomodorotime.singleton.ConfigSingleton;
+import com.matteoveroni.pomodorotime.singleton.ConfigManagerSingleton;
+import com.matteoveroni.pomodorotime.utils.FXGraphicsUtils;
 import javafx.application.Application;
-import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -30,6 +30,7 @@ public class App extends Application {
     private ResourcesService resourcesService;
     private ControllersFactory controllersFactory;
     private Stage stage;
+    private ConfigManager configManager;
     private Config config;
 
     public static final void main(String... args) {
@@ -40,15 +41,16 @@ public class App extends Application {
     @Override
     public void init() {
         resourcesService = new ResourcesService();
-        config = ConfigSingleton.INSTANCE.getConfig();
+        configManager = ConfigManagerSingleton.INSTANCE;
+        config = configManager.readConfig();
     }
 
     @Override
     public void start(Stage stage) throws Exception {
         this.stage = stage;
-        ControlPomodoro controlPomodoro = new ControlPomodoro(stage, resourcesService);
-        ControlSettings controlSettings = new ControlSettings(config, resourcesService);
-        this.controllersFactory = new ControllersFactory(stage, resourcesService, config, controlPomodoro, controlSettings);
+        ControlPomodoro controlPomodoro = new ControlPomodoro(stage, resourcesService, configManager);
+        ControlSettings controlSettings = new ControlSettings(resourcesService, configManager);
+        this.controllersFactory = new ControllersFactory(stage, resourcesService, configManager, controlPomodoro, controlSettings);
 
         FXMLLoader fxmlLoader = new FXMLLoader(resourcesService.getFXMLViewURL(View.APP_VIEW.getFileName()));
         fxmlLoader.setControllerFactory(controllersFactory);

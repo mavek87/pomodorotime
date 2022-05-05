@@ -5,6 +5,7 @@ import com.dlsc.preferencesfx.model.Category;
 import com.dlsc.preferencesfx.model.Group;
 import com.dlsc.preferencesfx.model.Setting;
 import com.matteoveroni.pomodorotime.configs.Config;
+import com.matteoveroni.pomodorotime.configs.ConfigManager;
 import com.matteoveroni.pomodorotime.services.ResourcesService;
 import javafx.beans.property.*;
 import javafx.collections.FXCollections;
@@ -21,7 +22,7 @@ import java.util.ResourceBundle;
 public class ControlSettings extends BorderPane implements Initializable, LoadableControl {
 
 //    private final FXLocalizationService localizationService;
-    private final Config config;
+    private final ConfigManager configManager;
 
 //    private final List<Locale> locales = Arrays.stream(SupportedLocale.values()).map(SupportedLocale::getLocale).collect(Collectors.toList());
 //    private final ListProperty<Locale> localesListProperty = new SimpleListProperty<>(FXCollections.observableArrayList(locales));
@@ -77,11 +78,6 @@ public class ControlSettings extends BorderPane implements Initializable, Loadab
                                     Category.of("Screen", screenResolutionSubGroup),
                                     Category.of("Look and feel", themesSubGroup, textSubGroup)
                             )
-//                Category.of("Languages",
-//                        Group.of("Choose language",
-//                                Setting.of("Language", localesListProperty, selectedLocalesProperty)
-//                        )
-//                )
             )
             .persistWindowState(false)
             .saveSettings(true)
@@ -89,20 +85,14 @@ public class ControlSettings extends BorderPane implements Initializable, Loadab
             .instantPersistent(false)
             .buttonsVisibility(true);
 
-    public ControlSettings(Config config, ResourcesService resourcesService) {
-        this.config = config;
+    public ControlSettings(ResourcesService resourcesService, ConfigManager configManager) {
+        this.configManager = configManager;
         loadControl(resourcesService, Control.SETTINGS);
     }
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         log.debug("INITIALIZE " + getClass().getSimpleName());
-
-//        root.getStyleClass().add(JMetroStyleClass.BACKGROUND);
-//
-//        localizationService.selectedLocaleProperty().bind(selectedLocalesProperty);
-//
-//        navbar_pane.getChildren().add(new ControlNavBar(localizationService));
         setCenter(preferencesFx.getView());
     }
 

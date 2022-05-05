@@ -1,6 +1,7 @@
 package com.matteoveroni.pomodorotime.factories;
 
 import com.matteoveroni.pomodorotime.configs.Config;
+import com.matteoveroni.pomodorotime.configs.ConfigManager;
 import com.matteoveroni.pomodorotime.gui.control.ControlPomodoro;
 import com.matteoveroni.pomodorotime.gui.control.ControlSettings;
 import com.matteoveroni.pomodorotime.gui.controllers.AppViewController;
@@ -14,14 +15,14 @@ public class ControllersFactory implements Callback<Class<?>, Object> {
 
     private final Stage stage;
     private final ResourcesService resourcesService;
-    private final Config config;
+    private final ConfigManager configManager;
     private final ControlPomodoro controlPomodoro;
     private final ControlSettings controlSettings;
 
-    public ControllersFactory(Stage stage, ResourcesService resourcesService, Config config, ControlPomodoro controlPomodoro, ControlSettings controlSettings) {
+    public ControllersFactory(Stage stage, ResourcesService resourcesService, ConfigManager configManager, ControlPomodoro controlPomodoro, ControlSettings controlSettings) {
         this.stage = stage;
         this.resourcesService = resourcesService;
-        this.config = config;
+        this.configManager = configManager;
         this.controlPomodoro = controlPomodoro;
         this.controlSettings = controlSettings;
     }

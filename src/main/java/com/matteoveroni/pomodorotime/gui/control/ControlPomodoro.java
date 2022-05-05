@@ -5,6 +5,8 @@ import com.dlsc.formsfx.model.util.BindingMode;
 import com.dlsc.formsfx.model.validators.CustomValidator;
 import com.dlsc.formsfx.view.renderer.FormRenderer;
 import com.dlsc.formsfx.view.util.ColSpan;
+import com.matteoveroni.pomodorotime.configs.Config;
+import com.matteoveroni.pomodorotime.configs.ConfigManager;
 import com.matteoveroni.pomodorotime.services.ResourcesService;
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
@@ -28,6 +30,7 @@ import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 import javafx.util.Duration;
 import lombok.extern.slf4j.Slf4j;
 import java.net.URL;
@@ -68,11 +71,14 @@ public class ControlPomodoro extends BorderPane implements Initializable, Loadab
             .label("Elapsed time");
     private final MediaPlayer mediaPlayer;
     private final Stage stage;
+    private final ConfigManager configManager;
 
     private Timeline timeline;
+    private Config currentConfig;
 
-    public ControlPomodoro(Stage stage, ResourcesService resourcesService) {
+    public ControlPomodoro(Stage stage, ResourcesService resourcesService, ConfigManager configManager) {
         this.stage = stage;
+        this.configManager = configManager;
         Media alarmSound = new Media(resourcesService.getAlarmAudioURL().toString());
         mediaPlayer = new MediaPlayer(alarmSound);
         mediaPlayer.setOnEndOfMedia(() -> {
@@ -116,12 +122,15 @@ public class ControlPomodoro extends BorderPane implements Initializable, Loadab
     }
 
     private void startAlertTimer() {
+        currentConfig = configManager.readConfig();
+
         timeline = new Timeline(
                 new KeyFrame(Duration.ZERO, new KeyValue(progressIndicator.progressProperty(), 0)),
-                new KeyFrame(Duration.minutes(fieldAlarmTimeMinutes.getValue()), onCompletionEvent -> {
+                new KeyFrame(Duration.minutes(currentConfig.getPomodoroDurationMin()), onCompletionEvent -> {
                     mediaPlayer.play();
                     Platform.runLater(() -> {
                         Alert alertDialog = new Alert(Alert.AlertType.WARNING);
+                        alertDialog.initStyle(StageStyle.UTILITY);
                         alertDialog.setTitle("Alert");
                         alertDialog.setHeaderText("Alert fired");
                         alertDialog.setContentText("It's time to stop!");
@@ -170,7 +179,7 @@ public class ControlPomodoro extends BorderPane implements Initializable, Loadab
     }
 
     private String formatRemainingDurationTime(Duration duration) {
-        return convertSecondsToHHMMSS((long) ((fieldAlarmTimeMinutes.getValue() * 60) - duration.toSeconds()));
+        return convertSecondsToHHMMSS((long) ((currentConfig.getPomodoroDurationMin() * 60L) - duration.toSeconds()));
     }
 
     private String convertSecondsToHHMMSS(long seconds) {
