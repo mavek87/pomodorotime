@@ -49,7 +49,7 @@ public class App extends Application {
     public void start(Stage stage) throws Exception {
         this.stage = stage;
         ControlPomodoro controlPomodoro = new ControlPomodoro(stage, resourcesService, configManager);
-        ControlSettings controlSettings = new ControlSettings(resourcesService, configManager);
+        ControlSettings controlSettings = new ControlSettings(stage, resourcesService, configManager);
         this.controllersFactory = new ControllersFactory(stage, resourcesService, configManager, controlPomodoro, controlSettings);
 
         FXMLLoader fxmlLoader = new FXMLLoader(resourcesService.getFXMLViewURL(View.APP_VIEW.getFileName()));

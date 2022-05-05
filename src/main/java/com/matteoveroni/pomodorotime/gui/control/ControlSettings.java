@@ -6,13 +6,16 @@ import com.dlsc.preferencesfx.model.Group;
 import com.dlsc.preferencesfx.model.Setting;
 import com.matteoveroni.pomodorotime.configs.Config;
 import com.matteoveroni.pomodorotime.configs.ConfigManager;
+import com.matteoveroni.pomodorotime.gui.screen.ScreenResolution;
 import com.matteoveroni.pomodorotime.services.ResourcesService;
+import com.matteoveroni.pomodorotime.utils.FXGraphicsUtils;
 import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.Initializable;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.paint.Color;
+import javafx.stage.Stage;
 import lombok.extern.slf4j.Slf4j;
 import java.net.URL;
 import java.util.Arrays;
@@ -21,6 +24,9 @@ import java.util.ResourceBundle;
 @Slf4j
 public class ControlSettings extends BorderPane implements Initializable, LoadableControl {
 
+    private static final ScreenResolution DEFAULT_SCREEN_SIZE_RESOLUTION = ScreenResolution.RESOLUTION_1024x768;
+
+    private Stage stage;
     private final ConfigManager configManager;
 
     private final IntegerProperty pomodoroDurationProperty = new SimpleIntegerProperty(30);
@@ -32,10 +38,8 @@ public class ControlSettings extends BorderPane implements Initializable, Loadab
     private final BooleanProperty nightMode = new SimpleBooleanProperty(true);
 
     // Combobox, Single Selection, with ObservableList
-    private final ObservableList resolutionItems = FXCollections.observableArrayList(Arrays.asList(
-            "1024x768", "1280x1024", "1440x900", "1920x1080")
-    );
-    private final ObjectProperty resolutionSelection = new SimpleObjectProperty<>("1024x768");
+    private final ObservableList<ScreenResolution> resolutionItems = FXCollections.observableArrayList(Arrays.asList(ScreenResolution.values()));
+    private final ObjectProperty<ScreenResolution> resolutionSelectionProperty = new SimpleObjectProperty<>(ScreenResolution.RESOLUTION_1024x768);
 
     // Color
     private final ObjectProperty colorProperty = new SimpleObjectProperty<>(Color.PAPAYAWHIP);
@@ -49,8 +53,8 @@ public class ControlSettings extends BorderPane implements Initializable, Loadab
             Setting.of("Sessions before a long pause", numberOfSessionsBeforeLongPauseProperty)
     );
 
-    private final Group screenResolutionGroup = Group.of("Screen resolution", Setting.of("Resolution", resolutionItems, resolutionSelection));
-    private final Group screenResolutionSubGroup = Group.of("Screen resolution", Setting.of("Resolution", resolutionItems, resolutionSelection));
+    private final Group screenResolutionGroup = Group.of("Screen resolution", Setting.of("Resolution", resolutionItems, resolutionSelectionProperty));
+    private final Group screenResolutionSubGroup = Group.of("Screen resolution", Setting.of("Resolution", resolutionItems, resolutionSelectionProperty));
 
     private final Group themesGroup = Group.of("Themes", Setting.of("Night Mode", nightMode));
     private final Group themesSubGroup = Group.of("Themes", Setting.of("Night Mode", nightMode));
@@ -74,7 +78,8 @@ public class ControlSettings extends BorderPane implements Initializable, Loadab
 //            .dialogTitle("AAAAA");
 //            .dialogIcon(resourc);
 
-    public ControlSettings(ResourcesService resourcesService, ConfigManager configManager) {
+    public ControlSettings(Stage stage, ResourcesService resourcesService, ConfigManager configManager) {
+        this.stage = stage;
         this.configManager = configManager;
         loadControl(resourcesService, Control.SETTINGS);
     }
@@ -86,10 +91,27 @@ public class ControlSettings extends BorderPane implements Initializable, Loadab
 
         final Config startupConfig = configManager.readConfig();
 
+        final double windowWidth = startupConfig.getWindowWidth();
+        final double windowHeight = startupConfig.getWindowHeight();
+        final ScreenResolution screenResolution = ScreenResolution.fromSize(windowWidth, windowHeight).orElse(DEFAULT_SCREEN_SIZE_RESOLUTION);
+        resolutionSelectionProperty.set(screenResolution);
+        resolutionSelectionProperty.addListener((observable, oldValue, newValue) -> {
+            log.debug("resolutionSelectionProperty: {}", newValue);
+            final Config currentConfig = configManager.readConfig();
+            final double newWindowWidth = newValue.getWidth();
+            final double newWindowHeight = newValue.getHeight();
+            currentConfig.setWindowWidth(newWindowWidth);
+            currentConfig.setWindowHeight(newWindowHeight);
+            configManager.writeConfig(currentConfig);
+            stage.setWidth(newWindowWidth);
+            stage.setHeight(newWindowHeight);
+            FXGraphicsUtils.centerStage(stage);
+        });
+
         pomodoroDurationProperty.set(startupConfig.getPomodoroDuration());
         pomodoroDurationProperty.addListener((observable, oldValue, newValue) -> {
             log.debug("pomodoroDurationProperty: {}", newValue);
-            Config currentConfig = configManager.readConfig();
+            final Config currentConfig = configManager.readConfig();
             currentConfig.setPomodoroDuration(newValue.intValue());
             configManager.writeConfig(currentConfig);
         });
@@ -97,7 +119,7 @@ public class ControlSettings extends BorderPane implements Initializable, Loadab
         pomodoroPauseProperty.set(startupConfig.getPomodoroPauseDuration());
         pomodoroPauseProperty.addListener((observable, oldValue, newValue) -> {
             log.debug("pomodoroPauseProperty: {}", newValue);
-            Config currentConfig = configManager.readConfig();
+            final Config currentConfig = configManager.readConfig();
             currentConfig.setPomodoroPauseDuration(newValue.intValue());
             configManager.writeConfig(currentConfig);
         });
@@ -105,7 +127,7 @@ public class ControlSettings extends BorderPane implements Initializable, Loadab
         pomodoroLongPauseProperty.set(startupConfig.getPomodoroLongPauseDuration());
         pomodoroLongPauseProperty.addListener((observable, oldValue, newValue) -> {
             log.debug("pomodoroLongPauseProperty: {}", newValue);
-            Config currentConfig = configManager.readConfig();
+            final Config currentConfig = configManager.readConfig();
             currentConfig.setPomodoroLongPauseDuration(newValue.intValue());
             configManager.writeConfig(currentConfig);
         });
@@ -113,7 +135,7 @@ public class ControlSettings extends BorderPane implements Initializable, Loadab
         numberOfSessionsBeforeLongPauseProperty.set(startupConfig.getNumberOfSessionBeforePause());
         numberOfSessionsBeforeLongPauseProperty.addListener((observable, oldValue, newValue) -> {
             log.debug("numberOfSessionsBeforeLongPauseProperty: {}", newValue);
-            Config currentConfig = configManager.readConfig();
+            final Config currentConfig = configManager.readConfig();
             currentConfig.setNumberOfSessionBeforeLongPause(newValue.intValue());
             configManager.writeConfig(currentConfig);
         });
