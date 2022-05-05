@@ -16,8 +16,10 @@ public class Config {
     private int pomodoroPauseDuration;
     @SerializedName("pomodoro_long_pause_duration_in_min")
     private int pomodoroLongPauseDuration;
-    @SerializedName("number_of_sessions_before_pause")
-    private int numberOfSessionBeforePause;
+    @SerializedName("number_of_sessions_before_long_pause")
+    private int numberOfSessionBeforeLongPause;
+    @SerializedName("is_pomodoro_loop")
+    private boolean isPomodoroLoop;
 
     public String getAppName() {
         return appName;
@@ -55,23 +57,31 @@ public class Config {
         return pomodoroPauseDuration;
     }
 
-    public void setPomodoroPauseDuration(int pomodoroPauseDurationMin) {
-        this.pomodoroPauseDuration = pomodoroPauseDurationMin;
+    public void setPomodoroPauseDuration(int pomodoroPauseDuration) {
+        this.pomodoroPauseDuration = pomodoroPauseDuration;
     }
 
     public int getPomodoroLongPauseDuration() {
         return pomodoroLongPauseDuration;
     }
 
-    public void setPomodoroLongPauseDuration(int pomodoroLongPauseDurationMin) {
-        this.pomodoroLongPauseDuration = pomodoroLongPauseDurationMin;
+    public void setPomodoroLongPauseDuration(int pomodoroLongPauseDuration) {
+        this.pomodoroLongPauseDuration = pomodoroLongPauseDuration;
     }
 
-    public int getNumberOfSessionBeforePause() {
-        return numberOfSessionBeforePause;
+    public int getNumberOfSessionBeforeLongPause() {
+        return numberOfSessionBeforeLongPause;
     }
 
-    public void setNumberOfSessionBeforeLongPause(int numberOfSessionBeforePause) {
-        this.numberOfSessionBeforePause = numberOfSessionBeforePause;
+    public void setNumberOfSessionBeforeLongPause(int numberOfSessionBeforeLongPause) {
+        this.numberOfSessionBeforeLongPause = numberOfSessionBeforeLongPause;
+    }
+
+    public boolean isPomodoroLoop() {
+        return isPomodoroLoop;
+    }
+
+    public void setPomodoroLoop(boolean pomodoroLoop) {
+        isPomodoroLoop = pomodoroLoop;
     }
 }

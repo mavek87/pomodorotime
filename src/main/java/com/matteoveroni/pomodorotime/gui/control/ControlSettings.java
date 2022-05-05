@@ -1,5 +1,6 @@
 package com.matteoveroni.pomodorotime.gui.control;
 
+import com.dlsc.formsfx.model.validators.IntegerRangeValidator;
 import com.dlsc.preferencesfx.PreferencesFx;
 import com.dlsc.preferencesfx.model.Category;
 import com.dlsc.preferencesfx.model.Group;
@@ -26,13 +27,15 @@ public class ControlSettings extends BorderPane implements Initializable, Loadab
 
     private static final ScreenResolution DEFAULT_SCREEN_SIZE_RESOLUTION = ScreenResolution.RESOLUTION_1024x768;
 
-    private Stage stage;
+    private final Stage stage;
     private final ConfigManager configManager;
 
     private final IntegerProperty pomodoroDurationProperty = new SimpleIntegerProperty(30);
     private final IntegerProperty pomodoroPauseProperty = new SimpleIntegerProperty(5);
     private final IntegerProperty pomodoroLongPauseProperty = new SimpleIntegerProperty(15);
     private final IntegerProperty numberOfSessionsBeforeLongPauseProperty = new SimpleIntegerProperty(4);
+
+    private final BooleanProperty isPomodoroLoopProperty = new SimpleBooleanProperty(true);
 
     // Boolean
     private final BooleanProperty nightMode = new SimpleBooleanProperty(true);
@@ -46,11 +49,24 @@ public class ControlSettings extends BorderPane implements Initializable, Loadab
     // Integer Range
     private final IntegerProperty fontSize = new SimpleIntegerProperty(12);
 
-    private final Group timerGroup = Group.of("Timer",
+    private final Group timerGroup = Group.of("Pomodoro main settings",
             Setting.of("Pomodoro duration (minutes)", pomodoroDurationProperty, 1, 60),
             Setting.of("Pause duration (minutes)", pomodoroPauseProperty, 1, 60),
             Setting.of("Long pause duration (minutes)", pomodoroLongPauseProperty, 1, 60),
-            Setting.of("Sessions before a long pause", numberOfSessionsBeforeLongPauseProperty)
+            Setting.of("Sessions before a long pause", numberOfSessionsBeforeLongPauseProperty).validate(IntegerRangeValidator.atLeast(0, "Insert a positive number"))
+    );
+    private final Group timerSubGroup = Group.of("Pomodoro main settings",
+            Setting.of("Pomodoro duration (minutes)", pomodoroDurationProperty, 1, 60),
+            Setting.of("Pause duration (minutes)", pomodoroPauseProperty, 1, 60),
+            Setting.of("Long pause duration (minutes)", pomodoroLongPauseProperty, 1, 60),
+            Setting.of("Sessions before a long pause", numberOfSessionsBeforeLongPauseProperty).validate(IntegerRangeValidator.atLeast(0, "Insert a positive number"))
+    );
+
+    private final Group timerRepetitionsGroup = Group.of("Pomodoro repetitions",
+            Setting.of("Pomodoro loop", isPomodoroLoopProperty)
+    );
+    private final Group timerRepetitionsSubGroup = Group.of("Pomodoro repetitions",
+            Setting.of("Pomodoro loop", isPomodoroLoopProperty)
     );
 
     private final Group screenResolutionGroup = Group.of("Screen resolution", Setting.of("Resolution", resolutionItems, resolutionSelectionProperty));
@@ -63,7 +79,12 @@ public class ControlSettings extends BorderPane implements Initializable, Loadab
     private final Group textSubGroup = Group.of("Text", Setting.of("Font Size", fontSize, 6, 36));
 
     private final PreferencesFx preferencesFx = PreferencesFx.of(ControlSettings.class,
-                    Category.of("General", timerGroup).expand(),
+                    Category.of("Pomodoro timer", timerGroup, timerRepetitionsGroup)
+                            .expand()
+                            .subCategories(
+                                    Category.of("Main settings", timerSubGroup),
+                                    Category.of("Repetitions", timerRepetitionsSubGroup)
+                            ),
                     Category.of("Graphics", screenResolutionGroup, themesGroup, textGroup)
                             .subCategories(
                                     Category.of("Screen", screenResolutionSubGroup),
@@ -72,11 +93,9 @@ public class ControlSettings extends BorderPane implements Initializable, Loadab
             )
             .persistWindowState(false)
             .saveSettings(false)
-            .debugHistoryMode(false)
+            .debugHistoryMode(true)
             .instantPersistent(true)
-            .buttonsVisibility(true);
-//            .dialogTitle("AAAAA");
-//            .dialogIcon(resourc);
+            .buttonsVisibility(false);
 
     public ControlSettings(Stage stage, ResourcesService resourcesService, ConfigManager configManager) {
         this.stage = stage;
@@ -132,11 +151,19 @@ public class ControlSettings extends BorderPane implements Initializable, Loadab
             configManager.writeConfig(currentConfig);
         });
 
-        numberOfSessionsBeforeLongPauseProperty.set(startupConfig.getNumberOfSessionBeforePause());
+        numberOfSessionsBeforeLongPauseProperty.set(startupConfig.getNumberOfSessionBeforeLongPause());
         numberOfSessionsBeforeLongPauseProperty.addListener((observable, oldValue, newValue) -> {
             log.debug("numberOfSessionsBeforeLongPauseProperty: {}", newValue);
             final Config currentConfig = configManager.readConfig();
             currentConfig.setNumberOfSessionBeforeLongPause(newValue.intValue());
+            configManager.writeConfig(currentConfig);
+        });
+
+        isPomodoroLoopProperty.set(startupConfig.isPomodoroLoop());
+        isPomodoroLoopProperty.addListener((observable, oldValue, newValue) -> {
+            log.debug("isPomodoroLoopProperty: {}", newValue);
+            final Config currentConfig = configManager.readConfig();
+            currentConfig.setPomodoroLoop(newValue);
             configManager.writeConfig(currentConfig);
         });
     }

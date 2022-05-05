@@ -1,9 +1,10 @@
 {
   "app_name": "Pomodoro-Time",
-  "window_width": 1920.0,
-  "window_height": 1080.0,
+  "window_width": 1024.0,
+  "window_height": 768.0,
   "pomodoro_duration_in_min": 30,
   "pomodoro_pause_duration_in_min": 5,
   "pomodoro_long_pause_duration_in_min": 15,
-  "number_of_sessions_before_pause": 4
+  "number_of_sessions_before_long_pause": 4,
+  "is_pomodoro_loop": true
 }
