@@ -4,6 +4,7 @@ import com.dlsc.preferencesfx.PreferencesFx;
 import com.dlsc.preferencesfx.model.Category;
 import com.dlsc.preferencesfx.model.Group;
 import com.dlsc.preferencesfx.model.Setting;
+import com.matteoveroni.pomodorotime.configs.Config;
 import com.matteoveroni.pomodorotime.configs.ConfigManager;
 import com.matteoveroni.pomodorotime.services.ResourcesService;
 import javafx.beans.property.*;
@@ -58,20 +59,20 @@ public class ControlSettings extends BorderPane implements Initializable, Loadab
     private final Group textSubGroup = Group.of("Text", Setting.of("Font Size", fontSize, 6, 36));
 
     private final PreferencesFx preferencesFx = PreferencesFx.of(ControlSettings.class,
-                    Category.of("General", timerGroup)
-                            .expand(),
+                    Category.of("General", timerGroup).expand(),
                     Category.of("Graphics", screenResolutionGroup, themesGroup, textGroup)
-//                                .expand()
                             .subCategories(
                                     Category.of("Screen", screenResolutionSubGroup),
                                     Category.of("Look and feel", themesSubGroup, textSubGroup)
                             )
             )
             .persistWindowState(false)
-            .saveSettings(true)
+            .saveSettings(false)
             .debugHistoryMode(false)
-            .instantPersistent(false)
+            .instantPersistent(true)
             .buttonsVisibility(true);
+//            .dialogTitle("AAAAA");
+//            .dialogIcon(resourc);
 
     public ControlSettings(ResourcesService resourcesService, ConfigManager configManager) {
         this.configManager = configManager;
@@ -82,6 +83,40 @@ public class ControlSettings extends BorderPane implements Initializable, Loadab
     public void initialize(URL location, ResourceBundle resources) {
         log.debug("INITIALIZE " + getClass().getSimpleName());
         setCenter(preferencesFx.getView());
+
+        final Config startupConfig = configManager.readConfig();
+
+        pomodoroDurationProperty.set(startupConfig.getPomodoroDuration());
+        pomodoroDurationProperty.addListener((observable, oldValue, newValue) -> {
+            log.debug("pomodoroDurationProperty: {}", newValue);
+            Config currentConfig = configManager.readConfig();
+            currentConfig.setPomodoroDuration(newValue.intValue());
+            configManager.writeConfig(currentConfig);
+        });
+
+        pomodoroPauseProperty.set(startupConfig.getPomodoroPauseDuration());
+        pomodoroPauseProperty.addListener((observable, oldValue, newValue) -> {
+            log.debug("pomodoroPauseProperty: {}", newValue);
+            Config currentConfig = configManager.readConfig();
+            currentConfig.setPomodoroPauseDuration(newValue.intValue());
+            configManager.writeConfig(currentConfig);
+        });
+
+        pomodoroLongPauseProperty.set(startupConfig.getPomodoroLongPauseDuration());
+        pomodoroLongPauseProperty.addListener((observable, oldValue, newValue) -> {
+            log.debug("pomodoroLongPauseProperty: {}", newValue);
+            Config currentConfig = configManager.readConfig();
+            currentConfig.setPomodoroLongPauseDuration(newValue.intValue());
+            configManager.writeConfig(currentConfig);
+        });
+
+        numberOfSessionsBeforeLongPauseProperty.set(startupConfig.getNumberOfSessionBeforePause());
+        numberOfSessionsBeforeLongPauseProperty.addListener((observable, oldValue, newValue) -> {
+            log.debug("numberOfSessionsBeforeLongPauseProperty: {}", newValue);
+            Config currentConfig = configManager.readConfig();
+            currentConfig.setNumberOfSessionBeforeLongPause(newValue.intValue());
+            configManager.writeConfig(currentConfig);
+        });
     }
 
 }

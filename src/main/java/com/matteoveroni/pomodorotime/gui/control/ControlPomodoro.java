@@ -126,7 +126,7 @@ public class ControlPomodoro extends BorderPane implements Initializable, Loadab
 
         timeline = new Timeline(
                 new KeyFrame(Duration.ZERO, new KeyValue(progressIndicator.progressProperty(), 0)),
-                new KeyFrame(Duration.minutes(currentConfig.getPomodoroDurationMin()), onCompletionEvent -> {
+                new KeyFrame(Duration.minutes(currentConfig.getPomodoroDuration()), onCompletionEvent -> {
                     mediaPlayer.play();
                     Platform.runLater(() -> {
                         Alert alertDialog = new Alert(Alert.AlertType.WARNING);
@@ -179,7 +179,7 @@ public class ControlPomodoro extends BorderPane implements Initializable, Loadab
     }
 
     private String formatRemainingDurationTime(Duration duration) {
-        return convertSecondsToHHMMSS((long) ((currentConfig.getPomodoroDurationMin() * 60L) - duration.toSeconds()));
+        return convertSecondsToHHMMSS((long) ((currentConfig.getPomodoroDuration() * 60L) - duration.toSeconds()));
     }
 
     private String convertSecondsToHHMMSS(long seconds) {

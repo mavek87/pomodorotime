@@ -1,7 +1,7 @@
 {
   "app_name": "Pomodoro-Time",
-  "window_width": 1024,
-  "window_height": 768,
+  "window_width": 1024.0,
+  "window_height": 768.0,
   "pomodoro_duration_in_min": 30,
   "pomodoro_pause_duration_in_min": 5,
   "pomodoro_long_pause_duration_in_min": 15,

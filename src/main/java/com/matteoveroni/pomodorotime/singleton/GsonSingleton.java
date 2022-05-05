@@ -6,7 +6,7 @@ import com.google.gson.GsonBuilder;
 public enum GsonSingleton {
     INSTANCE;
 
-    private final Gson gson = new GsonBuilder().create();
+    private final Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
     public Gson getGson() {
         return gson;
