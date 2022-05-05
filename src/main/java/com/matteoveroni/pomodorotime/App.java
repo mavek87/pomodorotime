@@ -9,6 +9,7 @@ import com.matteoveroni.pomodorotime.gui.views.View;
 import com.matteoveroni.pomodorotime.services.ResourcesService;
 import com.matteoveroni.pomodorotime.singleton.ConfigSingleton;
 import javafx.application.Application;
+import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -19,6 +20,7 @@ import javafx.scene.image.Image;
 import javafx.scene.layout.Pane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 import javafx.stage.WindowEvent;
 import java.util.Objects;
 import java.util.Optional;
@@ -69,6 +71,8 @@ public class App extends Application {
 
     private final EventHandler<WindowEvent> confirmCloseEventHandler = event -> {
         Alert quitConfirmationAlert = new Alert(Alert.AlertType.CONFIRMATION, "Are you sure you want to quit?");
+        quitConfirmationAlert.initStyle(StageStyle.UTILITY);
+        quitConfirmationAlert.setResizable(false);
         quitConfirmationAlert.setTitle(config.getAppName());
         quitConfirmationAlert.setHeaderText("Exit confirmation");
         quitConfirmationAlert.initModality(Modality.APPLICATION_MODAL);

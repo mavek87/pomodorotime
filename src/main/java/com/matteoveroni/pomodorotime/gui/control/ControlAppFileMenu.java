@@ -7,6 +7,8 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Alert;
 import javafx.scene.layout.BorderPane;
+import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 import java.net.URL;
 import java.util.ResourceBundle;
 
@@ -41,10 +43,12 @@ public class ControlAppFileMenu extends BorderPane implements LoadableControl, I
     @FXML
     void onActionAbout(ActionEvent event) {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.initStyle(StageStyle.UTILITY);
+        alert.setResizable(false);
         alert.setTitle("About");
         alert.setHeaderText("Pomodoro-Time");
         alert.setContentText("Author: Matteo Veroni\nWebsite: www.matteoveroni.com");
-//        alert.initOwner(paneForAppControlView.getScene().getWindow());
+        alert.initOwner((Stage) paneForAppControlView.getScene().getWindow());
         alert.showAndWait();
     }
 
