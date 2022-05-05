@@ -4,7 +4,6 @@ import com.dlsc.preferencesfx.PreferencesFx;
 import com.dlsc.preferencesfx.model.Category;
 import com.dlsc.preferencesfx.model.Group;
 import com.dlsc.preferencesfx.model.Setting;
-import com.matteoveroni.pomodorotime.configs.Config;
 import com.matteoveroni.pomodorotime.configs.ConfigManager;
 import com.matteoveroni.pomodorotime.services.ResourcesService;
 import javafx.beans.property.*;
@@ -21,12 +20,7 @@ import java.util.ResourceBundle;
 @Slf4j
 public class ControlSettings extends BorderPane implements Initializable, LoadableControl {
 
-//    private final FXLocalizationService localizationService;
     private final ConfigManager configManager;
-
-//    private final List<Locale> locales = Arrays.stream(SupportedLocale.values()).map(SupportedLocale::getLocale).collect(Collectors.toList());
-//    private final ListProperty<Locale> localesListProperty = new SimpleListProperty<>(FXCollections.observableArrayList(locales));
-//    private final ObjectProperty<Locale> selectedLocalesProperty = new SimpleObjectProperty<>(locales.get(0));
 
     private final IntegerProperty pomodoroDurationProperty = new SimpleIntegerProperty(30);
     private final IntegerProperty pomodoroPauseProperty = new SimpleIntegerProperty(5);
@@ -46,12 +40,6 @@ public class ControlSettings extends BorderPane implements Initializable, Loadab
     private final ObjectProperty colorProperty = new SimpleObjectProperty<>(Color.PAPAYAWHIP);
     // Integer Range
     private final IntegerProperty fontSize = new SimpleIntegerProperty(12);
-
-    // FileChooser / DirectoryChooser
-//    ObjectProperty fileProperty = new SimpleObjectProperty<>();
-//        Setting.of("File", fileProperty, false);     // FileChooser
-//        Setting.of("Directory", fileProperty, true); // DirectoryChooser
-
 
     private final Group timerGroup = Group.of("Timer",
             Setting.of("Pomodoro duration (minutes)", pomodoroDurationProperty, 1, 60),
