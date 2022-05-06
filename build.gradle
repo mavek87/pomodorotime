@@ -31,9 +31,10 @@ ext {
     UTF_8 = StandardCharsets.UTF_8.name()
 
     logbackVersion = '1.2.11'
-    jupiterVersion = '5.8.2'
     lombokVersion = '1.18.24'
     ikonliVersion = '12.3.1'
+    jupiterVersion = '5.8.2'
+    mockitoVersion = '4.5.1'
 }
 
 sourceCompatibility = JavaVersion.VERSION_17
@@ -99,6 +100,10 @@ dependencies {
     // Test
     testImplementation "org.junit.jupiter:junit-jupiter-api:$jupiterVersion"
     testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:$jupiterVersion"
+    // Mockito
+    testImplementation "org.mockito:mockito-core:$mockitoVersion"
+    testImplementation "org.mockito:mockito-junit-jupiter:$mockitoVersion"
+
 }
 
 javafx {

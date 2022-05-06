@@ -3,6 +3,7 @@ package com.matteoveroni.pomodorotime.gui.control;
 public enum Control {
     APP_FILE_MENU("app-file-menu", "control_app_file_menu.fxml"),
     POMODORO("pomodoro", "control_pomodoro.fxml"),
+    POMODORO_PAUSE("pomodoro-pause", "control_pomodoro_pause.fxml"),
     SETTINGS("settings", "control_settings.fxml");
 
     private final String id;

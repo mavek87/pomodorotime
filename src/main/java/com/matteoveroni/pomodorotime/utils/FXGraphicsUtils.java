@@ -1,11 +1,18 @@
 package com.matteoveroni.pomodorotime.utils;
 
 import javafx.geometry.Rectangle2D;
+import javafx.scene.control.Alert;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.stage.Window;
+import javafx.stage.WindowEvent;
 
 public class FXGraphicsUtils {
+
+    public static void centeredAlert(Alert alert) {
+        Window alertWindow = alert.getDialogPane().getScene().getWindow();
+        alertWindow.addEventHandler(WindowEvent.WINDOW_SHOWN, windowEventHandler -> centerWindow(alertWindow));
+    }
 
     public static final void centerStage(Stage stage) {
         Rectangle2D screenBounds = Screen.getPrimary().getVisualBounds();

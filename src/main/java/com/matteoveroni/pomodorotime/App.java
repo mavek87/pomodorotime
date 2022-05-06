@@ -3,6 +3,7 @@ package com.matteoveroni.pomodorotime;
 import com.matteoveroni.pomodorotime.configs.Config;
 import com.matteoveroni.pomodorotime.configs.ConfigManager;
 import com.matteoveroni.pomodorotime.factories.ControllersFactory;
+import com.matteoveroni.pomodorotime.gui.model.PomodoroModel;
 import com.matteoveroni.pomodorotime.gui.control.ControlPomodoro;
 import com.matteoveroni.pomodorotime.gui.control.ControlSettings;
 import com.matteoveroni.pomodorotime.gui.views.View;
@@ -48,7 +49,7 @@ public class App extends Application {
     @Override
     public void start(Stage stage) throws Exception {
         this.stage = stage;
-        ControlPomodoro controlPomodoro = new ControlPomodoro(stage, resourcesService, configManager);
+        ControlPomodoro controlPomodoro = new ControlPomodoro(stage, new PomodoroModel(configManager), resourcesService, configManager);
         ControlSettings controlSettings = new ControlSettings(stage, resourcesService, configManager);
         this.controllersFactory = new ControllersFactory(stage, resourcesService, configManager, controlPomodoro, controlSettings);
 
