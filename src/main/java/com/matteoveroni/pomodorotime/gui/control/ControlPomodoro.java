@@ -50,16 +50,6 @@ public class ControlPomodoro extends BorderPane implements Initializable, Loadab
         elapsedTimeStringProperty.set(formatElapsedDurationTime(currentDuration));
         remainingTimeStringProperty.set(formatRemainingDurationTime(currentDuration));
     };
-    private final StringField fieldRemainingTime = Field.ofStringType(remainingTimeStringProperty.get())
-            .bind(remainingTimeStringProperty)
-            .editable(false)
-            .span(ColSpan.HALF)
-            .label("Remaining time");
-    private final StringField fieldElapsedTime = Field.ofStringType("0")
-            .bind(elapsedTimeStringProperty)
-            .editable(false)
-            .span(ColSpan.HALF)
-            .label("Elapsed time");
     private final Stage stage;
     private final ResourcesService resourcesService;
     private final ConfigManager configManager;
@@ -89,8 +79,6 @@ public class ControlPomodoro extends BorderPane implements Initializable, Loadab
         btnStart.setFocusTraversable(false);
         btnStop.setTooltip(new Tooltip("Stop the pomodoro timer"));
         btnStop.setFocusTraversable(false);
-        fieldRemainingTime.setBindingMode(BindingMode.CONTINUOUS);
-        fieldElapsedTime.setBindingMode(BindingMode.CONTINUOUS);
         progressIndicator.setMaxSize(640, 480);
         progressIndicator.visibleProperty().bind(pomodoroModel.isPomodoroRunningProperty());
         paneFormAlertTimer.setCenter(new FormRenderer(buildFormPomodoro()));
@@ -138,7 +126,6 @@ public class ControlPomodoro extends BorderPane implements Initializable, Loadab
                     });
                 }, new KeyValue(progressIndicator.progressProperty(), 1))
         );
-//        timeline.setCycleCount(g);
         timeline.currentTimeProperty().addListener(durationTimeChangeListener);
         timeline.play();
     }
@@ -158,6 +145,16 @@ public class ControlPomodoro extends BorderPane implements Initializable, Loadab
                 .bind(pomodoroModel.getPomodoroSessionProperty())
                 .editable(false)
                 .label("Session number");
+        final StringField fieldRemainingTime = Field.ofStringType(remainingTimeStringProperty.get())
+                .bind(remainingTimeStringProperty)
+                .editable(false)
+                .span(ColSpan.HALF)
+                .label("Remaining time");
+        final StringField fieldElapsedTime = Field.ofStringType("0")
+                .bind(elapsedTimeStringProperty)
+                .editable(false)
+                .span(ColSpan.HALF)
+                .label("Elapsed time");
         return Form.of(
                 Section.of(fieldPomodoroSession, fieldElapsedTime, fieldRemainingTime)
                         .title("Pomodoro")
