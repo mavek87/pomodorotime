@@ -1,7 +1,6 @@
 package com.matteoveroni.pomodorotime.gui.control;
 
 import com.dlsc.formsfx.model.structure.*;
-import com.dlsc.formsfx.model.util.BindingMode;
 import com.dlsc.formsfx.view.renderer.FormRenderer;
 import com.dlsc.formsfx.view.util.ColSpan;
 import com.matteoveroni.pomodorotime.configs.Config;
@@ -39,8 +38,7 @@ import java.util.concurrent.TimeUnit;
 public class ControlPomodoro extends BorderPane implements Initializable, LoadableControl {
 
     @FXML private ProgressIndicator progressIndicator;
-    @FXML private BorderPane paneFormAlertSettings;
-    @FXML private BorderPane paneFormAlertTimer;
+    @FXML private BorderPane paneFormPomodoro;
     @FXML private Button btnStart;
     @FXML private Button btnStop;
 
@@ -54,7 +52,7 @@ public class ControlPomodoro extends BorderPane implements Initializable, Loadab
     private final ResourcesService resourcesService;
     private final ConfigManager configManager;
     private final MediaPlayer mediaPlayer;
-    private final PomodoroModel pomodoroModel;
+    private PomodoroModel pomodoroModel;
     private Timeline timeline;
     private Config currentConfig;
 
@@ -63,12 +61,7 @@ public class ControlPomodoro extends BorderPane implements Initializable, Loadab
         this.pomodoroModel = pomodoroModel;
         this.resourcesService = resourcesService;
         this.configManager = configManager;
-        Media alarmSound = new Media(resourcesService.getAlarmAudioURL().toString());
-        mediaPlayer = new MediaPlayer(alarmSound);
-        mediaPlayer.setOnEndOfMedia(() -> {
-            mediaPlayer.seek(Duration.ONE);
-            mediaPlayer.play();
-        });
+        mediaPlayer = new MediaPlayer(new Media(resourcesService.getAlarmAudioURL().toString()));
         loadControl(resourcesService, Control.POMODORO);
     }
 
@@ -80,32 +73,32 @@ public class ControlPomodoro extends BorderPane implements Initializable, Loadab
         btnStop.setTooltip(new Tooltip("Stop the pomodoro timer"));
         btnStop.setFocusTraversable(false);
         progressIndicator.setMaxSize(640, 480);
-        progressIndicator.visibleProperty().bind(pomodoroModel.isPomodoroRunningProperty());
-        paneFormAlertTimer.setCenter(new FormRenderer(buildFormPomodoro()));
-        paneFormAlertTimer.visibleProperty().bind(pomodoroModel.isPomodoroRunningProperty());
-        btnStart.disableProperty().bind(pomodoroModel.isPomodoroRunningProperty());
-        btnStop.disableProperty().bind(Bindings.not(pomodoroModel.isPomodoroRunningProperty()));
+        progressIndicator.setVisible(false);
+        paneFormPomodoro.setCenter(new FormRenderer(buildFormPomodoro()));
+        bindGraphicsToModel();
     }
 
     @FXML
     void onStartAction(ActionEvent event) {
-        startAlertTimer();
+        startPomodoro();
     }
 
     @FXML
     void onStopAction(ActionEvent event) {
-        stopAlertTimer();
+        stopPomodoro();
     }
 
-    private void startAlertTimer() {
-        double pomodoroPauseDuration = pomodoroModel.start();
+    private void startPomodoro() {
+        final double pomodoroPauseDuration = pomodoroModel.start();
+        progressIndicator.setVisible(true);
+        log.debug("pomodoro pause duration: " + pomodoroPauseDuration);
         currentConfig = configManager.readConfig();
         timeline = new Timeline(
                 new KeyFrame(Duration.ZERO, new KeyValue(progressIndicator.progressProperty(), 0)),
                 new KeyFrame(Duration.minutes(currentConfig.getPomodoroDuration()), onCompletionEvent -> {
-                    mediaPlayer.play();
-                    timeline.pause();
                     Platform.runLater(() -> {
+                        stopPomodoro();
+                        mediaPlayer.play();
                         final Alert alert = new Alert(Alert.AlertType.WARNING);
                         final DialogPane dialogPane = alert.getDialogPane();
                         alert.initStyle(StageStyle.UTILITY);
@@ -122,7 +115,15 @@ public class ControlPomodoro extends BorderPane implements Initializable, Loadab
                         dialogPane.toFront();
                         FXGraphicsUtils.centeredAlert(alert);
                         alert.showAndWait();
-                        timeline.play();
+
+                        if (pomodoroModel.isPomodoroCompleted()) {
+                            progressIndicator.setProgress(100);
+                            pomodoroModel = new PomodoroModel(configManager);
+                            paneFormPomodoro.setCenter(new FormRenderer(buildFormPomodoro()));
+                            bindGraphicsToModel();
+                        } else {
+                            startPomodoro();
+                        }
                     });
                 }, new KeyValue(progressIndicator.progressProperty(), 1))
         );
@@ -130,14 +131,27 @@ public class ControlPomodoro extends BorderPane implements Initializable, Loadab
         timeline.play();
     }
 
-    private void stopAlertTimer() {
+    private void stopPomodoro() {
         if (timeline != null) {
             timeline.stop();
             timeline.currentTimeProperty().removeListener(durationTimeChangeListener);
         }
-        progressIndicator.setProgress(0);
+        unbindGraphicsToModel();
         mediaPlayer.stop();
         pomodoroModel.stop();
+    }
+
+    private void bindGraphicsToModel() {
+        paneFormPomodoro.visibleProperty().bind(pomodoroModel.getIsPomodoroRunningProperty());
+        btnStart.disableProperty().bind(pomodoroModel.getIsPomodoroCompletedProperty());
+        btnStart.disableProperty().bind(pomodoroModel.getIsPomodoroRunningProperty());
+        btnStop.disableProperty().bind(Bindings.not(pomodoroModel.getIsPomodoroRunningProperty()));
+    }
+
+    private void unbindGraphicsToModel() {
+        paneFormPomodoro.visibleProperty().unbind();
+        btnStart.disableProperty().unbind();
+        btnStop.disableProperty().unbind();
     }
 
     private Form buildFormPomodoro() {

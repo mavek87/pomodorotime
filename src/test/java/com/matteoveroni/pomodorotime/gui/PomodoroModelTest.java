@@ -41,6 +41,7 @@ class PomodoroModelTest {
     @Test
     public void pomodoro_session_is_one_if_pomodoro_is_started_once() {
         when(mockConfigManager.readConfig()).thenReturn(mockConfig);
+        when(mockConfig.getNumberOfSessionBeforeLongPause()).thenReturn(1);
 
         pomodoroModel.start();
 
@@ -48,26 +49,30 @@ class PomodoroModelTest {
     }
 
     @Test
-    public void calling_start_method_twice_consecutively_throws_illegal_state_exception() {
-        when(mockConfigManager.readConfig()).thenReturn(mockConfig);
-
-        assertThrows(IllegalStateException.class, () -> {
-            pomodoroModel.start();
-            pomodoroModel.start();
+    public void throws_illegal_state_exception_trying_to_stop_not_running_pomodoro() {
+        IllegalStateException ex = assertThrows(IllegalStateException.class, () -> {
+            pomodoroModel.stop();
         });
+        assertEquals(PomodoroModel.ERROR_STOP_NO_RUNNING_POMODORO, ex.getMessage(), "Error");
     }
 
     @Test
-    public void calling_stop_method_twice_consecutively_throws_illegal_state_exception() {
-        assertThrows(IllegalStateException.class, () -> {
-            pomodoroModel.stop();
-            pomodoroModel.stop();
+    public void throws_illegal_state_exception_calling_trying_to_start_already_running_pomodoro() {
+        when(mockConfigManager.readConfig()).thenReturn(mockConfig);
+        when(mockConfig.getNumberOfSessionBeforeLongPause()).thenReturn(1);
+
+        IllegalStateException ex = assertThrows(IllegalStateException.class, () -> {
+            pomodoroModel.start();
+            pomodoroModel.start();
         });
+        assertEquals(PomodoroModel.ERROR_START_ALREADY_RUNNING_POMODORO, ex.getMessage(), "Error");
     }
 
     @Test
     public void pomodoro_session_is_two_if_pomodoro_is_started_twice() {
         when(mockConfigManager.readConfig()).thenReturn(mockConfig);
+        when(mockConfig.isPomodoroLoop()).thenReturn(true);
+        when(mockConfig.getNumberOfSessionBeforeLongPause()).thenReturn(3);
 
         pomodoroModel.start();
         pomodoroModel.stop();
@@ -78,8 +83,8 @@ class PomodoroModelTest {
     }
 
     @Test
-    public void number_of_sessions_before_long_pause_equal_to_zero_so_first_time_long_pause() {
-        final int numberOfSessionsBeforeLongPause = 0;
+    public void number_of_sessions_before_long_pause_equal_to_one_so_first_time_long_pause() {
+        final int numberOfSessionsBeforeLongPause = 1;
         final double longPauseDuration = 10;
         when(mockConfigManager.readConfig()).thenReturn(mockConfig);
         when(mockConfig.getNumberOfSessionBeforeLongPause()).thenReturn(numberOfSessionsBeforeLongPause);
@@ -91,8 +96,8 @@ class PomodoroModelTest {
     }
 
     @Test
-    public void number_of_sessions_before_long_pause_equal_to_one_so_first_time_short_pause() {
-        final int numberOfSessionsBeforeLongPause = 1;
+    public void number_of_sessions_before_long_pause_equal_to_two_so_first_time_short_pause() {
+        final int numberOfSessionsBeforeLongPause = 2;
         final double shortPauseDuration = 5;
         when(mockConfigManager.readConfig()).thenReturn(mockConfig);
         when(mockConfig.getNumberOfSessionBeforeLongPause()).thenReturn(numberOfSessionsBeforeLongPause);
@@ -104,11 +109,37 @@ class PomodoroModelTest {
     }
 
     @Test
-    public void number_of_sessions_before_long_pause_equal_to_two_so_first_two_times_short_pause_and_then_long_pause_and_after_short_pause() {
+    public void throws_exception_trying_to_start_already_completed_pomodoro() {
         final int numberOfSessionsBeforeLongPause = 2;
         final double longPauseDuration = 10;
         final double shortPauseDuration = 5;
         when(mockConfigManager.readConfig()).thenReturn(mockConfig);
+        when(mockConfig.isPomodoroLoop()).thenReturn(false);
+        when(mockConfig.getNumberOfSessionBeforeLongPause()).thenReturn(numberOfSessionsBeforeLongPause);
+        when(mockConfig.getPomodoroLongPauseDuration()).thenReturn(longPauseDuration);
+        when(mockConfig.getPomodoroPauseDuration()).thenReturn(shortPauseDuration);
+
+        final double firstPomodoroPauseDuration = pomodoroModel.start();
+        pomodoroModel.stop();
+
+        assertEquals(shortPauseDuration, firstPomodoroPauseDuration,"Error");
+
+        final double secondPomodoroPauseDuration = pomodoroModel.start();
+        pomodoroModel.stop();
+
+        assertEquals(longPauseDuration, secondPomodoroPauseDuration,"Error");
+
+        IllegalStateException ex = assertThrows(IllegalStateException.class, () -> pomodoroModel.start());
+        assertEquals(PomodoroModel.ERROR_START_ALREADY_COMPLETED_POMODORO, ex.getMessage(), "Error");
+    }
+
+    @Test
+    public void number_of_sessions_before_long_pause_equal_to_three_so_first_two_times_short_pause_and_then_long_pause_and_after_short_pause() {
+        final int numberOfSessionsBeforeLongPause = 3;
+        final double longPauseDuration = 10;
+        final double shortPauseDuration = 5;
+        when(mockConfigManager.readConfig()).thenReturn(mockConfig);
+        when(mockConfig.isPomodoroLoop()).thenReturn(true);
         when(mockConfig.getNumberOfSessionBeforeLongPause()).thenReturn(numberOfSessionsBeforeLongPause);
         when(mockConfig.getPomodoroLongPauseDuration()).thenReturn(longPauseDuration);
         when(mockConfig.getPomodoroPauseDuration()).thenReturn(shortPauseDuration);

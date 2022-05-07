@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.layout.BorderPane?>
-
-<?import javafx.scene.layout.HBox?>
-<?import javafx.scene.control.Button?>
-<?import org.kordamp.ikonli.javafx.FontIcon?>
 <?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
 <?import javafx.scene.control.ProgressIndicator?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.StackPane?>
+<?import org.kordamp.ikonli.javafx.FontIcon?>
+
 <fx:root type="javafx.scene.layout.BorderPane" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1">
     <center>
         <BorderPane prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
@@ -44,8 +44,7 @@
             <top>
                 <StackPane fx:id="stackPaneForm" BorderPane.alignment="CENTER">
                     <children>
-                        <BorderPane fx:id="paneFormAlertSettings" />
-                        <BorderPane fx:id="paneFormAlertTimer" />
+                        <BorderPane fx:id="paneFormPomodoro" />
                     </children>
                 </StackPane>
             </top>

@@ -11,6 +11,7 @@ import com.matteoveroni.pomodorotime.services.ResourcesService;
 import com.matteoveroni.pomodorotime.singleton.ConfigManagerSingleton;
 import com.matteoveroni.pomodorotime.utils.FXGraphicsUtils;
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -61,13 +62,15 @@ public class App extends Application {
         stage.setScene(scene);
         stage.setTitle(config.getAppName());
         stage.getIcons().add(new Image(Objects.requireNonNull(resourcesService.getLogoIconURL().openStream())));
-        stage.setResizable(false);
+//        stage.setResizable(false);
         stage.setWidth(config.getWindowWidth());
         stage.setHeight(config.getWindowHeight());
+        stage.setMaxHeight(Double.MAX_VALUE);
+        stage.setMaxWidth(Double.MAX_VALUE);
         stage.setOnCloseRequest(confirmCloseEventHandler);
         stage.addEventHandler(WindowEvent.WINDOW_SHOWN, event -> FXGraphicsUtils.centerStage(stage));
+        stage.setFullScreen(false);
         stage.show();
-
 //        FXTrayIcon icon = new FXTrayIcon(this.stage, resourcesService.getLogoIconURL());
 //        icon.show();
     }
