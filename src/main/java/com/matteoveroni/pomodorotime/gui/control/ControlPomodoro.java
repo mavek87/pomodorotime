@@ -135,14 +135,14 @@ public class ControlPomodoro extends BorderPane implements Initializable, Loadab
                     FXGraphicsUtils.centeredAlert(alert);
                     alert.showAndWait();
 
+                    mediaPlayer.stop();
+
                     Platform.runLater(() -> {
                         stage.setFullScreen(false);
                         stage.setWidth(currentConfig.getWindowWidth());
                         stage.setHeight(currentConfig.getWindowHeight());
                         FXGraphicsUtils.centerStage(stage);
                     });
-
-                    mediaPlayer.stop();
 
                     if (pomodoroModel.isPomodoroCompleted()) {
                         rebuildPomodoro();
