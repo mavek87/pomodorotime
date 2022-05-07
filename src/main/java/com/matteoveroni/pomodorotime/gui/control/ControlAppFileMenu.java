@@ -2,6 +2,7 @@ package com.matteoveroni.pomodorotime.gui.control;
 
 import com.matteoveroni.pomodorotime.gui.controllers.AppViewController;
 import com.matteoveroni.pomodorotime.services.ResourcesService;
+import com.matteoveroni.pomodorotime.services.localization.FXLocalizationService;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.event.Event;
@@ -11,6 +12,8 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.DialogPane;
 import javafx.scene.control.Hyperlink;
 import javafx.scene.control.Label;
+import javafx.scene.control.Menu;
+import javafx.scene.control.MenuItem;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
@@ -26,17 +29,34 @@ import java.util.ResourceBundle;
 @Slf4j
 public class ControlAppFileMenu extends BorderPane implements LoadableControl, Initializable {
 
+    private static final String KEY_MENU_HELP = "control_app_file_menu_key_menu_help";
+    private static final String KEY_MENU_ITEM_POMODORO = "control_app_file_menu_key_menu_item_pomodoro";
+    private static final String KEY_MENU_ITEM_SETTINGS = "control_app_file_menu_key_menu_item_settings";
+    private static final String KEY_MENU_ITEM_ABOUT = "control_app_file_menu_key_menu_item_about";
+    private static final String KEY_MENU_ITEM_EXIT = "control_app_file_menu_key_menu_item_exit";
+
+    @FXML Menu menuHelp;
+    @FXML MenuItem menuItemPomodoro;
+    @FXML MenuItem menuItemSettings;
+    @FXML MenuItem menuItemAbout;
+    @FXML MenuItem menuItemExit;
+
     private final Stage stage;
     private final AppViewController appViewController;
     private final ControlPomodoro controlPomodoro;
     private final ControlSettings controlSettings;
 
-    public ControlAppFileMenu(Stage stage, AppViewController appViewController, ResourcesService resourcesService, ControlPomodoro controlPomodoro, ControlSettings controlSettings) {
+    public ControlAppFileMenu(Stage stage, AppViewController appViewController, ResourcesService resourcesService, ControlPomodoro controlPomodoro, ControlSettings controlSettings, FXLocalizationService localizationService) {
         this.stage = stage;
         this.appViewController = appViewController;
         this.controlPomodoro = controlPomodoro;
         this.controlSettings = controlSettings;
         loadControl(resourcesService, Control.APP_FILE_MENU);
+        menuHelp.textProperty().bind(localizationService.getLocalizedString(KEY_MENU_HELP));
+        menuItemPomodoro.textProperty().bind(localizationService.getLocalizedString(KEY_MENU_ITEM_POMODORO));
+        menuItemSettings.textProperty().bind(localizationService.getLocalizedString(KEY_MENU_ITEM_SETTINGS));
+        menuItemAbout.textProperty().bind(localizationService.getLocalizedString(KEY_MENU_ITEM_ABOUT));
+        menuItemExit.textProperty().bind(localizationService.getLocalizedString(KEY_MENU_ITEM_EXIT));
     }
 
     @Override

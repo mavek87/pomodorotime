@@ -36,7 +36,7 @@ public class FXLocalizationService {
 
     public FXLocalizationService(Locale locale) {
         log.debug("Locale set to => " + locale);
-        selectedLocaleProperty.addListener((observableValue, locale1, t1) -> log.error("xxxxx " + t1));
+//        selectedLocaleProperty.addListener((observableValue, locale1, t1) -> log.error("xxxxx " + t1));
         selectedLocaleProperty.set(locale);
     }
 

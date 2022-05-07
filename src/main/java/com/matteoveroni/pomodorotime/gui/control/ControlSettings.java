@@ -8,6 +8,7 @@ import com.dlsc.preferencesfx.model.Setting;
 import com.matteoveroni.pomodorotime.configs.Config;
 import com.matteoveroni.pomodorotime.configs.ConfigManager;
 import com.matteoveroni.pomodorotime.gui.screen.ScreenResolution;
+import com.matteoveroni.pomodorotime.services.localization.FXLocalizationService;
 import com.matteoveroni.pomodorotime.services.localization.SupportedLocale;
 import com.matteoveroni.pomodorotime.services.ResourcesService;
 import com.matteoveroni.pomodorotime.utils.FXGraphicsUtils;
@@ -21,6 +22,7 @@ import javafx.stage.Stage;
 import lombok.extern.slf4j.Slf4j;
 import java.net.URL;
 import java.util.Arrays;
+import java.util.Locale;
 import java.util.ResourceBundle;
 
 @Slf4j
@@ -31,6 +33,7 @@ public class ControlSettings extends BorderPane implements Initializable, Loadab
 
     private final Stage stage;
     private final ConfigManager configManager;
+    private FXLocalizationService localizationService;
 
     private final DoubleProperty pomodoroDurationProperty = new SimpleDoubleProperty(30);
     private final DoubleProperty pomodoroPauseProperty = new SimpleDoubleProperty(5);
@@ -107,9 +110,10 @@ public class ControlSettings extends BorderPane implements Initializable, Loadab
             .instantPersistent(true)
             .buttonsVisibility(false);
 
-    public ControlSettings(Stage stage, ResourcesService resourcesService, ConfigManager configManager) {
+    public ControlSettings(Stage stage, ResourcesService resourcesService, ConfigManager configManager, FXLocalizationService localizationService) {
         this.stage = stage;
         this.configManager = configManager;
+        this.localizationService = localizationService;
         loadControl(resourcesService, Control.SETTINGS);
     }
 
@@ -141,8 +145,10 @@ public class ControlSettings extends BorderPane implements Initializable, Loadab
         selectedLocaleProperty.addListener((observable, oldValue, newValue) -> {
             log.debug("selectedLocaleProperty: {}", newValue);
             final Config currentConfig = configManager.readConfig();
-            currentConfig.setLanguage(newValue.getLocale().toString());
+            final Locale newLocale = newValue.getLocale();
+            currentConfig.setLanguage(newLocale.toString());
             configManager.writeConfig(currentConfig);
+            localizationService.selectedLocaleProperty().set(newLocale);
         });
 
         pomodoroDurationProperty.set(startupConfig.getPomodoroDuration());

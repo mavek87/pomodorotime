@@ -6,6 +6,7 @@ import com.matteoveroni.pomodorotime.gui.control.ControlPomodoro;
 import com.matteoveroni.pomodorotime.gui.control.ControlSettings;
 import com.matteoveroni.pomodorotime.gui.model.PomodoroModel;
 import com.matteoveroni.pomodorotime.services.ResourcesService;
+import com.matteoveroni.pomodorotime.services.localization.FXLocalizationService;
 import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -36,19 +37,21 @@ public class AppViewController implements Initializable {
     private final ResourcesService resourcesService;
 
     private ConfigManager configManager;
+    private FXLocalizationService localizationService;
     private Stage stage;
 
-    public AppViewController(Stage stage, ResourcesService resourcesService, ConfigManager configManager) {
+    public AppViewController(Stage stage, ResourcesService resourcesService, ConfigManager configManager, FXLocalizationService localizationService) {
         this.stage = stage;
         this.resourcesService = resourcesService;
         this.configManager = configManager;
+        this.localizationService = localizationService;
     }
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         final ControlPomodoro controlPomodoro = new ControlPomodoro(stage, this, new PomodoroModel(configManager), resourcesService, configManager);
-        final ControlSettings controlSettings = new ControlSettings(stage, resourcesService, configManager);
-        final ControlAppFileMenu controlAppFileMenu = new ControlAppFileMenu(stage,this, resourcesService, controlPomodoro, controlSettings);
+        final ControlSettings controlSettings = new ControlSettings(stage, resourcesService, configManager, localizationService);
+        final ControlAppFileMenu controlAppFileMenu = new ControlAppFileMenu(stage,this, resourcesService, controlPomodoro, controlSettings, localizationService);
         app_pane.setTop(controlAppFileMenu);
         pane_for_control_view.setCenter(controlPomodoro);
         setOverlayPane(false);

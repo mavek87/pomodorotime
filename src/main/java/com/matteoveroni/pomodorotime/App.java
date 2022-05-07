@@ -5,6 +5,7 @@ import com.matteoveroni.pomodorotime.configs.ConfigManager;
 import com.matteoveroni.pomodorotime.factories.ControllersFactory;
 import com.matteoveroni.pomodorotime.gui.views.View;
 import com.matteoveroni.pomodorotime.services.ResourcesService;
+import com.matteoveroni.pomodorotime.factories.FXLocalizationServiceFactory;
 import com.matteoveroni.pomodorotime.singleton.ConfigManagerSingleton;
 import com.matteoveroni.pomodorotime.utils.FXGraphicsUtils;
 import javafx.application.Application;
@@ -41,7 +42,7 @@ public class App extends Application {
     @Override
     public void start(Stage stage) throws Exception {
         this.stage = stage;
-        this.controllersFactory = new ControllersFactory(stage, resourcesService, configManager);
+        this.controllersFactory = new ControllersFactory(stage, resourcesService, configManager, new FXLocalizationServiceFactory().produce());
 
         FXMLLoader fxmlLoader = new FXMLLoader(resourcesService.getFXMLViewURL(View.APP_VIEW.getFileName()));
         fxmlLoader.setControllerFactory(controllersFactory);
