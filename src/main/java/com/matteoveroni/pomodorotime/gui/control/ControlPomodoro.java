@@ -17,11 +17,16 @@ import javafx.beans.binding.Bindings;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.event.Event;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyCombination;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Region;
 import javafx.scene.media.Media;
@@ -108,9 +113,12 @@ public class ControlPomodoro extends BorderPane implements Initializable, Loadab
                     stopPomodoro();
                     progressIndicator.setVisible(true);
 
+//                    stage.setFullScreen(true);
+//                    stage.setFullScreenExitKeyCombination(KeyCombination.NO_MATCH);
+
                     final Alert alert = new Alert(Alert.AlertType.WARNING);
                     final DialogPane dialogPane = alert.getDialogPane();
-                    alert.initStyle(StageStyle.UTILITY);
+                    alert.initStyle(StageStyle.UNDECORATED);
                     alert.setTitle("Pomodoro");
                     alert.setHeaderText("Pomodoro pause");
                     alert.initModality(Modality.APPLICATION_MODAL);
@@ -122,8 +130,16 @@ public class ControlPomodoro extends BorderPane implements Initializable, Loadab
                     dialogPane.lookupButton(ButtonType.OK).setVisible(false);
                     dialogPane.getScene().getWindow().setOnCloseRequest(Event::consume);
                     dialogPane.toFront();
+
                     FXGraphicsUtils.centeredAlert(alert);
                     alert.showAndWait();
+
+//                    Platform.runLater(() -> {
+//                        stage.setFullScreen(false);
+//                        stage.setWidth(currentConfig.getWindowWidth());
+//                        stage.setHeight(currentConfig.getWindowHeight());
+//                        FXGraphicsUtils.centerStage(stage);
+//                    });
 
                     mediaPlayer.stop();
 

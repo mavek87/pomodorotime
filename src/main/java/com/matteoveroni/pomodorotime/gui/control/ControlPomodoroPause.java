@@ -1,9 +1,6 @@
 package com.matteoveroni.pomodorotime.gui.control;
 
-import com.dlsc.formsfx.model.structure.Field;
-import com.dlsc.formsfx.model.structure.Form;
-import com.dlsc.formsfx.model.structure.Section;
-import com.dlsc.formsfx.model.structure.StringField;
+import com.dlsc.formsfx.model.structure.*;
 import com.dlsc.formsfx.view.renderer.FormRenderer;
 import com.dlsc.formsfx.view.util.ColSpan;
 import com.matteoveroni.pomodorotime.configs.Config;
@@ -33,8 +30,8 @@ public class ControlPomodoroPause extends BorderPane implements Initializable, L
 
     private final Alert parentAlert;
     private final ConfigManager configManager;
-    private final StringProperty elapsedTimeStringProperty = new SimpleStringProperty("1");
-    private final StringProperty remainingTimeStringProperty = new SimpleStringProperty("1");
+    private final StringProperty elapsedTimeStringProperty = new SimpleStringProperty("0");
+    private final StringProperty remainingTimeStringProperty = new SimpleStringProperty("0");
     private final double pauseDuration;
 
     private ChangeListener<Duration> durationTimeChangeListener;
@@ -79,6 +76,9 @@ public class ControlPomodoroPause extends BorderPane implements Initializable, L
     }
 
     private Form buildFormElapsedTime() {
+        final DoubleField fieldPomodoroSession = Field.ofDoubleType(pauseDuration)
+                .editable(false)
+                .label("Pause (min)");
         final StringField fieldElapsedTime = Field.ofStringType("0")
                 .bind(elapsedTimeStringProperty)
                 .editable(false)
@@ -90,7 +90,7 @@ public class ControlPomodoroPause extends BorderPane implements Initializable, L
                 .span(ColSpan.HALF)
                 .label("Remaining time");
         return Form.of(
-                Section.of(fieldElapsedTime, fieldRemainingTime)
+                Section.of(fieldPomodoroSession, fieldElapsedTime, fieldRemainingTime)
                         .title("Pomodoro pause")
                         .collapsible(false)
         );
