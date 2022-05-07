@@ -3,15 +3,14 @@ package com.matteoveroni.pomodorotime;
 import com.matteoveroni.pomodorotime.configs.Config;
 import com.matteoveroni.pomodorotime.configs.ConfigManager;
 import com.matteoveroni.pomodorotime.factories.ControllersFactory;
-import com.matteoveroni.pomodorotime.gui.model.PomodoroModel;
 import com.matteoveroni.pomodorotime.gui.control.ControlPomodoro;
 import com.matteoveroni.pomodorotime.gui.control.ControlSettings;
+import com.matteoveroni.pomodorotime.gui.model.PomodoroModel;
 import com.matteoveroni.pomodorotime.gui.views.View;
 import com.matteoveroni.pomodorotime.services.ResourcesService;
 import com.matteoveroni.pomodorotime.singleton.ConfigManagerSingleton;
 import com.matteoveroni.pomodorotime.utils.FXGraphicsUtils;
 import javafx.application.Application;
-import javafx.application.Platform;
 import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -19,14 +18,18 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.image.Image;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.Pane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import javafx.stage.WindowEvent;
+import lombok.extern.slf4j.Slf4j;
 import java.util.Objects;
 import java.util.Optional;
 
+@Slf4j
 public class App extends Application {
 
     private ResourcesService resourcesService;

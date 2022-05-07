@@ -12,6 +12,7 @@ import javafx.animation.Timeline;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.beans.value.ChangeListener;
+import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Alert;
@@ -66,9 +67,10 @@ public class ControlPomodoroPause extends BorderPane implements Initializable, L
     private void startAlertTimer() {
         timeline = new Timeline(
                 new KeyFrame(Duration.minutes(pauseDuration), onCompletionEvent -> {
-                    Button okButton = (Button) parentAlert.getDialogPane().lookupButton(ButtonType.OK);
+//                    Button okButton = (Button) parentAlert.getDialogPane().lookupButton(ButtonType.OK);
                     timeline.currentTimeProperty().removeListener(durationTimeChangeListener);
-                    okButton.fire();
+                    parentAlert.setOnCloseRequest(event -> parentAlert.close());
+                    parentAlert.close();
                 })
         );
         timeline.currentTimeProperty().addListener(durationTimeChangeListener);
