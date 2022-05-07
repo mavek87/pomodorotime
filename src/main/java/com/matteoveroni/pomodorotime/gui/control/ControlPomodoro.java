@@ -5,6 +5,7 @@ import com.dlsc.formsfx.view.renderer.FormRenderer;
 import com.dlsc.formsfx.view.util.ColSpan;
 import com.matteoveroni.pomodorotime.configs.Config;
 import com.matteoveroni.pomodorotime.configs.ConfigManager;
+import com.matteoveroni.pomodorotime.gui.controllers.AppViewController;
 import com.matteoveroni.pomodorotime.gui.model.PomodoroModel;
 import com.matteoveroni.pomodorotime.services.ResourcesService;
 import com.matteoveroni.pomodorotime.utils.DurationFormatter;
@@ -37,11 +38,15 @@ import javafx.stage.StageStyle;
 import javafx.util.Duration;
 import lombok.extern.slf4j.Slf4j;
 import java.net.URL;
+import java.util.Optional;
 import java.util.ResourceBundle;
 import java.util.concurrent.TimeUnit;
 
 @Slf4j
 public class ControlPomodoro extends BorderPane implements Initializable, LoadableControl {
+
+    public static final int PROGRESS_INDICATOR_WIDTH = 640;
+    public static final int PROGRESS_INDICATOR_HEIGHT = 480;
 
     @FXML private ProgressIndicator progressIndicator;
     @FXML private BorderPane paneFormPomodoro;
@@ -49,21 +54,21 @@ public class ControlPomodoro extends BorderPane implements Initializable, Loadab
     @FXML private Button btnStop;
 
     private final Stage stage;
+    private final AppViewController appViewController;
     private final ResourcesService resourcesService;
     private final ConfigManager configManager;
     private final MediaPlayer mediaPlayer;
+    private final StringProperty elapsedTimeStringProperty = new SimpleStringProperty("0");
+    private final StringProperty remainingTimeStringProperty = new SimpleStringProperty("0");
+
+    private ChangeListener<Duration> durationTimeChangeListener;
     private PomodoroModel pomodoroModel;
     private Timeline timeline;
     private Config currentConfig;
-    private final StringProperty elapsedTimeStringProperty = new SimpleStringProperty("1");
-    private final StringProperty remainingTimeStringProperty = new SimpleStringProperty("1");
-    private final ChangeListener<Duration> durationTimeChangeListener = (observable, oldDuration, currentDuration) -> {
-        elapsedTimeStringProperty.set(DurationFormatter.formatElapsedDurationTime(currentDuration));
-        remainingTimeStringProperty.set(DurationFormatter.formatRemainingDurationTime(currentConfig.getPomodoroDuration(), currentDuration));
-    };
 
-    public ControlPomodoro(Stage stage, PomodoroModel pomodoroModel, ResourcesService resourcesService, ConfigManager configManager) {
+    public ControlPomodoro(Stage stage, AppViewController appViewController, PomodoroModel pomodoroModel, ResourcesService resourcesService, ConfigManager configManager) {
         this.stage = stage;
+        this.appViewController = appViewController;
         this.pomodoroModel = pomodoroModel;
         this.resourcesService = resourcesService;
         this.configManager = configManager;
@@ -74,11 +79,15 @@ public class ControlPomodoro extends BorderPane implements Initializable, Loadab
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         log.debug("INITIALIZE " + getClass().getSimpleName());
+        durationTimeChangeListener = (observable, oldDuration, currentDuration) -> {
+            elapsedTimeStringProperty.set(DurationFormatter.formatElapsedDurationTime(currentDuration));
+            remainingTimeStringProperty.set(DurationFormatter.formatRemainingDurationTime(currentConfig.getPomodoroDuration(), currentDuration));
+        };
         btnStart.setTooltip(new Tooltip("Start the pomodoro timer"));
         btnStart.setFocusTraversable(false);
         btnStop.setTooltip(new Tooltip("Stop the pomodoro timer"));
         btnStop.setFocusTraversable(false);
-        progressIndicator.setMaxSize(640, 480);
+        progressIndicator.setMaxSize(PROGRESS_INDICATOR_WIDTH, PROGRESS_INDICATOR_HEIGHT);
         progressIndicator.setVisible(false);
         paneFormPomodoro.setCenter(new FormRenderer(buildFormPomodoro()));
         bindGraphicsToModel();
@@ -113,6 +122,8 @@ public class ControlPomodoro extends BorderPane implements Initializable, Loadab
                     stopPomodoro();
                     progressIndicator.setVisible(true);
 
+                    appViewController.setOverlayPane(true);
+
                     stage.setFullScreen(true);
                     stage.setFullScreenExitKeyCombination(KeyCombination.NO_MATCH);
 
@@ -124,18 +135,20 @@ public class ControlPomodoro extends BorderPane implements Initializable, Loadab
                     alert.initModality(Modality.APPLICATION_MODAL);
                     alert.initOwner(stage);
                     alert.setOnCloseRequest(Event::consume);
+                    dialogPane.getScene().getWindow().setOnCloseRequest(Event::consume);
                     dialogPane.setContent(new ControlPomodoroPause(alert, pomodoroPauseDuration, resourcesService, configManager));
                     dialogPane.setMinHeight(Region.USE_PREF_SIZE);
                     dialogPane.getButtonTypes().clear();
                     dialogPane.getButtonTypes().add(ButtonType.OK);
                     dialogPane.lookupButton(ButtonType.OK).setVisible(false);
-                    dialogPane.getScene().getWindow().setOnCloseRequest(Event::consume);
-                    dialogPane.toFront();
+//                    dialogPane.toFront();
 
                     FXGraphicsUtils.centeredAlert(alert);
                     alert.showAndWait();
 
                     mediaPlayer.stop();
+
+                    appViewController.setOverlayPane(false);
 
                     Platform.runLater(() -> {
                         stage.setFullScreen(false);

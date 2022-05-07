@@ -1,18 +1,27 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.StackPane?>
 
-<BorderPane prefHeight="768" prefWidth="1024.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
-            fx:controller="com.matteoveroni.pomodorotime.gui.controllers.AppViewController">
-    <top>
-        <BorderPane fx:id="pane_for_control_app_file_menu" minHeight="50.0"/>
-    </top>
-    <center>
-        <BorderPane fx:id="pane_for_control_view">
-            <center>
+<BorderPane fx:id="root_pane" prefHeight="768" prefWidth="1024.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.matteoveroni.pomodorotime.gui.controllers.AppViewController">
+   <center>
+      <StackPane fx:id="stackpane" BorderPane.alignment="CENTER">
+         <children>
+            <BorderPane fx:id="app_pane">
+               <top>
+                    <BorderPane fx:id="pane_for_control_app_file_menu" minHeight="50.0" BorderPane.alignment="CENTER" />
+               </top>
+               <center>
+                    <BorderPane fx:id="pane_for_control_view" BorderPane.alignment="CENTER">
+                        <center>
             </center>
-        </BorderPane>
-    </center>
+                    </BorderPane>
+               </center>
+            </BorderPane>
+            <AnchorPane fx:id="overlay_pane" style="-fx-background-color: rgba(100, 100, 100, 0.5)rgba(100, 100, 100, 0.5);" />
+         </children>
+      </StackPane>
+   </center>
 
 </BorderPane>
