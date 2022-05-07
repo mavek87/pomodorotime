@@ -7,6 +7,7 @@ import com.matteoveroni.pomodorotime.configs.Config;
 import com.matteoveroni.pomodorotime.configs.ConfigManager;
 import com.matteoveroni.pomodorotime.gui.model.PomodoroModel;
 import com.matteoveroni.pomodorotime.services.ResourcesService;
+import com.matteoveroni.pomodorotime.utils.DurationFormatter;
 import com.matteoveroni.pomodorotime.utils.FXGraphicsUtils;
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
@@ -42,12 +43,6 @@ public class ControlPomodoro extends BorderPane implements Initializable, Loadab
     @FXML private Button btnStart;
     @FXML private Button btnStop;
 
-    private final StringProperty elapsedTimeStringProperty = new SimpleStringProperty("1");
-    private final StringProperty remainingTimeStringProperty = new SimpleStringProperty("1");
-    private final ChangeListener<Duration> durationTimeChangeListener = (observable, oldDuration, currentDuration) -> {
-        elapsedTimeStringProperty.set(formatElapsedDurationTime(currentDuration));
-        remainingTimeStringProperty.set(formatRemainingDurationTime(currentDuration));
-    };
     private final Stage stage;
     private final ResourcesService resourcesService;
     private final ConfigManager configManager;
@@ -55,6 +50,12 @@ public class ControlPomodoro extends BorderPane implements Initializable, Loadab
     private PomodoroModel pomodoroModel;
     private Timeline timeline;
     private Config currentConfig;
+    private final StringProperty elapsedTimeStringProperty = new SimpleStringProperty("1");
+    private final StringProperty remainingTimeStringProperty = new SimpleStringProperty("1");
+    private final ChangeListener<Duration> durationTimeChangeListener = (observable, oldDuration, currentDuration) -> {
+        elapsedTimeStringProperty.set(DurationFormatter.formatElapsedDurationTime(currentDuration));
+        remainingTimeStringProperty.set(DurationFormatter.formatRemainingDurationTime(currentConfig.getPomodoroDuration(), currentDuration));
+    };
 
     public ControlPomodoro(Stage stage, PomodoroModel pomodoroModel, ResourcesService resourcesService, ConfigManager configManager) {
         this.stage = stage;
@@ -89,62 +90,77 @@ public class ControlPomodoro extends BorderPane implements Initializable, Loadab
     }
 
     private void startPomodoro() {
-        final double pomodoroPauseDuration = pomodoroModel.start();
         progressIndicator.setVisible(true);
+
+        if (pomodoroModel.isPomodoroCompleted()) {
+            rebuildPomodoro();
+        }
+
+        final double pomodoroPauseDuration = pomodoroModel.start();
         log.debug("pomodoro pause duration: " + pomodoroPauseDuration);
+
         currentConfig = configManager.readConfig();
         timeline = new Timeline(
                 new KeyFrame(Duration.ZERO, new KeyValue(progressIndicator.progressProperty(), 0)),
-                new KeyFrame(Duration.minutes(currentConfig.getPomodoroDuration()), onCompletionEvent -> {
-                    Platform.runLater(() -> {
-                        stopPomodoro();
-                        mediaPlayer.play();
-                        final Alert alert = new Alert(Alert.AlertType.WARNING);
-                        final DialogPane dialogPane = alert.getDialogPane();
-                        alert.initStyle(StageStyle.UTILITY);
-                        alert.setTitle("Alert");
-                        alert.setHeaderText("Alert fired");
-                        alert.initModality(Modality.APPLICATION_MODAL);
-                        alert.initOwner(stage);
-                        dialogPane.setContent(new ControlPomodoroPause(alert, stage, pomodoroPauseDuration, resourcesService, configManager));
-                        dialogPane.setMinHeight(Region.USE_PREF_SIZE);
-                        dialogPane.getButtonTypes().clear();
-                        dialogPane.getButtonTypes().add(ButtonType.OK);
-                        dialogPane.lookupButton(ButtonType.OK).setVisible(false);
-                        dialogPane.getScene().getWindow().setOnCloseRequest(Event::consume);
-                        dialogPane.toFront();
-                        FXGraphicsUtils.centeredAlert(alert);
-                        alert.showAndWait();
+                new KeyFrame(Duration.minutes(currentConfig.getPomodoroDuration()), onCompletionEvent -> Platform.runLater(() -> {
+                    mediaPlayer.play();
 
-                        if (pomodoroModel.isPomodoroCompleted()) {
-                            progressIndicator.setProgress(100);
-                            pomodoroModel = new PomodoroModel(configManager);
-                            paneFormPomodoro.setCenter(new FormRenderer(buildFormPomodoro()));
-                            bindGraphicsToModel();
-                        } else {
-                            startPomodoro();
-                        }
-                    });
-                }, new KeyValue(progressIndicator.progressProperty(), 1))
+                    stopPomodoro();
+                    progressIndicator.setVisible(true);
+
+                    final Alert alert = new Alert(Alert.AlertType.WARNING);
+                    final DialogPane dialogPane = alert.getDialogPane();
+                    alert.initStyle(StageStyle.UTILITY);
+                    alert.setTitle("Pomodoro");
+                    alert.setHeaderText("Pomodoro pause");
+                    alert.initModality(Modality.APPLICATION_MODAL);
+                    alert.initOwner(stage);
+                    dialogPane.setContent(new ControlPomodoroPause(alert, pomodoroPauseDuration, resourcesService, configManager));
+                    dialogPane.setMinHeight(Region.USE_PREF_SIZE);
+                    dialogPane.getButtonTypes().clear();
+                    dialogPane.getButtonTypes().add(ButtonType.OK);
+                    dialogPane.lookupButton(ButtonType.OK).setVisible(false);
+                    dialogPane.getScene().getWindow().setOnCloseRequest(Event::consume);
+                    dialogPane.toFront();
+                    FXGraphicsUtils.centeredAlert(alert);
+                    alert.showAndWait();
+
+                    mediaPlayer.stop();
+
+                    if (pomodoroModel.isPomodoroCompleted()) {
+                        rebuildPomodoro();
+                    } else {
+                        startPomodoro();
+                    }
+                }), new KeyValue(progressIndicator.progressProperty(), 1))
         );
         timeline.currentTimeProperty().addListener(durationTimeChangeListener);
         timeline.play();
     }
 
     private void stopPomodoro() {
+        progressIndicator.setVisible(false);
         if (timeline != null) {
             timeline.stop();
             timeline.currentTimeProperty().removeListener(durationTimeChangeListener);
         }
+        if (pomodoroModel.isPomodoroRunning() && !pomodoroModel.isPomodoroCompleted()) {
+            pomodoroModel.stop();
+        }
+    }
+
+    private void rebuildPomodoro() {
         unbindGraphicsToModel();
-        mediaPlayer.stop();
-        pomodoroModel.stop();
+        pomodoroModel = new PomodoroModel(configManager);
+        paneFormPomodoro.setCenter(new FormRenderer(buildFormPomodoro()));
+        bindGraphicsToModel();
     }
 
     private void bindGraphicsToModel() {
         paneFormPomodoro.visibleProperty().bind(pomodoroModel.getIsPomodoroRunningProperty());
         btnStart.disableProperty().bind(pomodoroModel.getIsPomodoroCompletedProperty());
         btnStart.disableProperty().bind(pomodoroModel.getIsPomodoroRunningProperty());
+        btnStop.disableProperty().bind(pomodoroModel.getIsPomodoroCompletedProperty());
         btnStop.disableProperty().bind(Bindings.not(pomodoroModel.getIsPomodoroRunningProperty()));
     }
 
@@ -174,20 +190,5 @@ public class ControlPomodoro extends BorderPane implements Initializable, Loadab
                         .title("Pomodoro")
                         .collapsible(false)
         );
-    }
-
-    private String formatElapsedDurationTime(Duration duration) {
-        return convertSecondsToHHMMSS((long) duration.toSeconds());
-    }
-
-    private String formatRemainingDurationTime(Duration duration) {
-        return convertSecondsToHHMMSS((long) ((currentConfig.getPomodoroDuration() * 60L) - duration.toSeconds()));
-    }
-
-    private String convertSecondsToHHMMSS(long seconds) {
-        final long HH = TimeUnit.SECONDS.toHours(seconds);
-        final long MM = TimeUnit.SECONDS.toMinutes(seconds) % 60;
-        final long SS = TimeUnit.SECONDS.toSeconds(seconds) % 60;
-        return String.format("%02d:%02d:%02d", HH, MM, SS);
     }
 }

@@ -8,6 +8,8 @@
 <?import javafx.scene.layout.StackPane?>
 <?import org.kordamp.ikonli.javafx.FontIcon?>
 
+<!--https://kordamp.org/ikonli/cheat-sheet-fontawesome5.html-->
+
 <fx:root type="javafx.scene.layout.BorderPane" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1">
     <center>
         <BorderPane prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
@@ -21,7 +23,7 @@
                         </Button>
                         <Button fx:id="btnStop" alignment="CENTER" contentDisplay="TOP" minHeight="70.0" minWidth="150.0" mnemonicParsing="false" onAction="#onStopAction" prefHeight="70.0" prefWidth="150.0">
                             <graphic>
-                                <FontIcon iconColor="#091f57" iconLiteral="far-pause-circle" iconSize="40" />
+                                <FontIcon iconColor="#091f57" iconLiteral="far-stop-circle" iconSize="40" />
                             </graphic>
                         </Button>
                     </children>
