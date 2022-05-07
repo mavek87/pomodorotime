@@ -2,22 +2,25 @@ package com.matteoveroni.pomodorotime.gui.controllers;
 
 import com.matteoveroni.pomodorotime.configs.ConfigManager;
 import com.matteoveroni.pomodorotime.gui.control.ControlAppFileMenu;
-import com.matteoveroni.pomodorotime.gui.control.ControlSettings;
 import com.matteoveroni.pomodorotime.gui.control.ControlPomodoro;
+import com.matteoveroni.pomodorotime.gui.control.ControlSettings;
 import com.matteoveroni.pomodorotime.gui.model.PomodoroModel;
 import com.matteoveroni.pomodorotime.services.ResourcesService;
-import com.matteoveroni.pomodorotime.utils.FXGraphicsUtils;
 import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.Node;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.StackPane;
-import javafx.stage.*;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
+import javafx.stage.StageStyle;
+import javafx.stage.WindowEvent;
 import java.net.URL;
 import java.util.Optional;
 import java.util.ResourceBundle;
@@ -28,7 +31,6 @@ public class AppViewController implements Initializable {
     @FXML private StackPane stackpane;
     @FXML private BorderPane app_pane;
     @FXML private AnchorPane overlay_pane;
-    @FXML private BorderPane pane_for_control_app_file_menu;
     @FXML private BorderPane pane_for_control_view;
 
     private final ResourcesService resourcesService;
@@ -46,12 +48,15 @@ public class AppViewController implements Initializable {
     public void initialize(URL location, ResourceBundle resources) {
         final ControlPomodoro controlPomodoro = new ControlPomodoro(stage, this, new PomodoroModel(configManager), resourcesService, configManager);
         final ControlSettings controlSettings = new ControlSettings(stage, resourcesService, configManager);
-        final ControlAppFileMenu controlAppFileMenu = new ControlAppFileMenu(resourcesService, pane_for_control_view, controlPomodoro, controlSettings);
-        pane_for_control_app_file_menu.setCenter(controlAppFileMenu);
+        final ControlAppFileMenu controlAppFileMenu = new ControlAppFileMenu(stage,this, resourcesService, controlPomodoro, controlSettings);
+        app_pane.setTop(controlAppFileMenu);
         pane_for_control_view.setCenter(controlPomodoro);
         setOverlayPane(false);
-
         stage.setOnCloseRequest(confirmCloseEventHandler);
+    }
+
+    public void showNodeInView(Node node) {
+        pane_for_control_view.setCenter(node);
     }
 
     public void setOverlayPane(boolean enableOverlayPane) {

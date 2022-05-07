@@ -18,16 +18,12 @@ import javafx.beans.binding.Bindings;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.event.Event;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
-import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCombination;
-import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Region;
 import javafx.scene.media.Media;
@@ -38,9 +34,7 @@ import javafx.stage.StageStyle;
 import javafx.util.Duration;
 import lombok.extern.slf4j.Slf4j;
 import java.net.URL;
-import java.util.Optional;
 import java.util.ResourceBundle;
-import java.util.concurrent.TimeUnit;
 
 @Slf4j
 public class ControlPomodoro extends BorderPane implements Initializable, LoadableControl {
@@ -127,24 +121,8 @@ public class ControlPomodoro extends BorderPane implements Initializable, Loadab
                     stage.setFullScreen(true);
                     stage.setFullScreenExitKeyCombination(KeyCombination.NO_MATCH);
 
-                    final Alert alert = new Alert(Alert.AlertType.WARNING);
-                    final DialogPane dialogPane = alert.getDialogPane();
-                    alert.initStyle(StageStyle.UTILITY);
-                    alert.setTitle("Pomodoro");
-                    alert.setHeaderText("Pomodoro pause");
-                    alert.initModality(Modality.APPLICATION_MODAL);
-                    alert.initOwner(stage);
-                    alert.setOnCloseRequest(Event::consume);
-                    dialogPane.getScene().getWindow().setOnCloseRequest(Event::consume);
-                    dialogPane.setContent(new ControlPomodoroPause(alert, pomodoroPauseDuration, resourcesService, configManager));
-                    dialogPane.setMinHeight(Region.USE_PREF_SIZE);
-                    dialogPane.getButtonTypes().clear();
-                    dialogPane.getButtonTypes().add(ButtonType.OK);
-                    dialogPane.lookupButton(ButtonType.OK).setVisible(false);
-//                    dialogPane.toFront();
-
-                    FXGraphicsUtils.centeredAlert(alert);
-                    alert.showAndWait();
+                    final Alert pomodoroPauseAlert = buildPomodoroPauseAlert(pomodoroPauseDuration);
+                    pomodoroPauseAlert.showAndWait();
 
                     mediaPlayer.stop();
 
@@ -220,5 +198,24 @@ public class ControlPomodoro extends BorderPane implements Initializable, Loadab
                         .title("Pomodoro")
                         .collapsible(false)
         );
+    }
+
+    private Alert buildPomodoroPauseAlert(double pomodoroPauseDuration) {
+        final Alert alert = new Alert(Alert.AlertType.WARNING);
+        final DialogPane dialogPane = alert.getDialogPane();
+        alert.initStyle(StageStyle.UTILITY);
+        alert.setTitle("Pomodoro");
+        alert.setHeaderText("Pomodoro pause");
+        alert.initModality(Modality.APPLICATION_MODAL);
+        alert.initOwner(stage);
+        alert.setOnCloseRequest(Event::consume);
+        dialogPane.getScene().getWindow().setOnCloseRequest(Event::consume);
+        dialogPane.setContent(new ControlPomodoroPause(alert, pomodoroPauseDuration, resourcesService, configManager));
+        dialogPane.setMinHeight(Region.USE_PREF_SIZE);
+        dialogPane.getButtonTypes().clear();
+        dialogPane.getButtonTypes().add(ButtonType.OK);
+        dialogPane.lookupButton(ButtonType.OK).setVisible(false);
+        FXGraphicsUtils.centeredAlert(alert);
+        return alert;
     }
 }

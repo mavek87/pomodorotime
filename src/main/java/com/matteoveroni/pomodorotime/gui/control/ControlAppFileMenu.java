@@ -1,13 +1,14 @@
 package com.matteoveroni.pomodorotime.gui.control;
 
+import com.matteoveroni.pomodorotime.gui.controllers.AppViewController;
 import com.matteoveroni.pomodorotime.services.ResourcesService;
 import javafx.application.Platform;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
+import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Alert;
+import javafx.scene.control.DialogPane;
 import javafx.scene.control.Hyperlink;
 import javafx.scene.control.Label;
 import javafx.scene.layout.BorderPane;
@@ -25,12 +26,14 @@ import java.util.ResourceBundle;
 @Slf4j
 public class ControlAppFileMenu extends BorderPane implements LoadableControl, Initializable {
 
-    private final BorderPane paneForAppControlView;
+    private final Stage stage;
+    private final AppViewController appViewController;
     private final ControlPomodoro controlPomodoro;
     private final ControlSettings controlSettings;
 
-    public ControlAppFileMenu(ResourcesService resourcesService, BorderPane paneForAppControlView, ControlPomodoro controlPomodoro, ControlSettings controlSettings) {
-        this.paneForAppControlView = paneForAppControlView;
+    public ControlAppFileMenu(Stage stage, AppViewController appViewController, ResourcesService resourcesService, ControlPomodoro controlPomodoro, ControlSettings controlSettings) {
+        this.stage = stage;
+        this.appViewController = appViewController;
         this.controlPomodoro = controlPomodoro;
         this.controlSettings = controlSettings;
         loadControl(resourcesService, Control.APP_FILE_MENU);
@@ -38,28 +41,29 @@ public class ControlAppFileMenu extends BorderPane implements LoadableControl, I
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-
     }
 
     @FXML
     void onActionPomodoro(ActionEvent event) {
-        paneForAppControlView.setCenter(controlPomodoro);
+        appViewController.showNodeInView(controlPomodoro);
     }
 
     @FXML
     void onActionSettings(ActionEvent event) {
-        paneForAppControlView.setCenter(controlSettings);
+        appViewController.showNodeInView(controlSettings);
     }
 
     @FXML
     void onActionAbout(ActionEvent event) {
+        appViewController.setOverlayPane(true);
+
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.initStyle(StageStyle.UTILITY);
         alert.setResizable(false);
         alert.setTitle("About");
         alert.setHeaderText("Pomodoro-Time");
 
-        BorderPane alertPane = new BorderPane();
+        BorderPane pane = new BorderPane();
         VBox vBox = new VBox();
         vBox.setSpacing(15);
         vBox.getChildren().add(new Label("Author: Matteo Veroni"));
@@ -73,12 +77,16 @@ public class ControlAppFileMenu extends BorderPane implements LoadableControl, I
         hBox.getChildren().add(websiteHyperlink);
         vBox.getChildren().add(hBox);
 
-        alertPane.setCenter(vBox);
+        pane.setCenter(vBox);
 
-        alert.getDialogPane().setContent(alertPane);
+        DialogPane alertDialogPane = alert.getDialogPane();
+        alertDialogPane.setContent(pane);
+        alertDialogPane.getScene().getWindow().setOnCloseRequest(Event::consume);
 
-        alert.initOwner((Stage) paneForAppControlView.getScene().getWindow());
+        alert.initOwner(stage);
         alert.showAndWait();
+
+        appViewController.setOverlayPane(false);
     }
 
     @FXML
