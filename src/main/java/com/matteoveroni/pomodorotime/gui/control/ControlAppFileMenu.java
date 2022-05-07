@@ -41,6 +41,7 @@ public class ControlAppFileMenu extends BorderPane implements LoadableControl, I
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        log.debug("INITIALIZE " + getClass().getSimpleName());
     }
 
     @FXML

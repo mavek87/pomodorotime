@@ -64,7 +64,6 @@ public class ControlPomodoroPause extends BorderPane implements Initializable, L
     private void startAlertTimer() {
         timeline = new Timeline(
                 new KeyFrame(Duration.minutes(pauseDuration), onCompletionEvent -> {
-//                    Button okButton = (Button) parentAlert.getDialogPane().lookupButton(ButtonType.OK);
                     timeline.currentTimeProperty().removeListener(durationTimeChangeListener);
                     parentAlert.setOnCloseRequest(event -> parentAlert.close());
                     parentAlert.close();
