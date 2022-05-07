@@ -10,13 +10,13 @@ public final class PomodoroModel {
     private final ConfigManager configManager;
     private final BooleanProperty isPomodoroRunningProperty = new SimpleBooleanProperty(false);
     private int pomodoroCounter = 0;
-    private Integer pomodoroPauseDuration = null;
+    private Double pomodoroPauseDuration = null;
 
     public PomodoroModel(ConfigManager configManager) {
         this.configManager = configManager;
     }
 
-    public int start() {
+    public double start() {
         if (isPomodoroRunning())
             throw new IllegalStateException("Pomodoro model state exception: a pomodoro session is already being running, so calling again the start method is wrong");
 
@@ -47,7 +47,7 @@ public final class PomodoroModel {
         isPomodoroRunningProperty.set(false);
     }
 
-    private int calculatePomodoroPauseDuration() {
+    private double calculatePomodoroPauseDuration() {
         final Config config = configManager.readConfig();
         final int numberOfSessionBeforeLongPause = config.getNumberOfSessionBeforeLongPause();
         if ((pomodoroCounter % (numberOfSessionBeforeLongPause + 1)) == 0) {

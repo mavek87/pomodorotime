@@ -28,7 +28,7 @@ class PomodoroModelTest {
     @Test
     public void check_mocks_working () {
         when(mockConfigManager.readConfig()).thenReturn(mockConfig);
-        when(mockConfig.getPomodoroDuration()).thenReturn(1);
+        when(mockConfig.getPomodoroDuration()).thenReturn(1.0);
 
         assertEquals(1, mockConfigManager.readConfig().getPomodoroDuration(), "Error, something is wrong with the mocks...");
     }
@@ -80,12 +80,12 @@ class PomodoroModelTest {
     @Test
     public void number_of_sessions_before_long_pause_equal_to_zero_so_first_time_long_pause() {
         final int numberOfSessionsBeforeLongPause = 0;
-        final int longPauseDuration = 10;
+        final double longPauseDuration = 10;
         when(mockConfigManager.readConfig()).thenReturn(mockConfig);
         when(mockConfig.getNumberOfSessionBeforeLongPause()).thenReturn(numberOfSessionsBeforeLongPause);
         when(mockConfig.getPomodoroLongPauseDuration()).thenReturn(longPauseDuration);
 
-        final int pomodoroPauseDuration = pomodoroModel.start();
+        final double pomodoroPauseDuration = pomodoroModel.start();
 
         assertEquals(longPauseDuration, pomodoroPauseDuration,"Error");
     }
@@ -93,12 +93,12 @@ class PomodoroModelTest {
     @Test
     public void number_of_sessions_before_long_pause_equal_to_one_so_first_time_short_pause() {
         final int numberOfSessionsBeforeLongPause = 1;
-        final int shortPauseDuration = 5;
+        final double shortPauseDuration = 5;
         when(mockConfigManager.readConfig()).thenReturn(mockConfig);
         when(mockConfig.getNumberOfSessionBeforeLongPause()).thenReturn(numberOfSessionsBeforeLongPause);
         when(mockConfig.getPomodoroPauseDuration()).thenReturn(shortPauseDuration);
 
-        final int pomodoroPauseDuration = pomodoroModel.start();
+        final double pomodoroPauseDuration = pomodoroModel.start();
 
         assertEquals(shortPauseDuration, pomodoroPauseDuration,"Error");
     }
@@ -106,29 +106,29 @@ class PomodoroModelTest {
     @Test
     public void number_of_sessions_before_long_pause_equal_to_two_so_first_two_times_short_pause_and_then_long_pause_and_after_short_pause() {
         final int numberOfSessionsBeforeLongPause = 2;
-        final int longPauseDuration = 10;
-        final int shortPauseDuration = 5;
+        final double longPauseDuration = 10;
+        final double shortPauseDuration = 5;
         when(mockConfigManager.readConfig()).thenReturn(mockConfig);
         when(mockConfig.getNumberOfSessionBeforeLongPause()).thenReturn(numberOfSessionsBeforeLongPause);
         when(mockConfig.getPomodoroLongPauseDuration()).thenReturn(longPauseDuration);
         when(mockConfig.getPomodoroPauseDuration()).thenReturn(shortPauseDuration);
 
-        final int firstPomodoroPauseDuration = pomodoroModel.start();
+        final double firstPomodoroPauseDuration = pomodoroModel.start();
         pomodoroModel.stop();
 
         assertEquals(shortPauseDuration, firstPomodoroPauseDuration,"Error");
 
-        final int secondPomodoroPauseDuration = pomodoroModel.start();
+        final double secondPomodoroPauseDuration = pomodoroModel.start();
         pomodoroModel.stop();
 
         assertEquals(shortPauseDuration, secondPomodoroPauseDuration,"Error");
 
-        final int thirdPomodoroPauseDuration = pomodoroModel.start();
+        final double thirdPomodoroPauseDuration = pomodoroModel.start();
         pomodoroModel.stop();
 
         assertEquals(longPauseDuration, thirdPomodoroPauseDuration,"Error");
 
-        final int fourthPomodoroPauseDuration = pomodoroModel.start();
+        final double fourthPomodoroPauseDuration = pomodoroModel.start();
         pomodoroModel.stop();
 
         assertEquals(shortPauseDuration, fourthPomodoroPauseDuration,"Error");

@@ -123,37 +123,31 @@ public class ControlPomodoro extends BorderPane implements Initializable, Loadab
     }
 
     private void startAlertTimer() {
-        int pomodoroPauseDuration = pomodoroModel.start();
+        double pomodoroPauseDuration = pomodoroModel.start();
         currentConfig = configManager.readConfig();
         timeline = new Timeline(
                 new KeyFrame(Duration.ZERO, new KeyValue(progressIndicator.progressProperty(), 0)),
                 new KeyFrame(Duration.minutes(currentConfig.getPomodoroDuration()), onCompletionEvent -> {
                     mediaPlayer.play();
+                    timeline.pause();
                     Platform.runLater(() -> {
-//                        Alert alertDialog = new Alert(Alert.AlertType.WARNING);
-//                        alertDialog.initStyle(StageStyle.UTILITY);
-//                        alertDialog.setTitle("Alert");
-//                        alertDialog.setHeaderText("Alert fired");
-////                        alertDialog.setContentText("It's time to stop!");
-//                        alertDialog.getDialogPane().setContent(new ControlPomodoroPause(stage, resourcesService, configManager));
-//                        alertDialog.initModality(Modality.APPLICATION_MODAL);
-//                        alertDialog.initOwner(stage);
-//                        alertDialog.showAndWait();
-//                        stopAlert();
-                        Alert alertDialog = new Alert(Alert.AlertType.WARNING);
-                        alertDialog.initStyle(StageStyle.UTILITY);
-                        alertDialog.setTitle("Alert");
-                        alertDialog.setHeaderText("Alert fired");
-//                        alertDialog.setContentText("It's time to stop!");
-                        alertDialog.getDialogPane().setContent(new ControlPomodoroPause(stage, pomodoroPauseDuration, resourcesService, configManager));
-                        alertDialog.initModality(Modality.APPLICATION_MODAL);
-                        alertDialog.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
-
-                        alertDialog.initOwner(stage);
-                        alertDialog.getDialogPane().toFront();
-                        FXGraphicsUtils.centeredAlert(alertDialog);
-                        alertDialog.getDialogPane().getScene().getWindow().setOnCloseRequest(Event::consume);
-                        alertDialog.showAndWait();
+                        final Alert alert = new Alert(Alert.AlertType.WARNING);
+                        final DialogPane dialogPane = alert.getDialogPane();
+                        alert.initStyle(StageStyle.UTILITY);
+                        alert.setTitle("Alert");
+                        alert.setHeaderText("Alert fired");
+                        alert.initModality(Modality.APPLICATION_MODAL);
+                        alert.initOwner(stage);
+                        dialogPane.setContent(new ControlPomodoroPause(alert, stage, pomodoroPauseDuration, resourcesService, configManager));
+                        dialogPane.setMinHeight(Region.USE_PREF_SIZE);
+                        dialogPane.getButtonTypes().clear();
+                        dialogPane.getButtonTypes().add(ButtonType.OK);
+                        dialogPane.lookupButton(ButtonType.OK).setVisible(false);
+                        dialogPane.getScene().getWindow().setOnCloseRequest(Event::consume);
+                        dialogPane.toFront();
+                        FXGraphicsUtils.centeredAlert(alert);
+                        alert.showAndWait();
+                        timeline.play();
                     });
                 }, new KeyValue(progressIndicator.progressProperty(), 1))
         );

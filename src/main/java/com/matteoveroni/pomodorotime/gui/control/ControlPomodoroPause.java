@@ -21,10 +21,7 @@ import javafx.beans.value.ChangeListener;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Button;
-import javafx.scene.control.ProgressIndicator;
-import javafx.scene.control.Tooltip;
+import javafx.scene.control.*;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
@@ -59,12 +56,14 @@ public class ControlPomodoroPause extends BorderPane implements Initializable, L
             .editable(false)
             .span(ColSpan.HALF)
             .label("Elapsed time");
+    private final Alert parentAlert;
     private final Stage stage;
     private final ConfigManager configManager;
 
-    private final int pauseDuration;
+    private final double pauseDuration;
 
-    public ControlPomodoroPause(Stage stage, int pauseDuration, ResourcesService resourcesService, ConfigManager configManager) {
+    public ControlPomodoroPause(Alert parentAlert, Stage stage, double pauseDuration, ResourcesService resourcesService, ConfigManager configManager) {
+        this.parentAlert = parentAlert;
         this.stage = stage;
         this.pauseDuration = pauseDuration;
         this.configManager = configManager;
@@ -90,10 +89,10 @@ public class ControlPomodoroPause extends BorderPane implements Initializable, L
     private void startAlertTimer() {
         Timeline timeline = new Timeline(
                 new KeyFrame(Duration.minutes(pauseDuration), onCompletionEvent -> {
-                    log.info("FINITOOOOO");
+                    Button okButton = (Button) parentAlert.getDialogPane().lookupButton(ButtonType.OK);
+                    okButton.fire();
                 })
         );
-        timeline.setCycleCount(2);
         timeline.currentTimeProperty().addListener(durationTimeChangeListener);
         timeline.play();
     }

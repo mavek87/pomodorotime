@@ -30,9 +30,9 @@ public class ControlSettings extends BorderPane implements Initializable, Loadab
     private final Stage stage;
     private final ConfigManager configManager;
 
-    private final IntegerProperty pomodoroDurationProperty = new SimpleIntegerProperty(30);
-    private final IntegerProperty pomodoroPauseProperty = new SimpleIntegerProperty(5);
-    private final IntegerProperty pomodoroLongPauseProperty = new SimpleIntegerProperty(15);
+    private final DoubleProperty pomodoroDurationProperty = new SimpleDoubleProperty(30);
+    private final DoubleProperty pomodoroPauseProperty = new SimpleDoubleProperty(5);
+    private final DoubleProperty pomodoroLongPauseProperty = new SimpleDoubleProperty(15);
     private final IntegerProperty numberOfSessionsBeforeLongPauseProperty = new SimpleIntegerProperty(4);
 
     private final BooleanProperty isPomodoroLoopProperty = new SimpleBooleanProperty(true);
@@ -50,15 +50,15 @@ public class ControlSettings extends BorderPane implements Initializable, Loadab
     private final IntegerProperty fontSize = new SimpleIntegerProperty(12);
 
     private final Group timerGroup = Group.of("Pomodoro main settings",
-            Setting.of("Pomodoro duration (minutes)", pomodoroDurationProperty, 1, 60),
-            Setting.of("Pause duration (minutes)", pomodoroPauseProperty, 1, 60),
-            Setting.of("Long pause duration (minutes)", pomodoroLongPauseProperty, 1, 60),
+            Setting.of("Pomodoro duration (minutes)", pomodoroDurationProperty, 1, 60, 1),
+            Setting.of("Pause duration (minutes)", pomodoroPauseProperty, 1, 60, 1),
+            Setting.of("Long pause duration (minutes)", pomodoroLongPauseProperty, 1, 60, 1),
             Setting.of("Sessions before a long pause", numberOfSessionsBeforeLongPauseProperty).validate(IntegerRangeValidator.atLeast(0, "Insert a positive number"))
     );
     private final Group timerSubGroup = Group.of("Pomodoro main settings",
-            Setting.of("Pomodoro duration (minutes)", pomodoroDurationProperty, 1, 60),
-            Setting.of("Pause duration (minutes)", pomodoroPauseProperty, 1, 60),
-            Setting.of("Long pause duration (minutes)", pomodoroLongPauseProperty, 1, 60),
+            Setting.of("Pomodoro duration (minutes)", pomodoroDurationProperty, 1, 60, 1),
+            Setting.of("Pause duration (minutes)", pomodoroPauseProperty, 1, 60, 1),
+            Setting.of("Long pause duration (minutes)", pomodoroLongPauseProperty, 1, 60, 1),
             Setting.of("Sessions before a long pause", numberOfSessionsBeforeLongPauseProperty).validate(IntegerRangeValidator.atLeast(0, "Insert a positive number"))
     );
 

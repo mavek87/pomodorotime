@@ -51,7 +51,7 @@ public class App extends Application {
         this.stage = stage;
         ControlPomodoro controlPomodoro = new ControlPomodoro(stage, new PomodoroModel(configManager), resourcesService, configManager);
         ControlSettings controlSettings = new ControlSettings(stage, resourcesService, configManager);
-        this.controllersFactory = new ControllersFactory(stage, resourcesService, configManager, controlPomodoro, controlSettings);
+        this.controllersFactory = new ControllersFactory(resourcesService, configManager, controlPomodoro, controlSettings);
 
         FXMLLoader fxmlLoader = new FXMLLoader(resourcesService.getFXMLViewURL(View.APP_VIEW.getFileName()));
         fxmlLoader.setControllerFactory(controllersFactory);

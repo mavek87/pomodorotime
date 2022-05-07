@@ -11,11 +11,11 @@ public class Config {
     @SerializedName("window_height")
     private double windowHeight;
     @SerializedName("pomodoro_duration_in_min")
-    private int pomodoroDuration;
+    private double pomodoroDuration;
     @SerializedName("pomodoro_pause_duration_in_min")
-    private int pomodoroPauseDuration;
+    private double pomodoroPauseDuration;
     @SerializedName("pomodoro_long_pause_duration_in_min")
-    private int pomodoroLongPauseDuration;
+    private double pomodoroLongPauseDuration;
     @SerializedName("number_of_sessions_before_long_pause")
     private int numberOfSessionBeforeLongPause;
     @SerializedName("is_pomodoro_loop")
@@ -45,27 +45,27 @@ public class Config {
         this.windowHeight = windowHeight;
     }
 
-    public int getPomodoroDuration() {
+    public double getPomodoroDuration() {
         return pomodoroDuration;
     }
 
-    public void setPomodoroDuration(int pomodoroDuration) {
+    public void setPomodoroDuration(double pomodoroDuration) {
         this.pomodoroDuration = pomodoroDuration;
     }
 
-    public int getPomodoroPauseDuration() {
+    public double getPomodoroPauseDuration() {
         return pomodoroPauseDuration;
     }
 
-    public void setPomodoroPauseDuration(int pomodoroPauseDuration) {
+    public void setPomodoroPauseDuration(double pomodoroPauseDuration) {
         this.pomodoroPauseDuration = pomodoroPauseDuration;
     }
 
-    public int getPomodoroLongPauseDuration() {
+    public double getPomodoroLongPauseDuration() {
         return pomodoroLongPauseDuration;
     }
 
-    public void setPomodoroLongPauseDuration(int pomodoroLongPauseDuration) {
+    public void setPomodoroLongPauseDuration(double pomodoroLongPauseDuration) {
         this.pomodoroLongPauseDuration = pomodoroLongPauseDuration;
     }
 
