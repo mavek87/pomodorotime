@@ -2,7 +2,6 @@ package com.matteoveroni.pomodorotime.gui.control;
 
 import com.dlsc.formsfx.model.structure.*;
 import com.dlsc.formsfx.model.util.BindingMode;
-import com.dlsc.formsfx.model.validators.CustomValidator;
 import com.dlsc.formsfx.view.renderer.FormRenderer;
 import com.dlsc.formsfx.view.util.ColSpan;
 import com.matteoveroni.pomodorotime.configs.Config;
@@ -51,12 +50,6 @@ public class ControlPomodoro extends BorderPane implements Initializable, Loadab
         elapsedTimeStringProperty.set(formatElapsedDurationTime(currentDuration));
         remainingTimeStringProperty.set(formatRemainingDurationTime(currentDuration));
     };
-    private final DoubleField fieldAlarmTimeMinutes = Field.ofDoubleType(1)
-            .required(true)
-            .validate(CustomValidator.forPredicate(doubleValue -> doubleValue > 0, "The amount of minutes must be more than 0"))
-            .placeholder("Insert an amount of time in minutes")
-            .span(ColSpan.HALF)
-            .label("Alarm time (minutes)");
     private final StringField fieldRemainingTime = Field.ofStringType(remainingTimeStringProperty.get())
             .bind(remainingTimeStringProperty)
             .editable(false)
@@ -100,9 +93,7 @@ public class ControlPomodoro extends BorderPane implements Initializable, Loadab
         fieldElapsedTime.setBindingMode(BindingMode.CONTINUOUS);
         progressIndicator.setMaxSize(640, 480);
         progressIndicator.visibleProperty().bind(pomodoroModel.isPomodoroRunningProperty());
-        paneFormAlertSettings.setCenter(new FormRenderer(buildFormAlarmSettings()));
-        paneFormAlertSettings.visibleProperty().bind(Bindings.not(pomodoroModel.isPomodoroRunningProperty()));
-        paneFormAlertTimer.setCenter(new FormRenderer(buildFormElapsedTime()));
+        paneFormAlertTimer.setCenter(new FormRenderer(buildFormPomodoro()));
         paneFormAlertTimer.visibleProperty().bind(pomodoroModel.isPomodoroRunningProperty());
         btnStart.disableProperty().bind(pomodoroModel.isPomodoroRunningProperty());
         btnStop.disableProperty().bind(Bindings.not(pomodoroModel.isPomodoroRunningProperty()));
@@ -110,16 +101,12 @@ public class ControlPomodoro extends BorderPane implements Initializable, Loadab
 
     @FXML
     void onStartAction(ActionEvent event) {
-        if (fieldAlarmTimeMinutes.isValid()) {
-            fieldAlarmTimeMinutes.persist();
-            startAlertTimer();
-            fieldAlarmTimeMinutes.editable(false);
-        }
+        startAlertTimer();
     }
 
     @FXML
     void onStopAction(ActionEvent event) {
-        stopAlert();
+        stopAlertTimer();
     }
 
     private void startAlertTimer() {
@@ -156,30 +143,24 @@ public class ControlPomodoro extends BorderPane implements Initializable, Loadab
         timeline.play();
     }
 
-    private void stopAlert() {
+    private void stopAlertTimer() {
         if (timeline != null) {
             timeline.stop();
             timeline.currentTimeProperty().removeListener(durationTimeChangeListener);
         }
-        fieldAlarmTimeMinutes.editable(true);
-        fieldAlarmTimeMinutes.reset();
         progressIndicator.setProgress(0);
         mediaPlayer.stop();
         pomodoroModel.stop();
     }
 
-    private Form buildFormAlarmSettings() {
+    private Form buildFormPomodoro() {
+        final IntegerField fieldPomodoroSession = Field.ofIntegerType(0)
+                .bind(pomodoroModel.getPomodoroSessionProperty())
+                .editable(false)
+                .label("Session number");
         return Form.of(
-                Section.of(fieldAlarmTimeMinutes)
-                        .title("Alarm settings")
-                        .collapsible(false)
-        );
-    }
-
-    private Form buildFormElapsedTime() {
-        return Form.of(
-                Section.of(fieldElapsedTime, fieldRemainingTime)
-                        .title("Alarm")
+                Section.of(fieldPomodoroSession, fieldElapsedTime, fieldRemainingTime)
+                        .title("Pomodoro")
                         .collapsible(false)
         );
     }

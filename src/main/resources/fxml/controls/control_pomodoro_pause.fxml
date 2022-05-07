@@ -2,5 +2,5 @@
 
 <?import javafx.scene.layout.BorderPane?>
 
-<fx:root fx:id="root_border_pane" minHeight="768.0" minWidth="1024.0" type="javafx.scene.layout.BorderPane" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1">
+<fx:root fx:id="root_border_pane" minHeight="768.0" minWidth="1024.0" type="javafx.scene.layout.BorderPane" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1">
 </fx:root>

@@ -4,7 +4,7 @@
   "window_height": 768.0,
   "pomodoro_duration_in_min": 0.1,
   "pomodoro_pause_duration_in_min": 0.1,
-  "pomodoro_long_pause_duration_in_min": 2,
+  "pomodoro_long_pause_duration_in_min": 5.0,
   "number_of_sessions_before_long_pause": 1,
   "is_pomodoro_loop": true
 }

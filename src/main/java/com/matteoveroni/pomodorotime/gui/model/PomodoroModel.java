@@ -3,13 +3,15 @@ package com.matteoveroni.pomodorotime.gui.model;
 import com.matteoveroni.pomodorotime.configs.Config;
 import com.matteoveroni.pomodorotime.configs.ConfigManager;
 import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.property.SimpleIntegerProperty;
 
 public final class PomodoroModel {
 
     private final ConfigManager configManager;
     private final BooleanProperty isPomodoroRunningProperty = new SimpleBooleanProperty(false);
-    private int pomodoroCounter = 0;
+    private final IntegerProperty pomodoroCounter = new SimpleIntegerProperty(0);
     private Double pomodoroPauseDuration = null;
 
     public PomodoroModel(ConfigManager configManager) {
@@ -20,7 +22,7 @@ public final class PomodoroModel {
         if (isPomodoroRunning())
             throw new IllegalStateException("Pomodoro model state exception: a pomodoro session is already being running, so calling again the start method is wrong");
 
-        pomodoroCounter++;
+        pomodoroCounter.set(pomodoroCounter.get() + 1);
         pomodoroPauseDuration = calculatePomodoroPauseDuration();
         isPomodoroRunningProperty.set(true);
 
@@ -28,6 +30,10 @@ public final class PomodoroModel {
     }
 
     public int getPomodoroSession() {
+        return pomodoroCounter.get();
+    }
+
+    public IntegerProperty getPomodoroSessionProperty() {
         return pomodoroCounter;
     }
 
@@ -50,7 +56,7 @@ public final class PomodoroModel {
     private double calculatePomodoroPauseDuration() {
         final Config config = configManager.readConfig();
         final int numberOfSessionBeforeLongPause = config.getNumberOfSessionBeforeLongPause();
-        if ((pomodoroCounter % (numberOfSessionBeforeLongPause + 1)) == 0) {
+        if ((pomodoroCounter.get() % (numberOfSessionBeforeLongPause + 1)) == 0) {
             return config.getPomodoroLongPauseDuration();
         } else {
             return config.getPomodoroPauseDuration();
