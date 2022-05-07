@@ -6,6 +6,8 @@ public class Config {
 
     @SerializedName("app_name")
     private String appName;
+    @SerializedName("language")
+    private String language;
     @SerializedName("window_width")
     private double windowWidth;
     @SerializedName("window_height")
@@ -27,6 +29,14 @@ public class Config {
 
     public void setAppName(String appName) {
         this.appName = appName;
+    }
+
+    public String getLanguage() {
+        return language;
+    }
+
+    public void setLanguage(String language) {
+        this.language = language;
     }
 
     public double getWindowWidth() {

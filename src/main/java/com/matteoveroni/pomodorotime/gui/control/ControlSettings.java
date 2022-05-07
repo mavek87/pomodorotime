@@ -8,6 +8,7 @@ import com.dlsc.preferencesfx.model.Setting;
 import com.matteoveroni.pomodorotime.configs.Config;
 import com.matteoveroni.pomodorotime.configs.ConfigManager;
 import com.matteoveroni.pomodorotime.gui.screen.ScreenResolution;
+import com.matteoveroni.pomodorotime.services.localization.SupportedLocale;
 import com.matteoveroni.pomodorotime.services.ResourcesService;
 import com.matteoveroni.pomodorotime.utils.FXGraphicsUtils;
 import javafx.beans.property.*;
@@ -26,6 +27,7 @@ import java.util.ResourceBundle;
 public class ControlSettings extends BorderPane implements Initializable, LoadableControl {
 
     private static final ScreenResolution DEFAULT_SCREEN_SIZE_RESOLUTION = ScreenResolution.RESOLUTION_1024x768;
+    private static final SupportedLocale DEFAULT_LOCALE = SupportedLocale.US;
 
     private final Stage stage;
     private final ConfigManager configManager;
@@ -40,9 +42,12 @@ public class ControlSettings extends BorderPane implements Initializable, Loadab
     // Boolean
     private final BooleanProperty nightMode = new SimpleBooleanProperty(true);
 
+    private final ObservableList<SupportedLocale> selectedLocale = FXCollections.observableArrayList(Arrays.asList(SupportedLocale.values()));
+    private final ObjectProperty<SupportedLocale> selectedLocaleProperty = new SimpleObjectProperty<>(DEFAULT_LOCALE);
+
     // Combobox, Single Selection, with ObservableList
     private final ObservableList<ScreenResolution> resolutionItems = FXCollections.observableArrayList(Arrays.asList(ScreenResolution.values()));
-    private final ObjectProperty<ScreenResolution> resolutionSelectionProperty = new SimpleObjectProperty<>(ScreenResolution.RESOLUTION_1024x768);
+    private final ObjectProperty<ScreenResolution> resolutionSelectionProperty = new SimpleObjectProperty<>(DEFAULT_SCREEN_SIZE_RESOLUTION);
 
     // Color
     private final ObjectProperty colorProperty = new SimpleObjectProperty<>(Color.PAPAYAWHIP);
@@ -89,7 +94,12 @@ public class ControlSettings extends BorderPane implements Initializable, Loadab
                             .subCategories(
                                     Category.of("Screen", screenResolutionSubGroup),
                                     Category.of("Look and feel", themesSubGroup, textSubGroup)
+                            ),
+                    Category.of("Languages",
+                            Group.of("Choose language",
+                                    Setting.of("Language", selectedLocale, selectedLocaleProperty)
                             )
+                    )
             )
             .persistWindowState(false)
             .saveSettings(false)
@@ -112,8 +122,7 @@ public class ControlSettings extends BorderPane implements Initializable, Loadab
 
         final double windowWidth = startupConfig.getWindowWidth();
         final double windowHeight = startupConfig.getWindowHeight();
-        final ScreenResolution screenResolution = ScreenResolution.fromSize(windowWidth, windowHeight).orElse(DEFAULT_SCREEN_SIZE_RESOLUTION);
-        resolutionSelectionProperty.set(screenResolution);
+        resolutionSelectionProperty.set(ScreenResolution.fromSize(windowWidth, windowHeight).orElse(DEFAULT_SCREEN_SIZE_RESOLUTION));
         resolutionSelectionProperty.addListener((observable, oldValue, newValue) -> {
             log.debug("resolutionSelectionProperty: {}", newValue);
             final Config currentConfig = configManager.readConfig();
@@ -125,6 +134,15 @@ public class ControlSettings extends BorderPane implements Initializable, Loadab
             stage.setWidth(newWindowWidth);
             stage.setHeight(newWindowHeight);
             FXGraphicsUtils.centerStage(stage);
+        });
+
+        final String language = startupConfig.getLanguage();
+        selectedLocaleProperty.set(SupportedLocale.fromString(language).orElse(DEFAULT_LOCALE));
+        selectedLocaleProperty.addListener((observable, oldValue, newValue) -> {
+            log.debug("selectedLocaleProperty: {}", newValue);
+            final Config currentConfig = configManager.readConfig();
+            currentConfig.setLanguage(newValue.getLocale().toString());
+            configManager.writeConfig(currentConfig);
         });
 
         pomodoroDurationProperty.set(startupConfig.getPomodoroDuration());
@@ -166,6 +184,8 @@ public class ControlSettings extends BorderPane implements Initializable, Loadab
             currentConfig.setPomodoroLoop(newValue);
             configManager.writeConfig(currentConfig);
         });
+
+
     }
 
 }

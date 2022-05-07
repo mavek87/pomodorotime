@@ -1,5 +1,6 @@
 {
   "app_name": "Pomodoro-Time",
+  "language": "en_US",
   "window_width": 1920.0,
   "window_height": 1080.0,
   "pomodoro_duration_in_min": 25.0,
