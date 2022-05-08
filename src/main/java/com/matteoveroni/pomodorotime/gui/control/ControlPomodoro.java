@@ -50,7 +50,7 @@ public class ControlPomodoro extends BorderPane implements Initializable, Loadab
     private static final String KEY_REMAINING_TIME = "field_key_remaining_time";
     private static final String KEY_ELAPSED_TIME = "field_key_elapsed_time";
     private static final String KEY_POMODORO = "key_pomodoro";
-    private static final String KEY_POMODORO_PAUSE = "control_pomodoro_alert_key_pomodoro_pause";
+    private static final String KEY_POMODORO_PAUSE = "key_pomodoro_pause";
 
     @FXML private ProgressIndicator progressIndicator;
     @FXML private BorderPane paneFormPomodoro;
@@ -226,12 +226,12 @@ public class ControlPomodoro extends BorderPane implements Initializable, Loadab
         final DialogPane dialogPane = alert.getDialogPane();
         alert.initStyle(StageStyle.UTILITY);
         alert.setTitle(localizationService.translateLocalizedString(KEY_POMODORO));
-        alert.setHeaderText(KEY_POMODORO_PAUSE);
+        alert.setHeaderText(localizationService.translateLocalizedString(KEY_POMODORO_PAUSE));
         alert.initModality(Modality.APPLICATION_MODAL);
         alert.initOwner(stage);
         alert.setOnCloseRequest(Event::consume);
         dialogPane.getScene().getWindow().setOnCloseRequest(Event::consume);
-        dialogPane.setContent(new ControlPomodoroPause(alert, pomodoroPauseDuration, resourcesService, configManager));
+        dialogPane.setContent(new ControlPomodoroPause(alert, pomodoroPauseDuration, resourcesService, configManager, resourceBundleService));
         dialogPane.setMinHeight(Region.USE_PREF_SIZE);
         dialogPane.getButtonTypes().clear();
         dialogPane.getButtonTypes().add(ButtonType.OK);

@@ -1,6 +1,7 @@
 package com.matteoveroni.pomodorotime.gui.control;
 
 import com.dlsc.formsfx.model.structure.*;
+import com.dlsc.formsfx.model.util.ResourceBundleService;
 import com.dlsc.formsfx.view.renderer.FormRenderer;
 import com.dlsc.formsfx.view.util.ColSpan;
 import com.matteoveroni.pomodorotime.configs.Config;
@@ -24,10 +25,16 @@ import java.util.ResourceBundle;
 @Slf4j
 public class ControlPomodoroPause extends BorderPane implements Initializable, LoadableControl {
 
+    private static final String KEY_POMODORO_PAUSE = "key_pomodoro_pause";
+    private static final String KEY_REMAINING_PAUSE_IN_MINUTES = "control_pomodoro_pause_field_key_remaining_time";
+    private static final String KEY_REMAINING_TIME = "field_key_remaining_time";
+    private static final String KEY_ELAPSED_TIME = "field_key_elapsed_time";
+
     @FXML private BorderPane root_border_pane;
 
     private final Alert parentAlert;
     private final ConfigManager configManager;
+    private final ResourceBundleService resourceBundleService;
     private final StringProperty elapsedTimeStringProperty = new SimpleStringProperty("0");
     private final StringProperty remainingTimeStringProperty = new SimpleStringProperty("0");
     private final double pauseDuration;
@@ -35,10 +42,11 @@ public class ControlPomodoroPause extends BorderPane implements Initializable, L
     private ChangeListener<Duration> durationTimeChangeListener;
     private Timeline timeline;
 
-    public ControlPomodoroPause(Alert parentAlert, double pauseDuration, ResourcesService resourcesService, ConfigManager configManager) {
+    public ControlPomodoroPause(Alert parentAlert, double pauseDuration, ResourcesService resourcesService, ConfigManager configManager, ResourceBundleService resourceBundleService) {
         this.parentAlert = parentAlert;
         this.pauseDuration = pauseDuration;
         this.configManager = configManager;
+        this.resourceBundleService = resourceBundleService;
         loadControl(resourcesService, Control.POMODORO_PAUSE);
     }
 
@@ -76,21 +84,21 @@ public class ControlPomodoroPause extends BorderPane implements Initializable, L
     private Form buildFormElapsedTime() {
         final DoubleField fieldPomodoroSession = Field.ofDoubleType(pauseDuration)
                 .editable(false)
-                .label("Pause (min)");
+                .label(KEY_REMAINING_PAUSE_IN_MINUTES);
         final StringField fieldElapsedTime = Field.ofStringType("0")
                 .bind(elapsedTimeStringProperty)
                 .editable(false)
                 .span(ColSpan.HALF)
-                .label("Elapsed time");
+                .label(KEY_ELAPSED_TIME);
         final StringField fieldRemainingTime = Field.ofStringType(remainingTimeStringProperty.get())
                 .bind(remainingTimeStringProperty)
                 .editable(false)
                 .span(ColSpan.HALF)
-                .label("Remaining time");
+                .label(KEY_REMAINING_TIME);
         return Form.of(
                 Section.of(fieldPomodoroSession, fieldElapsedTime, fieldRemainingTime)
-                        .title("Pomodoro pause")
+                        .title(KEY_POMODORO_PAUSE)
                         .collapsible(false)
-        );
+        ).i18n(resourceBundleService);
     }
 }
