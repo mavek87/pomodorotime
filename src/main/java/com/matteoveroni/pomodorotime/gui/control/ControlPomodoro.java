@@ -50,6 +50,7 @@ public class ControlPomodoro extends BorderPane implements Initializable, Loadab
     private static final String KEY_REMAINING_TIME = "field_key_remaining_time";
     private static final String KEY_ELAPSED_TIME = "field_key_elapsed_time";
     private static final String KEY_POMODORO = "key_pomodoro";
+    private static final String KEY_POMODORO_PAUSE = "control_pomodoro_alert_key_pomodoro_pause";
 
     @FXML private ProgressIndicator progressIndicator;
     @FXML private BorderPane paneFormPomodoro;
@@ -224,8 +225,8 @@ public class ControlPomodoro extends BorderPane implements Initializable, Loadab
         final Alert alert = new Alert(Alert.AlertType.WARNING);
         final DialogPane dialogPane = alert.getDialogPane();
         alert.initStyle(StageStyle.UTILITY);
-        alert.setTitle("Pomodoro");
-        alert.setHeaderText("Pomodoro pause");
+        alert.setTitle(localizationService.translateLocalizedString(KEY_POMODORO));
+        alert.setHeaderText(KEY_POMODORO_PAUSE);
         alert.initModality(Modality.APPLICATION_MODAL);
         alert.initOwner(stage);
         alert.setOnCloseRequest(Event::consume);
