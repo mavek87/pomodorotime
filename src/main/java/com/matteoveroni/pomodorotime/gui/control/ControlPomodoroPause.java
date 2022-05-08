@@ -54,7 +54,7 @@ public class ControlPomodoroPause extends BorderPane implements Initializable, L
     public void initialize(URL url, ResourceBundle resourceBundle) {
         log.debug("INITIALIZE " + getClass().getSimpleName());
 
-        Config currentConfig = configManager.readConfig();
+        final Config currentConfig = configManager.readConfig();
 
         durationTimeChangeListener = (observable, oldDuration, currentDuration) -> {
             elapsedTimeStringProperty.set(DurationFormatter.formatElapsedDurationTime(currentDuration));
@@ -63,7 +63,6 @@ public class ControlPomodoroPause extends BorderPane implements Initializable, L
 
         root_border_pane.setPrefWidth(currentConfig.getWindowWidth() + 50);
         root_border_pane.setPrefHeight(currentConfig.getWindowHeight());
-
         root_border_pane.setCenter(new FormRenderer(buildFormElapsedTime()));
 
         startAlertTimer();

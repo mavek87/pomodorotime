@@ -9,10 +9,10 @@ import java.net.URL;
 public interface LoadableControl {
 
     default void loadControl(ResourcesService resourcesService, Control control) {
-        URL fxmlControlURL = resourcesService.getFXMLControlURL(control.getFileName());
+        final URL fxmlControlURL = resourcesService.getFXMLControlURL(control.getFileName());
         LoggerFactory.getLogger(LoadableControl.class).info("Loading control: {}", fxmlControlURL);
 
-        FXMLLoader fxmlLoader = new FXMLLoader(fxmlControlURL);
+        final FXMLLoader fxmlLoader = new FXMLLoader(fxmlControlURL);
         fxmlLoader.setRoot(this);
         fxmlLoader.setController(this);
 

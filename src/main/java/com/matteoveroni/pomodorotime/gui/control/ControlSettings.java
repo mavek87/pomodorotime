@@ -139,6 +139,8 @@ public class ControlSettings extends BorderPane implements Initializable, Loadab
             currentConfig.setWindowWidth(newWindowWidth);
             currentConfig.setWindowHeight(newWindowHeight);
             configManager.writeConfig(currentConfig);
+            //TODO: the next line fix a bug after screen resizing, except for the resolution preference view...
+            preferencesFx.getView().setPrefSize(newWindowWidth, newWindowHeight);
             stage.setWidth(newWindowWidth);
             stage.setHeight(newWindowHeight);
             FXGraphicsUtils.centerStage(stage);
