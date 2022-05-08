@@ -23,7 +23,6 @@ public class App extends Application {
 
     private ResourcesService resourcesService;
     private ControllersFactory controllersFactory;
-    private Stage stage;
     private ConfigManager configManager;
     private Config config;
 
@@ -41,7 +40,6 @@ public class App extends Application {
 
     @Override
     public void start(Stage stage) throws Exception {
-        this.stage = stage;
         this.controllersFactory = new ControllersFactory(stage, resourcesService, configManager, new FXLocalizationServiceFactory().produce());
 
         FXMLLoader fxmlLoader = new FXMLLoader(resourcesService.getFXMLViewURL(View.APP_VIEW.getFileName()));
