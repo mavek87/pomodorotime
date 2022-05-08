@@ -23,6 +23,7 @@ import lombok.extern.slf4j.Slf4j;
 import java.net.URL;
 import java.util.Arrays;
 import java.util.Locale;
+import java.util.Optional;
 import java.util.ResourceBundle;
 
 @Slf4j
@@ -141,14 +142,17 @@ public class ControlSettings extends BorderPane implements Initializable, Loadab
         });
 
         final String language = startupConfig.getLanguage();
-        selectedLocaleProperty.set(SupportedLocale.fromString(language).orElse(DEFAULT_LOCALE));
+        final SupportedLocale supportedLocale = SupportedLocale.fromString(language).orElse(DEFAULT_LOCALE);
+        localizationService.selectedLocaleProperty().set(supportedLocale.getLocale());
+        selectedLocaleProperty.set(supportedLocale);
+
         selectedLocaleProperty.addListener((observable, oldValue, newValue) -> {
             log.debug("selectedLocaleProperty: {}", newValue);
             final Config currentConfig = configManager.readConfig();
             final Locale newLocale = newValue.getLocale();
+            localizationService.selectedLocaleProperty().set(newLocale);
             currentConfig.setLanguage(newLocale.toString());
             configManager.writeConfig(currentConfig);
-            localizationService.selectedLocaleProperty().set(newLocale);
         });
 
         pomodoroDurationProperty.set(startupConfig.getPomodoroDuration());

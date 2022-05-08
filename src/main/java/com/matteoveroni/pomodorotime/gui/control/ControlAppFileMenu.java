@@ -34,6 +34,8 @@ public class ControlAppFileMenu extends BorderPane implements LoadableControl, I
     private static final String KEY_MENU_ITEM_SETTINGS = "control_app_file_menu_key_menu_item_settings";
     private static final String KEY_MENU_ITEM_ABOUT = "control_app_file_menu_key_menu_item_about";
     private static final String KEY_MENU_ITEM_EXIT = "control_app_file_menu_key_menu_item_exit";
+    private static final String KEY_MENU_ITEM_AUTHOR = "control_app_file_menu_key_menu_item_author";
+    private static final String KEY_MENU_ITEM_WEBSITE = "control_app_file_menu_key_menu_item_website";
 
     @FXML Menu menuHelp;
     @FXML MenuItem menuItemPomodoro;
@@ -45,23 +47,25 @@ public class ControlAppFileMenu extends BorderPane implements LoadableControl, I
     private final AppViewController appViewController;
     private final ControlPomodoro controlPomodoro;
     private final ControlSettings controlSettings;
+    private final FXLocalizationService localizationService;
 
     public ControlAppFileMenu(Stage stage, AppViewController appViewController, ResourcesService resourcesService, ControlPomodoro controlPomodoro, ControlSettings controlSettings, FXLocalizationService localizationService) {
         this.stage = stage;
         this.appViewController = appViewController;
         this.controlPomodoro = controlPomodoro;
         this.controlSettings = controlSettings;
+        this.localizationService = localizationService;
         loadControl(resourcesService, Control.APP_FILE_MENU);
-        menuHelp.textProperty().bind(localizationService.getLocalizedString(KEY_MENU_HELP));
-        menuItemPomodoro.textProperty().bind(localizationService.getLocalizedString(KEY_MENU_ITEM_POMODORO));
-        menuItemSettings.textProperty().bind(localizationService.getLocalizedString(KEY_MENU_ITEM_SETTINGS));
-        menuItemAbout.textProperty().bind(localizationService.getLocalizedString(KEY_MENU_ITEM_ABOUT));
-        menuItemExit.textProperty().bind(localizationService.getLocalizedString(KEY_MENU_ITEM_EXIT));
     }
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         log.debug("INITIALIZE " + getClass().getSimpleName());
+        menuHelp.textProperty().bind(localizationService.getLocalizedString(KEY_MENU_HELP));
+        menuItemPomodoro.textProperty().bind(localizationService.getLocalizedString(KEY_MENU_ITEM_POMODORO));
+        menuItemSettings.textProperty().bind(localizationService.getLocalizedString(KEY_MENU_ITEM_SETTINGS));
+        menuItemAbout.textProperty().bind(localizationService.getLocalizedString(KEY_MENU_ITEM_ABOUT));
+        menuItemExit.textProperty().bind(localizationService.getLocalizedString(KEY_MENU_ITEM_EXIT));
     }
 
     @FXML
@@ -76,38 +80,7 @@ public class ControlAppFileMenu extends BorderPane implements LoadableControl, I
 
     @FXML
     void onActionAbout(ActionEvent event) {
-        appViewController.setOverlayPane(true);
-
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.initStyle(StageStyle.UTILITY);
-        alert.setResizable(false);
-        alert.setTitle("About");
-        alert.setHeaderText("Pomodoro-Time");
-
-        BorderPane pane = new BorderPane();
-        VBox vBox = new VBox();
-        vBox.setSpacing(15);
-        vBox.getChildren().add(new Label("Author: Matteo Veroni"));
-
-        HBox hBox = new HBox();
-        hBox.getChildren().add(new Label("Website:"));
-        Hyperlink websiteHyperlink = new Hyperlink("https://github.com/mavek87/pomodorotime");
-        websiteHyperlink.visitedProperty().addListener((observable, oldValue, newValue) -> {
-            openWebPage(websiteHyperlink.getText());
-        });
-        hBox.getChildren().add(websiteHyperlink);
-        vBox.getChildren().add(hBox);
-
-        pane.setCenter(vBox);
-
-        DialogPane alertDialogPane = alert.getDialogPane();
-        alertDialogPane.setContent(pane);
-        alertDialogPane.getScene().getWindow().setOnCloseRequest(Event::consume);
-
-        alert.initOwner(stage);
-        alert.showAndWait();
-
-        appViewController.setOverlayPane(false);
+        showAlertAbout();
     }
 
     @FXML
@@ -126,5 +99,40 @@ public class ControlAppFileMenu extends BorderPane implements LoadableControl, I
                 log.error("Error", e);
             }
         });
+    }
+
+    private void showAlertAbout() {
+        appViewController.setOverlayPane(true);
+
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.initStyle(StageStyle.UTILITY);
+        alert.setResizable(false);
+        alert.setTitle(localizationService.translateLocalizedString(KEY_MENU_ITEM_ABOUT));
+        alert.setHeaderText("Pomodoro-Time");
+
+        BorderPane pane = new BorderPane();
+        VBox vBox = new VBox();
+        vBox.setSpacing(15);
+        vBox.getChildren().add(new Label(localizationService.translateLocalizedString(KEY_MENU_ITEM_AUTHOR) + ": Matteo Veroni"));
+
+        HBox hBox = new HBox();
+        hBox.getChildren().add(new Label(localizationService.translateLocalizedString(KEY_MENU_ITEM_WEBSITE) + ":"));
+        Hyperlink websiteHyperlink = new Hyperlink("https://github.com/mavek87/pomodorotime");
+        websiteHyperlink.visitedProperty().addListener((observable, oldValue, newValue) -> {
+            openWebPage(websiteHyperlink.getText());
+        });
+        hBox.getChildren().add(websiteHyperlink);
+        vBox.getChildren().add(hBox);
+
+        pane.setCenter(vBox);
+
+        DialogPane alertDialogPane = alert.getDialogPane();
+        alertDialogPane.setContent(pane);
+        alertDialogPane.getScene().getWindow().setOnCloseRequest(Event::consume);
+
+        alert.initOwner(stage);
+        alert.showAndWait();
+
+        appViewController.setOverlayPane(false);
     }
 }

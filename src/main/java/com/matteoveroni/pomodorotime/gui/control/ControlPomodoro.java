@@ -8,6 +8,7 @@ import com.matteoveroni.pomodorotime.configs.ConfigManager;
 import com.matteoveroni.pomodorotime.gui.controllers.AppViewController;
 import com.matteoveroni.pomodorotime.gui.model.PomodoroModel;
 import com.matteoveroni.pomodorotime.services.ResourcesService;
+import com.matteoveroni.pomodorotime.services.localization.FXLocalizationService;
 import com.matteoveroni.pomodorotime.utils.DurationFormatter;
 import com.matteoveroni.pomodorotime.utils.FXGraphicsUtils;
 import javafx.animation.KeyFrame;
@@ -52,6 +53,7 @@ public class ControlPomodoro extends BorderPane implements Initializable, Loadab
     private final ResourcesService resourcesService;
     private final ConfigManager configManager;
     private final MediaPlayer mediaPlayer;
+    private final FXLocalizationService localizationService;
     private final StringProperty elapsedTimeStringProperty = new SimpleStringProperty("0");
     private final StringProperty remainingTimeStringProperty = new SimpleStringProperty("0");
 
@@ -60,13 +62,14 @@ public class ControlPomodoro extends BorderPane implements Initializable, Loadab
     private Timeline timeline;
     private Config currentConfig;
 
-    public ControlPomodoro(Stage stage, AppViewController appViewController, PomodoroModel pomodoroModel, ResourcesService resourcesService, ConfigManager configManager) {
+    public ControlPomodoro(Stage stage, AppViewController appViewController, PomodoroModel pomodoroModel, ResourcesService resourcesService, ConfigManager configManager, FXLocalizationService localizationService) {
         this.stage = stage;
         this.appViewController = appViewController;
         this.pomodoroModel = pomodoroModel;
         this.resourcesService = resourcesService;
         this.configManager = configManager;
         mediaPlayer = new MediaPlayer(new Media(resourcesService.getAlarmAudioURL().toString()));
+        this.localizationService = localizationService;
         loadControl(resourcesService, Control.POMODORO);
     }
 

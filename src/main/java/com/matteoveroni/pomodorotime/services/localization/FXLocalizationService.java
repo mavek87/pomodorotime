@@ -36,7 +36,6 @@ public class FXLocalizationService {
 
     public FXLocalizationService(Locale locale) {
         log.debug("Locale set to => " + locale);
-//        selectedLocaleProperty.addListener((observableValue, locale1, t1) -> log.error("xxxxx " + t1));
         selectedLocaleProperty.set(locale);
     }
 
@@ -93,6 +92,10 @@ public class FXLocalizationService {
      */
     public StringBinding getLocalizedString(String key) {
         return Bindings.createStringBinding(() -> translateLocalizedString(key, selectedLocaleProperty.get()), selectedLocaleProperty);
+    }
+
+    public String translateLocalizedString(String key) {
+        return translateLocalizedString(key, selectedLocaleProperty.get());
     }
 
     private String translateLocalizedString(String key, Locale locale) {

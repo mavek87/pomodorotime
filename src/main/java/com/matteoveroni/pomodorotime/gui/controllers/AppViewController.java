@@ -49,7 +49,7 @@ public class AppViewController implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        final ControlPomodoro controlPomodoro = new ControlPomodoro(stage, this, new PomodoroModel(configManager), resourcesService, configManager);
+        final ControlPomodoro controlPomodoro = new ControlPomodoro(stage, this, new PomodoroModel(configManager), resourcesService, configManager, localizationService);
         final ControlSettings controlSettings = new ControlSettings(stage, resourcesService, configManager, localizationService);
         final ControlAppFileMenu controlAppFileMenu = new ControlAppFileMenu(stage,this, resourcesService, controlPomodoro, controlSettings, localizationService);
         app_pane.setTop(controlAppFileMenu);
