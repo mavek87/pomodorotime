@@ -25,10 +25,10 @@ import java.util.ResourceBundle;
 @Slf4j
 public class ControlPomodoroPause extends BorderPane implements Initializable, LoadableControl {
 
-    private static final String KEY_POMODORO_PAUSE = "key_pomodoro_pause";
-    private static final String KEY_REMAINING_PAUSE_IN_MINUTES = "control_pomodoro_pause_field_key_remaining_time";
-    private static final String KEY_REMAINING_TIME = "field_key_remaining_time";
-    private static final String KEY_ELAPSED_TIME = "field_key_elapsed_time";
+    private static final String POMODORO_PAUSE = "POMODORO_PAUSE";
+    private static final String PAUSE_MIN = "PAUSE_MIN";
+    private static final String REMAINING_TIME = "REMAINING_TIME";
+    private static final String ELAPSED_TIME = "ELAPSED_TIME";
 
     @FXML private BorderPane root_border_pane;
 
@@ -84,20 +84,20 @@ public class ControlPomodoroPause extends BorderPane implements Initializable, L
     private Form buildFormElapsedTime() {
         final DoubleField fieldPomodoroSession = Field.ofDoubleType(pauseDuration)
                 .editable(false)
-                .label(KEY_REMAINING_PAUSE_IN_MINUTES);
+                .label(PAUSE_MIN);
         final StringField fieldElapsedTime = Field.ofStringType("0")
                 .bind(elapsedTimeStringProperty)
                 .editable(false)
                 .span(ColSpan.HALF)
-                .label(KEY_ELAPSED_TIME);
+                .label(ELAPSED_TIME);
         final StringField fieldRemainingTime = Field.ofStringType(remainingTimeStringProperty.get())
                 .bind(remainingTimeStringProperty)
                 .editable(false)
                 .span(ColSpan.HALF)
-                .label(KEY_REMAINING_TIME);
+                .label(REMAINING_TIME);
         return Form.of(
                 Section.of(fieldPomodoroSession, fieldElapsedTime, fieldRemainingTime)
-                        .title(KEY_POMODORO_PAUSE)
+                        .title(POMODORO_PAUSE)
                         .collapsible(false)
         ).i18n(resourceBundleService);
     }

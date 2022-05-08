@@ -29,13 +29,13 @@ import java.util.ResourceBundle;
 @Slf4j
 public class ControlAppFileMenu extends BorderPane implements LoadableControl, Initializable {
 
-    private static final String KEY_MENU_HELP = "control_app_file_menu_key_menu_help";
-    private static final String KEY_MENU_ITEM_POMODORO = "control_app_file_menu_key_menu_item_pomodoro";
-    private static final String KEY_MENU_ITEM_SETTINGS = "control_app_file_menu_key_menu_item_settings";
-    private static final String KEY_MENU_ITEM_ABOUT = "control_app_file_menu_key_menu_item_about";
-    private static final String KEY_MENU_ITEM_EXIT = "control_app_file_menu_key_menu_item_exit";
-    private static final String KEY_MENU_ITEM_AUTHOR = "control_app_file_menu_key_menu_item_author";
-    private static final String KEY_MENU_ITEM_WEBSITE = "control_app_file_menu_key_menu_item_website";
+    private static final String HELP = "HELP";
+    private static final String POMODORO = "POMODORO";
+    private static final String SETTINGS = "SETTINGS";
+    private static final String ABOUT = "ABOUT";
+    private static final String EXIT = "EXIT";
+    private static final String AUTHOR = "AUTHOR";
+    private static final String WEBSITE = "WEBSITE";
 
     @FXML Menu menuHelp;
     @FXML MenuItem menuItemPomodoro;
@@ -61,11 +61,11 @@ public class ControlAppFileMenu extends BorderPane implements LoadableControl, I
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         log.debug("INITIALIZE " + getClass().getSimpleName());
-        menuHelp.textProperty().bind(localizationService.getLocalizedString(KEY_MENU_HELP));
-        menuItemPomodoro.textProperty().bind(localizationService.getLocalizedString(KEY_MENU_ITEM_POMODORO));
-        menuItemSettings.textProperty().bind(localizationService.getLocalizedString(KEY_MENU_ITEM_SETTINGS));
-        menuItemAbout.textProperty().bind(localizationService.getLocalizedString(KEY_MENU_ITEM_ABOUT));
-        menuItemExit.textProperty().bind(localizationService.getLocalizedString(KEY_MENU_ITEM_EXIT));
+        menuHelp.textProperty().bind(localizationService.getLocalizedString(HELP));
+        menuItemPomodoro.textProperty().bind(localizationService.getLocalizedString(POMODORO));
+        menuItemSettings.textProperty().bind(localizationService.getLocalizedString(SETTINGS));
+        menuItemAbout.textProperty().bind(localizationService.getLocalizedString(ABOUT));
+        menuItemExit.textProperty().bind(localizationService.getLocalizedString(EXIT));
     }
 
     @FXML
@@ -107,16 +107,16 @@ public class ControlAppFileMenu extends BorderPane implements LoadableControl, I
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.initStyle(StageStyle.UTILITY);
         alert.setResizable(false);
-        alert.setTitle(localizationService.translateLocalizedString(KEY_MENU_ITEM_ABOUT));
+        alert.setTitle(localizationService.translateLocalizedString(ABOUT));
         alert.setHeaderText("Pomodoro-Time");
 
         BorderPane pane = new BorderPane();
         VBox vBox = new VBox();
         vBox.setSpacing(15);
-        vBox.getChildren().add(new Label(localizationService.translateLocalizedString(KEY_MENU_ITEM_AUTHOR) + ": Matteo Veroni"));
+        vBox.getChildren().add(new Label(localizationService.translateLocalizedString(AUTHOR) + ": Matteo Veroni"));
 
         HBox hBox = new HBox();
-        hBox.getChildren().add(new Label(localizationService.translateLocalizedString(KEY_MENU_ITEM_WEBSITE) + ":"));
+        hBox.getChildren().add(new Label(localizationService.translateLocalizedString(WEBSITE) + ":"));
         Hyperlink websiteHyperlink = new Hyperlink("https://github.com/mavek87/pomodorotime");
         websiteHyperlink.visitedProperty().addListener((observable, oldValue, newValue) -> {
             openWebPage(websiteHyperlink.getText());

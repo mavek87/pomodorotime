@@ -44,13 +44,13 @@ public class ControlPomodoro extends BorderPane implements Initializable, Loadab
     public static final int PROGRESS_INDICATOR_WIDTH = 640;
     public static final int PROGRESS_INDICATOR_HEIGHT = 480;
 
-    private static final String KEY_START_POMODORO = "control_pomodoro_tooltip_key_start_pomodoro";
-    private static final String KEY_STOP_POMODORO = "control_pomodoro_tooltip_key_stop_pomodoro";
-    private static final String KEY_SESSION_NUMBER = "field_key_session_number";
-    private static final String KEY_REMAINING_TIME = "field_key_remaining_time";
-    private static final String KEY_ELAPSED_TIME = "field_key_elapsed_time";
-    private static final String KEY_POMODORO = "key_pomodoro";
-    private static final String KEY_POMODORO_PAUSE = "key_pomodoro_pause";
+    private static final String START_POMODORO = "START_POMODORO";
+    private static final String STOP_POMODORO = "STOP_POMODORO";
+    private static final String SESSION_NUMBER = "SESSION_NUMBER";
+    private static final String REMAINING_TIME = "REMAINING_TIME";
+    private static final String ELAPSED_TIME = "ELAPSED_TIME";
+    private static final String POMODORO = "POMODORO";
+    private static final String POMODORO_PAUSE = "POMODORO_PAUSE";
 
     @FXML private ProgressIndicator progressIndicator;
     @FXML private BorderPane paneFormPomodoro;
@@ -104,8 +104,8 @@ public class ControlPomodoro extends BorderPane implements Initializable, Loadab
         paneFormPomodoro.setCenter(new FormRenderer(buildFormPomodoro()));
         bindGraphicsToModel();
 
-        btnStartTooltip.textProperty().bind(localizationService.getLocalizedString(KEY_START_POMODORO));
-        btnStopTooltip.textProperty().bind(localizationService.getLocalizedString(KEY_STOP_POMODORO));
+        btnStartTooltip.textProperty().bind(localizationService.getLocalizedString(START_POMODORO));
+        btnStopTooltip.textProperty().bind(localizationService.getLocalizedString(STOP_POMODORO));
     }
 
     @FXML
@@ -203,20 +203,20 @@ public class ControlPomodoro extends BorderPane implements Initializable, Loadab
         final IntegerField fieldPomodoroSession = Field.ofIntegerType(0)
                 .bind(pomodoroModel.getPomodoroSessionProperty())
                 .editable(false)
-                .label(KEY_SESSION_NUMBER);
+                .label(SESSION_NUMBER);
         final StringField fieldRemainingTime = Field.ofStringType(remainingTimeStringProperty.get())
                 .bind(remainingTimeStringProperty)
                 .editable(false)
                 .span(ColSpan.HALF)
-                .label(KEY_REMAINING_TIME);
+                .label(REMAINING_TIME);
         final StringField fieldElapsedTime = Field.ofStringType("0")
                 .bind(elapsedTimeStringProperty)
                 .editable(false)
                 .span(ColSpan.HALF)
-                .label(KEY_ELAPSED_TIME);
+                .label(ELAPSED_TIME);
         return Form.of(
                 Section.of(fieldPomodoroSession, fieldElapsedTime, fieldRemainingTime)
-                        .title(KEY_POMODORO)
+                        .title(POMODORO)
                         .collapsible(false)
         ).i18n(resourceBundleService);
     }
@@ -225,8 +225,8 @@ public class ControlPomodoro extends BorderPane implements Initializable, Loadab
         final Alert alert = new Alert(Alert.AlertType.WARNING);
         final DialogPane dialogPane = alert.getDialogPane();
         alert.initStyle(StageStyle.UTILITY);
-        alert.setTitle(localizationService.translateLocalizedString(KEY_POMODORO));
-        alert.setHeaderText(localizationService.translateLocalizedString(KEY_POMODORO_PAUSE));
+        alert.setTitle(localizationService.translateLocalizedString(POMODORO));
+        alert.setHeaderText(localizationService.translateLocalizedString(POMODORO_PAUSE));
         alert.initModality(Modality.APPLICATION_MODAL);
         alert.initOwner(stage);
         alert.setOnCloseRequest(Event::consume);

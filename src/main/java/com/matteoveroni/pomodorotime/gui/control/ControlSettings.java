@@ -1,5 +1,6 @@
 package com.matteoveroni.pomodorotime.gui.control;
 
+import com.dlsc.formsfx.model.util.ResourceBundleService;
 import com.dlsc.formsfx.model.validators.IntegerRangeValidator;
 import com.dlsc.preferencesfx.PreferencesFx;
 import com.dlsc.preferencesfx.model.Category;
@@ -34,7 +35,8 @@ public class ControlSettings extends BorderPane implements Initializable, Loadab
 
     private final Stage stage;
     private final ConfigManager configManager;
-    private FXLocalizationService localizationService;
+    private final FXLocalizationService localizationService;
+    private final ResourceBundleService resourceBundleService;
 
     private final DoubleProperty pomodoroDurationProperty = new SimpleDoubleProperty(30);
     private final DoubleProperty pomodoroPauseProperty = new SimpleDoubleProperty(5);
@@ -111,10 +113,11 @@ public class ControlSettings extends BorderPane implements Initializable, Loadab
             .instantPersistent(true)
             .buttonsVisibility(false);
 
-    public ControlSettings(Stage stage, ResourcesService resourcesService, ConfigManager configManager, FXLocalizationService localizationService) {
+    public ControlSettings(Stage stage, ResourcesService resourcesService, ConfigManager configManager, FXLocalizationService localizationService, ResourceBundleService resourceBundleService) {
         this.stage = stage;
         this.configManager = configManager;
         this.localizationService = localizationService;
+        this.resourceBundleService = resourceBundleService;
         loadControl(resourcesService, Control.SETTINGS);
     }
 

@@ -29,6 +29,10 @@ import java.util.ResourceBundle;
 
 public class AppViewController implements Initializable {
 
+    private static final String ARE_YOU_SURE_YOU_WANT_TO_EXIT = "ARE_YOU_SURE_YOU_WANT_TO_EXIT";
+    private static final String EXIT_CONFIRMATION = "EXIT_CONFIRMATION";
+    private static final String EXIT = "EXIT";
+
     @FXML private BorderPane root_pane;
     @FXML private StackPane stackpane;
     @FXML private BorderPane app_pane;
@@ -53,11 +57,31 @@ public class AppViewController implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         final ControlPomodoro controlPomodoro = new ControlPomodoro(stage, this, new PomodoroModel(configManager), resourcesService, configManager, localizationService, resourceBundleService);
-        final ControlSettings controlSettings = new ControlSettings(stage, resourcesService, configManager, localizationService);
-        final ControlAppFileMenu controlAppFileMenu = new ControlAppFileMenu(stage,this, resourcesService, controlPomodoro, controlSettings, localizationService);
+        final ControlSettings controlSettings = new ControlSettings(stage, resourcesService, configManager, localizationService, resourceBundleService);
+        final ControlAppFileMenu controlAppFileMenu = new ControlAppFileMenu(stage, this, resourcesService, controlPomodoro, controlSettings, localizationService);
         app_pane.setTop(controlAppFileMenu);
         pane_for_control_view.setCenter(controlPomodoro);
         setOverlayPane(false);
+
+        final EventHandler<WindowEvent> confirmCloseEventHandler = event -> {
+            setOverlayPane(true);
+            Alert alert = new Alert(Alert.AlertType.CONFIRMATION, localizationService.translateLocalizedString(ARE_YOU_SURE_YOU_WANT_TO_EXIT));
+            alert.initStyle(StageStyle.UTILITY);
+            alert.setResizable(false);
+            alert.setTitle(configManager.readConfig().getAppName());
+            alert.setHeaderText(localizationService.translateLocalizedString(EXIT_CONFIRMATION));
+            alert.initModality(Modality.APPLICATION_MODAL);
+            alert.initOwner(stage);
+            alert.getDialogPane().getScene().getWindow().setOnCloseRequest(Event::consume);
+            Button exitButton = (Button) alert.getDialogPane().lookupButton(ButtonType.OK);
+            exitButton.setText(localizationService.translateLocalizedString(EXIT));
+            Optional<ButtonType> closeButton = alert.showAndWait();
+            if (!ButtonType.OK.equals(closeButton.get())) {
+                event.consume();
+            }
+            setOverlayPane(false);
+        };
+
         stage.setOnCloseRequest(confirmCloseEventHandler);
     }
 
@@ -76,23 +100,4 @@ public class AppViewController implements Initializable {
             app_pane.toFront();
         }
     }
-
-    private final EventHandler<WindowEvent> confirmCloseEventHandler = event -> {
-        setOverlayPane(true);
-        Alert alert = new Alert(Alert.AlertType.CONFIRMATION, "Are you sure you want to quit?");
-        alert.initStyle(StageStyle.UTILITY);
-        alert.setResizable(false);
-        alert.setTitle(configManager.readConfig().getAppName());
-        alert.setHeaderText("Exit confirmation");
-        alert.initModality(Modality.APPLICATION_MODAL);
-        alert.initOwner(stage);
-        alert.getDialogPane().getScene().getWindow().setOnCloseRequest(Event::consume);
-        Button exitButton = (Button) alert.getDialogPane().lookupButton(ButtonType.OK);
-        exitButton.setText("Exit");
-        Optional<ButtonType> closeButton = alert.showAndWait();
-        if (!ButtonType.OK.equals(closeButton.get())) {
-            event.consume();
-        }
-        setOverlayPane(false);
-    };
 }
