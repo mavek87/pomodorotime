@@ -7,7 +7,7 @@ import javafx.stage.Stage;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-public class AppPreloader extends Preloader {
+public final class AppPreloader extends Preloader {
 
     @Override
     public void start(Stage stage) {
