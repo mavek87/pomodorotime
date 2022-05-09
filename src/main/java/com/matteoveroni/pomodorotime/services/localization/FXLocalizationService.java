@@ -102,7 +102,8 @@ public class FXLocalizationService {
         if (localizationData.containsKey(locale)) {
             return localizationData.get(locale).translate(key);
         } else {
-            return TRANSLATIONS_NOT_LOADED_FOR_SELECTED_LOCALE;
+            log.error("Translations not found for selected locale ({})", locale);
+            return key;
         }
     }
 }
