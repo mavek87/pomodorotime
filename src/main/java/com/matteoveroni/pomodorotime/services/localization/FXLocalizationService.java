@@ -10,7 +10,6 @@ import java.util.*;
 @Slf4j
 public class FXLocalizationService {
 
-    public static final String TRANSLATIONS_NOT_LOADED_FOR_SELECTED_LOCALE = "TRANSLATIONS_NOT_LOADED_FOR_SELECTED_LOCALE";
     public static final String NO_TRANSLATION_FOUND = "NO_TRANSLATION_FOUND";
 
     private final Map<Locale, Translations> localizationData = new HashMap<>();

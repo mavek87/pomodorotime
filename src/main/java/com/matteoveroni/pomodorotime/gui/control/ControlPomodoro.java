@@ -51,10 +51,12 @@ public class ControlPomodoro extends BorderPane implements Initializable, Loadab
     private static final String ELAPSED_TIME = "ELAPSED_TIME";
     private static final String POMODORO = "POMODORO";
     private static final String POMODORO_PAUSE = "POMODORO_PAUSE";
+    private static final String PAUSE_POMODORO = "PAUSE_POMODORO";
 
     @FXML private ProgressIndicator progressIndicator;
     @FXML private BorderPane paneFormPomodoro;
     @FXML private Button btnStart;
+    @FXML private Button btnPause;
     @FXML private Button btnStop;
 
     private final Stage stage;
@@ -96,26 +98,23 @@ public class ControlPomodoro extends BorderPane implements Initializable, Loadab
         final Tooltip btnStartTooltip = new Tooltip();
         btnStart.setTooltip(btnStartTooltip);
         btnStart.setFocusTraversable(false);
+        btnStart.setOnAction(event -> startPomodoro());
+        final Tooltip btnPauseTooltip = new Tooltip();
+        btnPause.setTooltip(btnPauseTooltip);
+        btnPause.setFocusTraversable(false);
+        btnPause.setOnAction(event -> pausePomodoro());
         final Tooltip btnStopTooltip = new Tooltip();
         btnStop.setTooltip(btnStopTooltip);
         btnStop.setFocusTraversable(false);
+        btnStop.setOnAction(event -> stopPomodoro());
         progressIndicator.setMaxSize(PROGRESS_INDICATOR_WIDTH, PROGRESS_INDICATOR_HEIGHT);
         progressIndicator.setVisible(false);
         paneFormPomodoro.setCenter(new FormRenderer(buildFormPomodoro()));
         bindGraphicsToModel();
 
         btnStartTooltip.textProperty().bind(localizationService.getLocalizedString(START_POMODORO));
+        btnPauseTooltip.textProperty().bind(localizationService.getLocalizedString(PAUSE_POMODORO));
         btnStopTooltip.textProperty().bind(localizationService.getLocalizedString(STOP_POMODORO));
-    }
-
-    @FXML
-    void onStartAction(ActionEvent event) {
-        startPomodoro();
-    }
-
-    @FXML
-    void onStopAction(ActionEvent event) {
-        stopPomodoro();
     }
 
     private void startPomodoro() {
@@ -170,6 +169,8 @@ public class ControlPomodoro extends BorderPane implements Initializable, Loadab
         timeline.currentTimeProperty().addListener(durationTimeChangeListener);
         timeline.play();
     }
+
+    private void pausePomodoro(){}
 
     private void stopPomodoro() {
         progressIndicator.setVisible(false);
