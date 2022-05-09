@@ -22,6 +22,8 @@ public class Config {
     private int numberOfSessionBeforeLongPause;
     @SerializedName("is_pomodoro_loop")
     private boolean isPomodoroLoop;
+    @SerializedName("is_pomodoro_pause_alert_fullscreen")
+    private boolean isPomodoroPauseAlertFullscreen;
 
     public String getAppName() {
         return appName;
@@ -93,5 +95,13 @@ public class Config {
 
     public void setPomodoroLoop(boolean pomodoroLoop) {
         isPomodoroLoop = pomodoroLoop;
+    }
+
+    public boolean isPomodoroPauseAlertFullscreen() {
+        return isPomodoroPauseAlertFullscreen;
+    }
+
+    public void setPomodoroPauseAlertFullscreen(boolean pomodoroPauseAlertFullscreen) {
+        isPomodoroPauseAlertFullscreen = pomodoroPauseAlertFullscreen;
     }
 }

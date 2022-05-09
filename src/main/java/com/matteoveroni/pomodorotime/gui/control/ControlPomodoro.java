@@ -139,8 +139,10 @@ public class ControlPomodoro extends BorderPane implements Initializable, Loadab
 
                     appViewController.setOverlayPane(true);
 
-                    stage.setFullScreen(true);
-                    stage.setFullScreenExitKeyCombination(KeyCombination.NO_MATCH);
+                    if (currentConfig.isPomodoroPauseAlertFullscreen()) {
+                        stage.setFullScreen(true);
+                        stage.setFullScreenExitKeyCombination(KeyCombination.NO_MATCH);
+                    }
 
                     final Alert pomodoroPauseAlert = buildPomodoroPauseAlert(pomodoroPauseDuration);
                     pomodoroPauseAlert.showAndWait();
@@ -150,7 +152,9 @@ public class ControlPomodoro extends BorderPane implements Initializable, Loadab
                     appViewController.setOverlayPane(false);
 
                     Platform.runLater(() -> {
-                        stage.setFullScreen(false);
+                        if (currentConfig.isPomodoroPauseAlertFullscreen()) {
+                            stage.setFullScreen(false);
+                        }
                         stage.setWidth(currentConfig.getWindowWidth());
                         stage.setHeight(currentConfig.getWindowHeight());
                         FXGraphicsUtils.centerStage(stage);

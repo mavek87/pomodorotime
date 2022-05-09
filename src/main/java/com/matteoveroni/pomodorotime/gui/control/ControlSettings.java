@@ -18,7 +18,6 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.Initializable;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import lombok.extern.slf4j.Slf4j;
 
@@ -38,6 +37,7 @@ public class ControlSettings extends BorderPane implements Initializable, Loadab
     private static final String LOOK_AND_FEEL = "LOOK_AND_FEEL";
     private static final String MAIN_SETTINGS = "MAIN_SETTINGS";
     private static final String REPETITIONS = "REPETITIONS";
+    private static final String PAUSE_SETTINGS = "PAUSE_SETTINGS";
     private static final String SCREEN = "SCREEN";
     private static final String LANGUAGES = "LANGUAGES";
     private static final String CHOOSE_LANGUAGE = "CHOOSE_LANGUAGE";
@@ -49,36 +49,32 @@ public class ControlSettings extends BorderPane implements Initializable, Loadab
     private static final String SESSIONS_BEFORE_LONG_PAUSE = "SESSIONS_BEFORE_LONG_PAUSE";
     private static final String POMODORO_REPETITIONS = "POMODORO_REPETITIONS";
     private static final String POMODORO_LOOP = "POMODORO_LOOP";
+    private static final String POMODORO_PAUSE = "POMODORO_PAUSE";
+    private static final String FULLSCREEN_PAUSE_ALERT = "FULLSCREEN_PAUSE_ALERT";
     private static final String SCREEN_RESOLUTION = "SCREEN_RESOLUTION";
     private static final String RESOLUTION = "RESOLUTION";
 
+    // Color
+//    private final ObjectProperty colorProperty = new SimpleObjectProperty<>(Color.PAPAYAWHIP);
+    // Integer Range
+//    private final IntegerProperty fontSize = new SimpleIntegerProperty(12);
+    //    private final BooleanProperty nightMode = new SimpleBooleanProperty(true);
     private final Stage stage;
     private final ConfigManager configManager;
     private final FXLocalizationService localizationService;
     private final ResourceBundleService resourceBundleService;
-
     private final DoubleProperty pomodoroDurationProperty = new SimpleDoubleProperty(30);
     private final DoubleProperty pomodoroPauseProperty = new SimpleDoubleProperty(5);
     private final DoubleProperty pomodoroLongPauseProperty = new SimpleDoubleProperty(15);
     private final IntegerProperty numberOfSessionsBeforeLongPauseProperty = new SimpleIntegerProperty(4);
-
     private final BooleanProperty isPomodoroLoopProperty = new SimpleBooleanProperty(true);
-
-    // Boolean
-    private final BooleanProperty nightMode = new SimpleBooleanProperty(true);
-
+    private final BooleanProperty isFullScreenPauseAlertOnProperty = new SimpleBooleanProperty(false);
     private final ObservableList<SupportedLocale> selectedLocale = FXCollections.observableArrayList(Arrays.asList(SupportedLocale.values()));
     private final ObjectProperty<SupportedLocale> selectedLocaleProperty = new SimpleObjectProperty<>(DEFAULT_LOCALE);
-
-    // Combobox, Single Selection, with ObservableList
     private final ObservableList<ScreenResolution> resolutionItems = FXCollections.observableArrayList(Arrays.asList(ScreenResolution.values()));
     private final ObjectProperty<ScreenResolution> resolutionSelectionProperty = new SimpleObjectProperty<>(DEFAULT_SCREEN_SIZE_RESOLUTION);
 
-    // Color
-    private final ObjectProperty colorProperty = new SimpleObjectProperty<>(Color.PAPAYAWHIP);
-    // Integer Range
-    private final IntegerProperty fontSize = new SimpleIntegerProperty(12);
-
+    // TODO: find a way to localize the tooltip error message
     private final Group timerGroup = Group.of(POMODORO_MAIN_SETTINGS,
             Setting.of(POMODORO_DURATION_MINUTES, pomodoroDurationProperty, 1, 60, 0),
             Setting.of(PAUSE_DURATION_MINUTES, pomodoroPauseProperty, 1, 60, 0),
@@ -92,12 +88,11 @@ public class ControlSettings extends BorderPane implements Initializable, Loadab
             Setting.of(SESSIONS_BEFORE_LONG_PAUSE, numberOfSessionsBeforeLongPauseProperty).validate(IntegerRangeValidator.atLeast(0, "Insert a positive number"))
     );
 
-    private final Group timerRepetitionsGroup = Group.of(POMODORO_REPETITIONS,
-            Setting.of(POMODORO_LOOP, isPomodoroLoopProperty)
-    );
-    private final Group timerRepetitionsSubGroup = Group.of(POMODORO_REPETITIONS,
-            Setting.of(POMODORO_LOOP, isPomodoroLoopProperty)
-    );
+    private final Group timerRepetitionsGroup = Group.of(POMODORO_REPETITIONS, Setting.of(POMODORO_LOOP, isPomodoroLoopProperty));
+    private final Group timerRepetitionsSubGroup = Group.of(POMODORO_REPETITIONS, Setting.of(POMODORO_LOOP, isPomodoroLoopProperty));
+
+    private final Group pauseGroup = Group.of(POMODORO_PAUSE, Setting.of(FULLSCREEN_PAUSE_ALERT, isFullScreenPauseAlertOnProperty));
+    private final Group pauseSubGroup = Group.of(POMODORO_PAUSE, Setting.of(FULLSCREEN_PAUSE_ALERT, isFullScreenPauseAlertOnProperty));
 
     private final Group screenResolutionGroup = Group.of(SCREEN_RESOLUTION, Setting.of(RESOLUTION, resolutionItems, resolutionSelectionProperty));
     private final Group screenResolutionSubGroup = Group.of(SCREEN_RESOLUTION, Setting.of(RESOLUTION, resolutionItems, resolutionSelectionProperty));
@@ -196,15 +191,24 @@ public class ControlSettings extends BorderPane implements Initializable, Loadab
             currentConfig.setPomodoroLoop(newValue);
             configManager.writeConfig(currentConfig);
         });
+
+        isFullScreenPauseAlertOnProperty.set(startupConfig.isPomodoroPauseAlertFullscreen());
+        isFullScreenPauseAlertOnProperty.addListener((observable, oldValue, newValue) -> {
+            log.debug("isFullScreenPauseAlertOnProperty: {}", newValue);
+            final Config currentConfig = configManager.readConfig();
+            currentConfig.setPomodoroPauseAlertFullscreen(newValue);
+            configManager.writeConfig(currentConfig);
+        });
     }
 
     private PreferencesFx buildPreferencesFX() {
         return PreferencesFx.of(ControlSettings.class,
-                        Category.of(POMODORO, timerGroup, timerRepetitionsGroup)
+                        Category.of(POMODORO, timerGroup, timerRepetitionsGroup, pauseGroup)
                                 .expand()
                                 .subCategories(
                                         Category.of(MAIN_SETTINGS, timerSubGroup),
-                                        Category.of(REPETITIONS, timerRepetitionsSubGroup)
+                                        Category.of(REPETITIONS, timerRepetitionsSubGroup),
+                                        Category.of(PAUSE_SETTINGS, pauseSubGroup)
                                 ),
                         Category.of(GRAPHICS, screenResolutionGroup)
                                 .subCategories(
