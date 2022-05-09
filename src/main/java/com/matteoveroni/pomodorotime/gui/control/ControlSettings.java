@@ -9,9 +9,9 @@ import com.dlsc.preferencesfx.model.Setting;
 import com.matteoveroni.pomodorotime.configs.Config;
 import com.matteoveroni.pomodorotime.configs.ConfigManager;
 import com.matteoveroni.pomodorotime.gui.screen.ScreenResolution;
+import com.matteoveroni.pomodorotime.services.ResourcesService;
 import com.matteoveroni.pomodorotime.services.localization.FXLocalizationService;
 import com.matteoveroni.pomodorotime.services.localization.SupportedLocale;
-import com.matteoveroni.pomodorotime.services.ResourcesService;
 import com.matteoveroni.pomodorotime.utils.FXGraphicsUtils;
 import javafx.beans.property.*;
 import javafx.collections.FXCollections;
@@ -21,10 +21,10 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import lombok.extern.slf4j.Slf4j;
+
 import java.net.URL;
 import java.util.Arrays;
 import java.util.Locale;
-import java.util.Optional;
 import java.util.ResourceBundle;
 
 @Slf4j
@@ -32,6 +32,25 @@ public class ControlSettings extends BorderPane implements Initializable, Loadab
 
     private static final ScreenResolution DEFAULT_SCREEN_SIZE_RESOLUTION = ScreenResolution.RESOLUTION_1024x768;
     private static final SupportedLocale DEFAULT_LOCALE = SupportedLocale.US;
+
+    private static final String POMODORO = "POMODORO";
+    private static final String GRAPHICS = "GRAPHICS";
+    private static final String LOOK_AND_FEEL = "LOOK_AND_FEEL";
+    private static final String MAIN_SETTINGS = "MAIN_SETTINGS";
+    private static final String REPETITIONS = "REPETITIONS";
+    private static final String SCREEN = "SCREEN";
+    private static final String LANGUAGES = "LANGUAGES";
+    private static final String CHOOSE_LANGUAGE = "CHOOSE_LANGUAGE";
+    private static final String LANGUAGE = "LANGUAGE";
+    private static final String POMODORO_MAIN_SETTINGS = "POMODORO_MAIN_SETTINGS";
+    private static final String POMODORO_DURATION_MINUTES = "POMODORO_DURATION_MINUTES";
+    private static final String PAUSE_DURATION_MINUTES = "PAUSE_DURATION_MINUTES";
+    private static final String LONG_PAUSE_DURATION_MINUTES = "LONG_PAUSE_DURATION_MINUTES";
+    private static final String SESSIONS_BEFORE_LONG_PAUSE = "SESSIONS_BEFORE_LONG_PAUSE";
+    private static final String POMODORO_REPETITIONS = "POMODORO_REPETITIONS";
+    private static final String POMODORO_LOOP = "POMODORO_LOOP";
+    private static final String SCREEN_RESOLUTION = "SCREEN_RESOLUTION";
+    private static final String RESOLUTION = "RESOLUTION";
 
     private final Stage stage;
     private final ConfigManager configManager;
@@ -60,58 +79,34 @@ public class ControlSettings extends BorderPane implements Initializable, Loadab
     // Integer Range
     private final IntegerProperty fontSize = new SimpleIntegerProperty(12);
 
-    private final Group timerGroup = Group.of("Pomodoro main settings",
-            Setting.of("Pomodoro duration (minutes)", pomodoroDurationProperty, 1, 60, 0),
-            Setting.of("Pause duration (minutes)", pomodoroPauseProperty, 1, 60, 0),
-            Setting.of("Long pause duration (minutes)", pomodoroLongPauseProperty, 1, 60, 0),
-            Setting.of("Sessions before a long pause", numberOfSessionsBeforeLongPauseProperty).validate(IntegerRangeValidator.atLeast(0, "Insert a positive number"))
+    private final Group timerGroup = Group.of(POMODORO_MAIN_SETTINGS,
+            Setting.of(POMODORO_DURATION_MINUTES, pomodoroDurationProperty, 1, 60, 0),
+            Setting.of(PAUSE_DURATION_MINUTES, pomodoroPauseProperty, 1, 60, 0),
+            Setting.of(LONG_PAUSE_DURATION_MINUTES, pomodoroLongPauseProperty, 1, 60, 0),
+            Setting.of(SESSIONS_BEFORE_LONG_PAUSE, numberOfSessionsBeforeLongPauseProperty).validate(IntegerRangeValidator.atLeast(0, "Insert a positive number"))
     );
-    private final Group timerSubGroup = Group.of("Pomodoro main settings",
-            Setting.of("Pomodoro duration (minutes)", pomodoroDurationProperty, 1, 60, 0),
-            Setting.of("Pause duration (minutes)", pomodoroPauseProperty, 1, 60, 1),
-            Setting.of("Long pause duration (minutes)", pomodoroLongPauseProperty, 1, 60, 0),
-            Setting.of("Sessions before a long pause", numberOfSessionsBeforeLongPauseProperty).validate(IntegerRangeValidator.atLeast(0, "Insert a positive number"))
-    );
-
-    private final Group timerRepetitionsGroup = Group.of("Pomodoro repetitions",
-            Setting.of("Pomodoro loop", isPomodoroLoopProperty)
-    );
-    private final Group timerRepetitionsSubGroup = Group.of("Pomodoro repetitions",
-            Setting.of("Pomodoro loop", isPomodoroLoopProperty)
+    private final Group timerSubGroup = Group.of(POMODORO_MAIN_SETTINGS,
+            Setting.of(POMODORO_DURATION_MINUTES, pomodoroDurationProperty, 1, 60, 0),
+            Setting.of(PAUSE_DURATION_MINUTES, pomodoroPauseProperty, 1, 60, 1),
+            Setting.of(LONG_PAUSE_DURATION_MINUTES, pomodoroLongPauseProperty, 1, 60, 0),
+            Setting.of(SESSIONS_BEFORE_LONG_PAUSE, numberOfSessionsBeforeLongPauseProperty).validate(IntegerRangeValidator.atLeast(0, "Insert a positive number"))
     );
 
-    private final Group screenResolutionGroup = Group.of("Screen resolution", Setting.of("Resolution", resolutionItems, resolutionSelectionProperty));
-    private final Group screenResolutionSubGroup = Group.of("Screen resolution", Setting.of("Resolution", resolutionItems, resolutionSelectionProperty));
+    private final Group timerRepetitionsGroup = Group.of(POMODORO_REPETITIONS,
+            Setting.of(POMODORO_LOOP, isPomodoroLoopProperty)
+    );
+    private final Group timerRepetitionsSubGroup = Group.of(POMODORO_REPETITIONS,
+            Setting.of(POMODORO_LOOP, isPomodoroLoopProperty)
+    );
 
-    private final Group themesGroup = Group.of("Themes", Setting.of("Night Mode", nightMode));
-    private final Group themesSubGroup = Group.of("Themes", Setting.of("Night Mode", nightMode));
+    private final Group screenResolutionGroup = Group.of(SCREEN_RESOLUTION, Setting.of(RESOLUTION, resolutionItems, resolutionSelectionProperty));
+    private final Group screenResolutionSubGroup = Group.of(SCREEN_RESOLUTION, Setting.of(RESOLUTION, resolutionItems, resolutionSelectionProperty));
 
-    private final Group textGroup = Group.of("Text", Setting.of("Font Color", colorProperty));
-    private final Group textSubGroup = Group.of("Text", Setting.of("Font Size", fontSize, 6, 36));
-
-    private final PreferencesFx preferencesFx = PreferencesFx.of(ControlSettings.class,
-                    Category.of("Pomodoro timer", timerGroup, timerRepetitionsGroup)
-                            .expand()
-                            .subCategories(
-                                    Category.of("Main settings", timerSubGroup),
-                                    Category.of("Repetitions", timerRepetitionsSubGroup)
-                            ),
-                    Category.of("Graphics", screenResolutionGroup, themesGroup, textGroup)
-                            .subCategories(
-                                    Category.of("Screen", screenResolutionSubGroup),
-                                    Category.of("Look and feel", themesSubGroup, textSubGroup)
-                            ),
-                    Category.of("Languages",
-                            Group.of("Choose language",
-                                    Setting.of("Language", selectedLocale, selectedLocaleProperty)
-                            )
-                    )
-            )
-            .persistWindowState(false)
-            .saveSettings(false)
-            .debugHistoryMode(true)
-            .instantPersistent(true)
-            .buttonsVisibility(false);
+//    private final Group themesGroup = Group.of("Themes", Setting.of("Night Mode", nightMode));
+//    private final Group themesSubGroup = Group.of("Themes", Setting.of("Night Mode", nightMode));
+//
+//    private final Group textGroup = Group.of("Text", Setting.of("Font Color", colorProperty));
+//    private final Group textSubGroup = Group.of("Text", Setting.of("Font Size", fontSize, 6, 36));
 
     public ControlSettings(Stage stage, ResourcesService resourcesService, ConfigManager configManager, FXLocalizationService localizationService, ResourceBundleService resourceBundleService) {
         this.stage = stage;
@@ -124,6 +119,8 @@ public class ControlSettings extends BorderPane implements Initializable, Loadab
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         log.debug("INITIALIZE " + getClass().getSimpleName());
+
+        final PreferencesFx preferencesFx = buildPreferencesFX();
         setCenter(preferencesFx.getView());
 
         final Config startupConfig = configManager.readConfig();
@@ -199,8 +196,33 @@ public class ControlSettings extends BorderPane implements Initializable, Loadab
             currentConfig.setPomodoroLoop(newValue);
             configManager.writeConfig(currentConfig);
         });
+    }
 
-
+    private PreferencesFx buildPreferencesFX() {
+        return PreferencesFx.of(ControlSettings.class,
+                        Category.of(POMODORO, timerGroup, timerRepetitionsGroup)
+                                .expand()
+                                .subCategories(
+                                        Category.of(MAIN_SETTINGS, timerSubGroup),
+                                        Category.of(REPETITIONS, timerRepetitionsSubGroup)
+                                ),
+                        Category.of(GRAPHICS, screenResolutionGroup)
+                                .subCategories(
+                                        Category.of(SCREEN, screenResolutionSubGroup),
+                                        Category.of(LOOK_AND_FEEL)
+                                ),
+                        Category.of(LANGUAGES,
+                                Group.of(CHOOSE_LANGUAGE,
+                                        Setting.of(LANGUAGE, selectedLocale, selectedLocaleProperty)
+                                )
+                        )
+                )
+                .i18n(resourceBundleService)
+                .persistWindowState(false)
+                .saveSettings(false)
+                .debugHistoryMode(true)
+                .instantPersistent(true)
+                .buttonsVisibility(false);
     }
 
 }
