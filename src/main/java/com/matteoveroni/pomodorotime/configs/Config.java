@@ -20,10 +20,18 @@ public class Config {
     private double pomodoroLongPauseDuration;
     @SerializedName("number_of_sessions_before_long_pause")
     private int numberOfSessionBeforeLongPause;
+    @SerializedName("allow_interrupt_pomodoro")
+    private boolean allowInterruptPomodoro;
+    @SerializedName("allow_abort_pomodoro")
+    private boolean allowAbortPomodoro;
     @SerializedName("is_pomodoro_loop")
     private boolean isPomodoroLoop;
     @SerializedName("is_pomodoro_pause_alert_fullscreen")
     private boolean isPomodoroPauseAlertFullscreen;
+    @SerializedName("allow_interrupt_pause")
+    private boolean allowInterruptPause;
+    @SerializedName("allow_abort_pause")
+    private boolean allowAbortPause;
 
     public String getAppName() {
         return appName;
@@ -89,6 +97,22 @@ public class Config {
         this.numberOfSessionBeforeLongPause = numberOfSessionBeforeLongPause;
     }
 
+    public boolean isAllowInterruptPomodoro() {
+        return allowInterruptPomodoro;
+    }
+
+    public void setAllowInterruptPomodoro(boolean allowInterruptPomodoro) {
+        this.allowInterruptPomodoro = allowInterruptPomodoro;
+    }
+
+    public boolean isAllowAbortPomodoro() {
+        return allowAbortPomodoro;
+    }
+
+    public void setAllowAbortPomodoro(boolean allowAbortPomodoro) {
+        this.allowAbortPomodoro = allowAbortPomodoro;
+    }
+
     public boolean isPomodoroLoop() {
         return isPomodoroLoop;
     }
@@ -103,5 +127,21 @@ public class Config {
 
     public void setPomodoroPauseAlertFullscreen(boolean pomodoroPauseAlertFullscreen) {
         isPomodoroPauseAlertFullscreen = pomodoroPauseAlertFullscreen;
+    }
+
+    public boolean isAllowInterruptPause() {
+        return allowInterruptPause;
+    }
+
+    public void setAllowInterruptPause(boolean allowInterruptPause) {
+        this.allowInterruptPause = allowInterruptPause;
+    }
+
+    public boolean isAllowAbortPause() {
+        return allowAbortPause;
+    }
+
+    public void setAllowAbortPause(boolean allowAbortPause) {
+        this.allowAbortPause = allowAbortPause;
     }
 }
