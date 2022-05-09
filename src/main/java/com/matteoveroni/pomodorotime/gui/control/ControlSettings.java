@@ -158,6 +158,9 @@ public class ControlSettings extends BorderPane implements Initializable, Loadab
             FXGraphicsUtils.centerStage(stage);
         });
 
+
+        // TODO: distribute without a default locale in the config file. If the locale is not there try to use the system locale.
+        // Otherwise if not found use the dafault; english (us)
         final String language = startupConfig.getLanguage();
         final SupportedLocale supportedLocale = SupportedLocale.fromString(language).orElse(DEFAULT_LOCALE);
         localizationService.selectedLocaleProperty().set(supportedLocale.getLocale());
