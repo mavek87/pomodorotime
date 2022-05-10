@@ -18,6 +18,8 @@ import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.beans.value.ChangeListener;
@@ -81,6 +83,7 @@ public class ControlPomodoro extends BorderPane implements Initializable, Loadab
     private final ResourceBundleService resourceBundleService;
     private final StringProperty elapsedTimeStringProperty = new SimpleStringProperty("0");
     private final StringProperty remainingTimeStringProperty = new SimpleStringProperty("0");
+    private final BooleanProperty isPomodoroPausedProperty = new SimpleBooleanProperty(false);
 
     private ChangeListener<Duration> durationTimeChangeListener;
     private PomodoroModel pomodoroModel;
@@ -146,67 +149,73 @@ public class ControlPomodoro extends BorderPane implements Initializable, Loadab
     }
 
     private void startPomodoro() {
-        progressIndicator.setVisible(true);
+        if (isPomodoroPausedProperty.get()) {
+            timeline.play();
+            isPomodoroPausedProperty.set(false);
+        } else {
+            progressIndicator.setVisible(true);
 
-        if (pomodoroModel.isPomodoroCompleted()) {
-            rebuildPomodoro();
-        }
+            if (pomodoroModel.isPomodoroCompleted()) {
+                rebuildPomodoro();
+            }
 
-        final double pomodoroPauseDuration = pomodoroModel.start();
-        log.debug("pomodoro pause duration: " + pomodoroPauseDuration);
+            final double pomodoroPauseDuration = pomodoroModel.start();
+            log.debug("pomodoro pause duration: " + pomodoroPauseDuration);
 
-        currentConfig = configManager.readConfig();
-        timeline = new Timeline(
-                new KeyFrame(Duration.ZERO, new KeyValue(progressIndicator.progressProperty(), 0)),
-                new KeyFrame(Duration.minutes(currentConfig.getPomodoroDuration()), onCompletionEvent -> Platform.runLater(() -> {
-                    mediaPlayer.play();
+            currentConfig = configManager.readConfig();
+            timeline = new Timeline(
+                    new KeyFrame(Duration.ZERO, new KeyValue(progressIndicator.progressProperty(), 0)),
+                    new KeyFrame(Duration.minutes(currentConfig.getPomodoroDuration()), onCompletionEvent -> Platform.runLater(() -> {
+                        mediaPlayer.play();
 
-                    stopPomodoro();
-                    progressIndicator.setVisible(true);
+                        stopPomodoro();
+                        progressIndicator.setVisible(true);
 
-                    appViewController.setOverlayPane(true);
+                        appViewController.setOverlayPane(true);
 
-                    if (currentConfig.isPomodoroPauseAlertFullscreen()) {
-                        stage.setFullScreen(true);
-                        stage.setFullScreenExitKeyCombination(KeyCombination.NO_MATCH);
-                    }
-
-                    final Alert pomodoroPauseAlert = buildPomodoroPauseAlert(pomodoroPauseDuration);
-                    pomodoroPauseAlert.showAndWait();
-
-                    mediaPlayer.stop();
-
-                    appViewController.setOverlayPane(false);
-
-                    Platform.runLater(() -> {
                         if (currentConfig.isPomodoroPauseAlertFullscreen()) {
-                            stage.setFullScreen(false);
+                            stage.setFullScreen(true);
+                            stage.setFullScreenExitKeyCombination(KeyCombination.NO_MATCH);
                         }
-                        stage.setWidth(currentConfig.getWindowWidth());
-                        stage.setHeight(currentConfig.getWindowHeight());
-                        FXGraphicsUtils.centerStage(stage);
-                    });
 
-                    if (pomodoroModel.isPomodoroCompleted()) {
-                        rebuildPomodoro();
-                    } else {
-                        startPomodoro();
-                    }
-                }), new KeyValue(progressIndicator.progressProperty(), 1))
-        );
-        timeline.currentTimeProperty().addListener(durationTimeChangeListener);
-        timeline.play();
+                        final Alert pomodoroPauseAlert = buildPomodoroPauseAlert(pomodoroPauseDuration);
+                        pomodoroPauseAlert.showAndWait();
+
+                        mediaPlayer.stop();
+
+                        appViewController.setOverlayPane(false);
+
+                        Platform.runLater(() -> {
+                            if (currentConfig.isPomodoroPauseAlertFullscreen()) {
+                                stage.setFullScreen(false);
+                            }
+                            stage.setWidth(currentConfig.getWindowWidth());
+                            stage.setHeight(currentConfig.getWindowHeight());
+                            FXGraphicsUtils.centerStage(stage);
+                        });
+
+                        if (pomodoroModel.isPomodoroCompleted()) {
+                            rebuildPomodoro();
+                        } else {
+                            startPomodoro();
+                        }
+                    }), new KeyValue(progressIndicator.progressProperty(), 1))
+            );
+            timeline.currentTimeProperty().addListener(durationTimeChangeListener);
+            timeline.play();
+        }
     }
 
     private void pausePomodoro() {
+        isPomodoroPausedProperty.set(true);
+        timeline.pause();
     }
 
     private void stopPomodoro() {
+        isPomodoroPausedProperty.set(false);
         progressIndicator.setVisible(false);
-        if (timeline != null) {
-            timeline.stop();
-            timeline.currentTimeProperty().removeListener(durationTimeChangeListener);
-        }
+        timeline.stop();
+        timeline.currentTimeProperty().removeListener(durationTimeChangeListener);
         if (pomodoroModel.isPomodoroRunning() && !pomodoroModel.isPomodoroCompleted()) {
             pomodoroModel.stop();
         }
@@ -222,7 +231,7 @@ public class ControlPomodoro extends BorderPane implements Initializable, Loadab
     private void bindGraphicsToModel() {
         paneFormPomodoro.visibleProperty().bind(pomodoroModel.getIsPomodoroRunningProperty());
         btnStart.disableProperty().bind(pomodoroModel.getIsPomodoroCompletedProperty());
-        btnStart.disableProperty().bind(pomodoroModel.getIsPomodoroRunningProperty());
+        btnStart.disableProperty().bind(Bindings.and(pomodoroModel.getIsPomodoroRunningProperty(), isPomodoroPausedProperty.not()));
         btnPause.disableProperty().bind(pomodoroModel.getIsPomodoroCompletedProperty());
         btnPause.disableProperty().bind(Bindings.not(pomodoroModel.getIsPomodoroRunningProperty()));
         btnStop.disableProperty().bind(pomodoroModel.getIsPomodoroCompletedProperty());
