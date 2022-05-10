@@ -6,6 +6,7 @@ import com.dlsc.preferencesfx.PreferencesFx;
 import com.dlsc.preferencesfx.model.Category;
 import com.dlsc.preferencesfx.model.Group;
 import com.dlsc.preferencesfx.model.Setting;
+import com.matteoveroni.pomodorotime.Settings;
 import com.matteoveroni.pomodorotime.configs.Config;
 import com.matteoveroni.pomodorotime.configs.ConfigManager;
 import com.matteoveroni.pomodorotime.gui.screen.ScreenResolution;
@@ -13,24 +14,20 @@ import com.matteoveroni.pomodorotime.services.ResourcesService;
 import com.matteoveroni.pomodorotime.services.localization.FXLocalizationService;
 import com.matteoveroni.pomodorotime.services.localization.SupportedLocale;
 import com.matteoveroni.pomodorotime.utils.FXGraphicsUtils;
-import javafx.beans.property.*;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.fxml.Initializable;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 import lombok.extern.slf4j.Slf4j;
 
 import java.net.URL;
-import java.util.Arrays;
 import java.util.Locale;
 import java.util.ResourceBundle;
 
+import static com.matteoveroni.pomodorotime.Settings.DEFAULT_LOCALE;
+import static com.matteoveroni.pomodorotime.Settings.DEFAULT_SCREEN_SIZE_RESOLUTION;
+
 @Slf4j
 public class ControlSettings extends BorderPane implements Initializable, LoadableControl {
-
-    private static final ScreenResolution DEFAULT_SCREEN_SIZE_RESOLUTION = ScreenResolution.RESOLUTION_1024x768;
-    private static final SupportedLocale DEFAULT_LOCALE = SupportedLocale.US;
 
     private static final String POMODORO = "POMODORO";
     private static final String GRAPHICS = "GRAPHICS";
@@ -65,57 +62,9 @@ public class ControlSettings extends BorderPane implements Initializable, Loadab
     //    private final BooleanProperty nightMode = new SimpleBooleanProperty(true);
     private final Stage stage;
     private final ConfigManager configManager;
+    private final Settings settings;
     private final FXLocalizationService localizationService;
     private final ResourceBundleService resourceBundleService;
-    private final DoubleProperty pomodoroDurationProperty = new SimpleDoubleProperty(30);
-    private final DoubleProperty pomodoroPauseProperty = new SimpleDoubleProperty(5);
-    private final DoubleProperty pomodoroLongPauseProperty = new SimpleDoubleProperty(15);
-    private final IntegerProperty numberOfSessionsBeforeLongPauseProperty = new SimpleIntegerProperty(4);
-    private final BooleanProperty isPomodoroLoopProperty = new SimpleBooleanProperty(true);
-    private final BooleanProperty allowInterruptPomodoroProperty = new SimpleBooleanProperty(false);
-    private final BooleanProperty allowAbortPomodoroProperty = new SimpleBooleanProperty(false);
-    private final BooleanProperty isFullScreenPauseAlertOnProperty = new SimpleBooleanProperty(false);
-    private final BooleanProperty allowInterruptPauseProperty = new SimpleBooleanProperty(false);
-    private final BooleanProperty allowAbortPauseProperty = new SimpleBooleanProperty(false);
-    private final ObservableList<SupportedLocale> selectedLocale = FXCollections.observableArrayList(Arrays.asList(SupportedLocale.values()));
-    private final ObjectProperty<SupportedLocale> selectedLocaleProperty = new SimpleObjectProperty<>(DEFAULT_LOCALE);
-    private final ObservableList<ScreenResolution> resolutionItems = FXCollections.observableArrayList(Arrays.asList(ScreenResolution.values()));
-    private final ObjectProperty<ScreenResolution> resolutionSelectionProperty = new SimpleObjectProperty<>(DEFAULT_SCREEN_SIZE_RESOLUTION);
-
-    // TODO: find a way to localize the tooltip error message
-    private final Group pomodoroGroup = Group.of(POMODORO_MAIN_SETTINGS,
-            Setting.of(POMODORO_DURATION_MINUTES, pomodoroDurationProperty, 1, 60, 0),
-            Setting.of(PAUSE_DURATION_MINUTES, pomodoroPauseProperty, 1, 60, 0),
-            Setting.of(LONG_PAUSE_DURATION_MINUTES, pomodoroLongPauseProperty, 1, 60, 0),
-            Setting.of(SESSIONS_BEFORE_LONG_PAUSE, numberOfSessionsBeforeLongPauseProperty).validate(IntegerRangeValidator.atLeast(0, "Insert a positive number")),
-            Setting.of(ALLOW_INTERRUPT_POMODORO, allowInterruptPomodoroProperty),
-            Setting.of(ALLOW_ABORT_POMODORO, allowAbortPomodoroProperty)
-    );
-    private final Group pomodoroSubGroup = Group.of(POMODORO_MAIN_SETTINGS,
-            Setting.of(POMODORO_DURATION_MINUTES, pomodoroDurationProperty, 1, 60, 0),
-            Setting.of(PAUSE_DURATION_MINUTES, pomodoroPauseProperty, 1, 60, 1),
-            Setting.of(LONG_PAUSE_DURATION_MINUTES, pomodoroLongPauseProperty, 1, 60, 0),
-            Setting.of(SESSIONS_BEFORE_LONG_PAUSE, numberOfSessionsBeforeLongPauseProperty).validate(IntegerRangeValidator.atLeast(0, "Insert a positive number")),
-            Setting.of(ALLOW_INTERRUPT_POMODORO, allowInterruptPomodoroProperty),
-            Setting.of(ALLOW_ABORT_POMODORO, allowAbortPomodoroProperty)
-    );
-
-    private final Group pomodoroRepetitionsGroup = Group.of(POMODORO_REPETITIONS, Setting.of(POMODORO_LOOP, isPomodoroLoopProperty));
-    private final Group pomodoroRepetitionsSubGroup = Group.of(POMODORO_REPETITIONS, Setting.of(POMODORO_LOOP, isPomodoroLoopProperty));
-
-    private final Group pomodoroPauseGroup = Group.of(POMODORO_PAUSE,
-            Setting.of(ALLOW_INTERRUPT_PAUSE, allowInterruptPauseProperty),
-            Setting.of(ALLOW_ABORT_PAUSE, allowAbortPauseProperty),
-            Setting.of(FULLSCREEN_PAUSE_ALERT, isFullScreenPauseAlertOnProperty)
-    );
-    private final Group pomodoroPauseSubGroup = Group.of(POMODORO_PAUSE,
-            Setting.of(ALLOW_INTERRUPT_PAUSE, allowInterruptPauseProperty),
-            Setting.of(ALLOW_ABORT_PAUSE, allowAbortPauseProperty),
-            Setting.of(FULLSCREEN_PAUSE_ALERT, isFullScreenPauseAlertOnProperty)
-    );
-
-    private final Group screenResolutionGroup = Group.of(SCREEN_RESOLUTION, Setting.of(RESOLUTION, resolutionItems, resolutionSelectionProperty));
-    private final Group screenResolutionSubGroup = Group.of(SCREEN_RESOLUTION, Setting.of(RESOLUTION, resolutionItems, resolutionSelectionProperty));
 
 //    private final Group themesGroup = Group.of("Themes", Setting.of("Night Mode", nightMode));
 //    private final Group themesSubGroup = Group.of("Themes", Setting.of("Night Mode", nightMode));
@@ -123,9 +72,10 @@ public class ControlSettings extends BorderPane implements Initializable, Loadab
 //    private final Group textGroup = Group.of("Text", Setting.of("Font Color", colorProperty));
 //    private final Group textSubGroup = Group.of("Text", Setting.of("Font Size", fontSize, 6, 36));
 
-    public ControlSettings(Stage stage, ResourcesService resourcesService, ConfigManager configManager, FXLocalizationService localizationService, ResourceBundleService resourceBundleService) {
+    public ControlSettings(Stage stage, ResourcesService resourcesService, ConfigManager configManager, Settings settings, FXLocalizationService localizationService, ResourceBundleService resourceBundleService) {
         this.stage = stage;
         this.configManager = configManager;
+        this.settings = settings;
         this.localizationService = localizationService;
         this.resourceBundleService = resourceBundleService;
         loadControl(resourcesService, Control.SETTINGS);
@@ -138,12 +88,7 @@ public class ControlSettings extends BorderPane implements Initializable, Loadab
         final PreferencesFx preferencesFx = buildPreferencesFX();
         setCenter(preferencesFx.getView());
 
-        final Config startupConfig = configManager.readConfig();
-
-        final double windowWidth = startupConfig.getWindowWidth();
-        final double windowHeight = startupConfig.getWindowHeight();
-        resolutionSelectionProperty.set(ScreenResolution.fromSize(windowWidth, windowHeight).orElse(DEFAULT_SCREEN_SIZE_RESOLUTION));
-        resolutionSelectionProperty.addListener((observable, oldValue, newValue) -> {
+        settings.resolutionSelectionProperty().addListener((observable, oldValue, newValue) -> {
             log.debug("resolutionSelectionProperty: {}", newValue);
             final Config currentConfig = configManager.readConfig();
             final double newWindowWidth = newValue.getWidth();
@@ -157,16 +102,7 @@ public class ControlSettings extends BorderPane implements Initializable, Loadab
             stage.setHeight(newWindowHeight);
             FXGraphicsUtils.centerStage(stage);
         });
-
-
-        // TODO: distribute without a default locale in the config file. If the locale is not there try to use the system locale.
-        // Otherwise if not found use the dafault; english (us)
-        final String language = startupConfig.getLanguage();
-        final SupportedLocale supportedLocale = SupportedLocale.fromString(language).orElse(DEFAULT_LOCALE);
-        localizationService.selectedLocaleProperty().set(supportedLocale.getLocale());
-        selectedLocaleProperty.set(supportedLocale);
-
-        selectedLocaleProperty.addListener((observable, oldValue, newValue) -> {
+        settings.selectedLocaleProperty().addListener((observable, oldValue, newValue) -> {
             log.debug("selectedLocaleProperty: {}", newValue);
             final Config currentConfig = configManager.readConfig();
             final Locale newLocale = newValue.getLocale();
@@ -174,90 +110,105 @@ public class ControlSettings extends BorderPane implements Initializable, Loadab
             currentConfig.setLanguage(newLocale.toString());
             configManager.writeConfig(currentConfig);
         });
-
-        pomodoroDurationProperty.set(startupConfig.getPomodoroDuration());
-        pomodoroDurationProperty.addListener((observable, oldValue, newValue) -> {
+        settings.pomodoroDurationProperty().addListener((observable, oldValue, newValue) -> {
             log.debug("pomodoroDurationProperty: {}", newValue);
             final Config currentConfig = configManager.readConfig();
             currentConfig.setPomodoroDuration(newValue.intValue());
             configManager.writeConfig(currentConfig);
         });
 
-        pomodoroPauseProperty.set(startupConfig.getPomodoroPauseDuration());
-        pomodoroPauseProperty.addListener((observable, oldValue, newValue) -> {
+        settings.pomodoroPauseProperty().addListener((observable, oldValue, newValue) -> {
             log.debug("pomodoroPauseProperty: {}", newValue);
             final Config currentConfig = configManager.readConfig();
             currentConfig.setPomodoroPauseDuration(newValue.intValue());
             configManager.writeConfig(currentConfig);
         });
-
-        pomodoroLongPauseProperty.set(startupConfig.getPomodoroLongPauseDuration());
-        pomodoroLongPauseProperty.addListener((observable, oldValue, newValue) -> {
+        settings.pomodoroLongPauseProperty().addListener((observable, oldValue, newValue) -> {
             log.debug("pomodoroLongPauseProperty: {}", newValue);
             final Config currentConfig = configManager.readConfig();
             currentConfig.setPomodoroLongPauseDuration(newValue.intValue());
             configManager.writeConfig(currentConfig);
         });
-
-        numberOfSessionsBeforeLongPauseProperty.set(startupConfig.getNumberOfSessionBeforeLongPause());
-        numberOfSessionsBeforeLongPauseProperty.addListener((observable, oldValue, newValue) -> {
+        settings.numberOfSessionsBeforeLongPauseProperty().addListener((observable, oldValue, newValue) -> {
             log.debug("numberOfSessionsBeforeLongPauseProperty: {}", newValue);
             final Config currentConfig = configManager.readConfig();
             currentConfig.setNumberOfSessionBeforeLongPause(newValue.intValue());
             configManager.writeConfig(currentConfig);
         });
-
-        allowInterruptPomodoroProperty.set(startupConfig.isAllowInterruptPomodoro());
-        allowInterruptPomodoroProperty.addListener((observable, oldValue, newValue) -> {
+        settings.allowInterruptPomodoroProperty().addListener((observable, oldValue, newValue) -> {
             log.debug("allowInterruptPomodoroProperty: {}", newValue);
             final Config currentConfig = configManager.readConfig();
             currentConfig.setAllowInterruptPomodoro(newValue);
             configManager.writeConfig(currentConfig);
         });
-
-        allowAbortPomodoroProperty.set(startupConfig.isAllowAbortPomodoro());
-        allowAbortPomodoroProperty.addListener((observable, oldValue, newValue) -> {
+        settings.allowAbortPomodoroProperty().addListener((observable, oldValue, newValue) -> {
             log.debug("allowAbortPomodoroProperty: {}", newValue);
             final Config currentConfig = configManager.readConfig();
             currentConfig.setAllowAbortPomodoro(newValue);
             configManager.writeConfig(currentConfig);
         });
-
-        isPomodoroLoopProperty.set(startupConfig.isPomodoroLoop());
-        isPomodoroLoopProperty.addListener((observable, oldValue, newValue) -> {
+        settings.isPomodoroLoopProperty().addListener((observable, oldValue, newValue) -> {
             log.debug("isPomodoroLoopProperty: {}", newValue);
             final Config currentConfig = configManager.readConfig();
             currentConfig.setPomodoroLoop(newValue);
             configManager.writeConfig(currentConfig);
         });
-
-        isFullScreenPauseAlertOnProperty.set(startupConfig.isPomodoroPauseAlertFullscreen());
-        isFullScreenPauseAlertOnProperty.addListener((observable, oldValue, newValue) -> {
+        settings.isFullScreenPauseAlertOnProperty().addListener((observable, oldValue, newValue) -> {
             log.debug("isFullScreenPauseAlertOnProperty: {}", newValue);
             final Config currentConfig = configManager.readConfig();
             currentConfig.setPomodoroPauseAlertFullscreen(newValue);
             configManager.writeConfig(currentConfig);
         });
-
-        allowInterruptPauseProperty.set(startupConfig.isAllowInterruptPause());
-        allowInterruptPauseProperty.addListener((observable, oldValue, newValue) -> {
+        settings.allowInterruptPauseProperty().addListener((observable, oldValue, newValue) -> {
             log.debug("allowInterruptPauseProperty: {}", newValue);
             final Config currentConfig = configManager.readConfig();
             currentConfig.setAllowInterruptPause(newValue);
             configManager.writeConfig(currentConfig);
         });
-
-        allowAbortPauseProperty.set(startupConfig.isAllowAbortPause());
-        allowAbortPauseProperty.addListener((observable, oldValue, newValue) -> {
+        settings.allowAbortPauseProperty().addListener((observable, oldValue, newValue) -> {
             log.debug("allowAbortPauseProperty: {}", newValue);
             final Config currentConfig = configManager.readConfig();
             currentConfig.setAllowAbortPause(newValue);
             configManager.writeConfig(currentConfig);
         });
-
     }
 
     private PreferencesFx buildPreferencesFX() {
+        // TODO: find a way to localize the tooltip error message
+        final Group pomodoroGroup = Group.of(POMODORO_MAIN_SETTINGS,
+                Setting.of(POMODORO_DURATION_MINUTES, settings.pomodoroDurationProperty(), 1, 60, 0),
+                Setting.of(PAUSE_DURATION_MINUTES, settings.pomodoroPauseProperty(), 1, 60, 0),
+                Setting.of(LONG_PAUSE_DURATION_MINUTES, settings.pomodoroLongPauseProperty(), 1, 60, 0),
+                Setting.of(SESSIONS_BEFORE_LONG_PAUSE, settings.numberOfSessionsBeforeLongPauseProperty()).validate(IntegerRangeValidator.atLeast(0, "Insert a positive number")),
+                Setting.of(ALLOW_INTERRUPT_POMODORO, settings.allowInterruptPomodoroProperty()),
+                Setting.of(ALLOW_ABORT_POMODORO, settings.allowAbortPomodoroProperty())
+        );
+        final Group pomodoroSubGroup = Group.of(POMODORO_MAIN_SETTINGS,
+                Setting.of(POMODORO_DURATION_MINUTES, settings.pomodoroDurationProperty(), 1, 60, 0),
+                Setting.of(PAUSE_DURATION_MINUTES, settings.pomodoroPauseProperty(), 1, 60, 1),
+                Setting.of(LONG_PAUSE_DURATION_MINUTES, settings.pomodoroLongPauseProperty(), 1, 60, 0),
+                Setting.of(SESSIONS_BEFORE_LONG_PAUSE, settings.numberOfSessionsBeforeLongPauseProperty()).validate(IntegerRangeValidator.atLeast(0, "Insert a positive number")),
+                Setting.of(ALLOW_INTERRUPT_POMODORO, settings.allowInterruptPomodoroProperty()),
+                Setting.of(ALLOW_ABORT_POMODORO, settings.allowAbortPomodoroProperty())
+        );
+
+        final Group pomodoroRepetitionsGroup = Group.of(POMODORO_REPETITIONS, Setting.of(POMODORO_LOOP, settings.isPomodoroLoopProperty()));
+        final Group pomodoroRepetitionsSubGroup = Group.of(POMODORO_REPETITIONS, Setting.of(POMODORO_LOOP, settings.isPomodoroLoopProperty()));
+
+        final Group pomodoroPauseGroup = Group.of(POMODORO_PAUSE,
+                Setting.of(ALLOW_INTERRUPT_PAUSE, settings.allowInterruptPauseProperty()),
+                Setting.of(ALLOW_ABORT_PAUSE, settings.allowAbortPauseProperty()),
+                Setting.of(FULLSCREEN_PAUSE_ALERT, settings.isFullScreenPauseAlertOnProperty())
+        );
+        final Group pomodoroPauseSubGroup = Group.of(POMODORO_PAUSE,
+                Setting.of(ALLOW_INTERRUPT_PAUSE, settings.allowInterruptPauseProperty()),
+                Setting.of(ALLOW_ABORT_PAUSE, settings.allowAbortPauseProperty()),
+                Setting.of(FULLSCREEN_PAUSE_ALERT, settings.isFullScreenPauseAlertOnProperty())
+        );
+
+        final Group screenResolutionGroup = Group.of(SCREEN_RESOLUTION, Setting.of(RESOLUTION, settings.getResolutionItems(), settings.resolutionSelectionProperty()));
+        final Group screenResolutionSubGroup = Group.of(SCREEN_RESOLUTION, Setting.of(RESOLUTION, settings.getResolutionItems(), settings.resolutionSelectionProperty()));
+
         return PreferencesFx.of(ControlSettings.class,
                         Category.of(POMODORO, pomodoroGroup, pomodoroRepetitionsGroup, pomodoroPauseGroup)
                                 .expand()
@@ -273,7 +224,7 @@ public class ControlSettings extends BorderPane implements Initializable, Loadab
                                 ),
                         Category.of(LANGUAGES,
                                 Group.of(CHOOSE_LANGUAGE,
-                                        Setting.of(LANGUAGE, selectedLocale, selectedLocaleProperty)
+                                        Setting.of(LANGUAGE, settings.getSelectedLocale(), settings.selectedLocaleProperty())
                                 )
                         )
                 )

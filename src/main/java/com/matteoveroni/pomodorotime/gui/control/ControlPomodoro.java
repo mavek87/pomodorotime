@@ -4,6 +4,7 @@ import com.dlsc.formsfx.model.structure.*;
 import com.dlsc.formsfx.model.util.ResourceBundleService;
 import com.dlsc.formsfx.view.renderer.FormRenderer;
 import com.dlsc.formsfx.view.util.ColSpan;
+import com.matteoveroni.pomodorotime.Settings;
 import com.matteoveroni.pomodorotime.configs.Config;
 import com.matteoveroni.pomodorotime.configs.ConfigManager;
 import com.matteoveroni.pomodorotime.gui.controllers.AppViewController;
@@ -20,13 +21,16 @@ import javafx.beans.binding.Bindings;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.beans.value.ChangeListener;
-import javafx.event.ActionEvent;
+import javafx.beans.value.ObservableValue;
+import javafx.collections.ObservableList;
 import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.input.KeyCombination;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.Region;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
@@ -35,6 +39,7 @@ import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import javafx.util.Duration;
 import lombok.extern.slf4j.Slf4j;
+
 import java.net.URL;
 import java.util.ResourceBundle;
 
@@ -53,17 +58,25 @@ public class ControlPomodoro extends BorderPane implements Initializable, Loadab
     private static final String POMODORO_PAUSE = "POMODORO_PAUSE";
     private static final String PAUSE_POMODORO = "PAUSE_POMODORO";
 
-    @FXML private ProgressIndicator progressIndicator;
-    @FXML private BorderPane paneFormPomodoro;
-    @FXML private Button btnStart;
-    @FXML private Button btnPause;
-    @FXML private Button btnStop;
+    @FXML
+    private ProgressIndicator progressIndicator;
+    @FXML
+    private BorderPane paneFormPomodoro;
+    @FXML
+    private HBox paneActions;
+    @FXML
+    private Button btnStart;
+    @FXML
+    private Button btnPause;
+    @FXML
+    private Button btnStop;
 
     private final Stage stage;
     private final AppViewController appViewController;
     private final ResourcesService resourcesService;
     private final ConfigManager configManager;
     private final MediaPlayer mediaPlayer;
+    private final Settings settings;
     private final FXLocalizationService localizationService;
     private final ResourceBundleService resourceBundleService;
     private final StringProperty elapsedTimeStringProperty = new SimpleStringProperty("0");
@@ -74,13 +87,14 @@ public class ControlPomodoro extends BorderPane implements Initializable, Loadab
     private Timeline timeline;
     private Config currentConfig;
 
-    public ControlPomodoro(Stage stage, AppViewController appViewController, PomodoroModel pomodoroModel, ResourcesService resourcesService, ConfigManager configManager, FXLocalizationService localizationService, ResourceBundleService resourceBundleService) {
+    public ControlPomodoro(Stage stage, AppViewController appViewController, PomodoroModel pomodoroModel, ResourcesService resourcesService, ConfigManager configManager, Settings settings, FXLocalizationService localizationService, ResourceBundleService resourceBundleService) {
         this.stage = stage;
         this.appViewController = appViewController;
         this.pomodoroModel = pomodoroModel;
         this.resourcesService = resourcesService;
         this.configManager = configManager;
-        mediaPlayer = new MediaPlayer(new Media(resourcesService.getAlarmAudioURL().toString()));
+        this.mediaPlayer = new MediaPlayer(new Media(resourcesService.getAlarmAudioURL().toString()));
+        this.settings = settings;
         this.localizationService = localizationService;
         this.resourceBundleService = resourceBundleService;
         loadControl(resourcesService, Control.POMODORO);
@@ -95,26 +109,40 @@ public class ControlPomodoro extends BorderPane implements Initializable, Loadab
             remainingTimeStringProperty.set(DurationFormatter.formatRemainingDurationTime(currentConfig.getPomodoroDuration(), currentDuration));
         };
 
-        final Tooltip btnStartTooltip = new Tooltip();
-        btnStart.setTooltip(btnStartTooltip);
-        btnStart.setFocusTraversable(false);
-        btnStart.setOnAction(event -> startPomodoro());
-        final Tooltip btnPauseTooltip = new Tooltip();
-        btnPause.setTooltip(btnPauseTooltip);
-        btnPause.setFocusTraversable(false);
-        btnPause.setOnAction(event -> pausePomodoro());
-        final Tooltip btnStopTooltip = new Tooltip();
-        btnStop.setTooltip(btnStopTooltip);
-        btnStop.setFocusTraversable(false);
-        btnStop.setOnAction(event -> stopPomodoro());
+        buildButtons();
+
         progressIndicator.setMaxSize(PROGRESS_INDICATOR_WIDTH, PROGRESS_INDICATOR_HEIGHT);
         progressIndicator.setVisible(false);
         paneFormPomodoro.setCenter(new FormRenderer(buildFormPomodoro()));
+
         bindGraphicsToModel();
 
-        btnStartTooltip.textProperty().bind(localizationService.getLocalizedString(START_POMODORO));
-        btnPauseTooltip.textProperty().bind(localizationService.getLocalizedString(PAUSE_POMODORO));
-        btnStopTooltip.textProperty().bind(localizationService.getLocalizedString(STOP_POMODORO));
+        final ObservableList<Node> paneActionsChildren = paneActions.getChildren();
+        paneActionsChildren.clear();
+        paneActionsChildren.add(btnStart);
+        if (settings.isAllowInterruptPomodoro()) {
+            paneActions.getChildren().add(btnPause);
+        }
+        if (settings.isAllowAbortPomodoro()) {
+            paneActionsChildren.add(btnStop);
+        }
+
+        settings.allowInterruptPomodoroProperty().addListener((observableValue, oldValue, newValue) -> {
+            log.debug("allowInterruptPomodoroProperty: {}", newValue);
+            if (newValue) {
+                paneActions.getChildren().add(btnPause);
+            } else {
+                paneActions.getChildren().remove(btnPause);
+            }
+        });
+        settings.allowAbortPomodoroProperty().addListener((observableValue, oldValue, newValue) -> {
+            log.debug("allowAbortPomodoroProperty: {}", newValue);
+            if (newValue) {
+                paneActions.getChildren().add(btnStop);
+            } else {
+                paneActions.getChildren().remove(btnStop);
+            }
+        });
     }
 
     private void startPomodoro() {
@@ -170,7 +198,8 @@ public class ControlPomodoro extends BorderPane implements Initializable, Loadab
         timeline.play();
     }
 
-    private void pausePomodoro(){}
+    private void pausePomodoro() {
+    }
 
     private void stopPomodoro() {
         progressIndicator.setVisible(false);
@@ -243,5 +272,24 @@ public class ControlPomodoro extends BorderPane implements Initializable, Loadab
         dialogPane.lookupButton(ButtonType.OK).setVisible(false);
         FXGraphicsUtils.centeredAlert(alert);
         return alert;
+    }
+
+    private void buildButtons() {
+        final Tooltip btnStartTooltip = new Tooltip();
+        btnStart.setTooltip(btnStartTooltip);
+        btnStart.setFocusTraversable(false);
+        btnStart.setOnAction(event -> startPomodoro());
+        final Tooltip btnPauseTooltip = new Tooltip();
+        btnPause.setTooltip(btnPauseTooltip);
+        btnPause.setFocusTraversable(false);
+        btnPause.setOnAction(event -> pausePomodoro());
+        final Tooltip btnStopTooltip = new Tooltip();
+        btnStop.setTooltip(btnStopTooltip);
+        btnStop.setFocusTraversable(false);
+        btnStop.setOnAction(event -> stopPomodoro());
+
+        btnStartTooltip.textProperty().bind(localizationService.getLocalizedString(START_POMODORO));
+        btnPauseTooltip.textProperty().bind(localizationService.getLocalizedString(PAUSE_POMODORO));
+        btnStopTooltip.textProperty().bind(localizationService.getLocalizedString(STOP_POMODORO));
     }
 }

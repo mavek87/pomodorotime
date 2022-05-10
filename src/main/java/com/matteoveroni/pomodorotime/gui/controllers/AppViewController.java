@@ -1,6 +1,7 @@
 package com.matteoveroni.pomodorotime.gui.controllers;
 
 import com.dlsc.formsfx.model.util.ResourceBundleService;
+import com.matteoveroni.pomodorotime.Settings;
 import com.matteoveroni.pomodorotime.configs.ConfigManager;
 import com.matteoveroni.pomodorotime.gui.control.ControlAppFileMenu;
 import com.matteoveroni.pomodorotime.gui.control.ControlPomodoro;
@@ -39,25 +40,25 @@ public class AppViewController implements Initializable {
     @FXML private AnchorPane overlay_pane;
     @FXML private BorderPane pane_for_control_view;
 
+    private final Stage stage;
     private final ResourcesService resourcesService;
+    private final ConfigManager configManager;
+    private final Settings settings;
     private final FXLocalizationService localizationService;
     private final ResourceBundleService resourceBundleService;
-
-    private ConfigManager configManager;
-    private Stage stage;
-
-    public AppViewController(Stage stage, ResourcesService resourcesService, ConfigManager configManager, FXLocalizationService localizationService, ResourceBundleService resourceBundleService) {
+    public AppViewController(Stage stage, ResourcesService resourcesService, ConfigManager configManager, Settings settings, FXLocalizationService localizationService, ResourceBundleService resourceBundleService) {
         this.stage = stage;
         this.resourcesService = resourcesService;
         this.configManager = configManager;
+        this.settings = settings;
         this.localizationService = localizationService;
         this.resourceBundleService = resourceBundleService;
     }
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        final ControlPomodoro controlPomodoro = new ControlPomodoro(stage, this, new PomodoroModel(configManager), resourcesService, configManager, localizationService, resourceBundleService);
-        final ControlSettings controlSettings = new ControlSettings(stage, resourcesService, configManager, localizationService, resourceBundleService);
+        final ControlPomodoro controlPomodoro = new ControlPomodoro(stage, this, new PomodoroModel(configManager), resourcesService, configManager, settings, localizationService, resourceBundleService);
+        final ControlSettings controlSettings = new ControlSettings(stage, resourcesService, configManager, settings, localizationService, resourceBundleService);
         final ControlAppFileMenu controlAppFileMenu = new ControlAppFileMenu(stage, this, resourcesService, controlPomodoro, controlSettings, localizationService);
         app_pane.setTop(controlAppFileMenu);
         pane_for_control_view.setCenter(controlPomodoro);
