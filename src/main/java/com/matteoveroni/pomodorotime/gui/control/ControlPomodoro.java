@@ -130,17 +130,17 @@ public class ControlPomodoro extends BorderPane implements Initializable, Loadab
         settings.allowInterruptPomodoroProperty().addListener((observableValue, oldValue, newValue) -> {
             log.debug("allowInterruptPomodoroProperty: {}", newValue);
             if (newValue) {
-                paneActions.getChildren().add(btnPause);
+                paneActionsChildren.add(btnPause);
             } else {
-                paneActions.getChildren().remove(btnPause);
+                paneActionsChildren.remove(btnPause);
             }
         });
         settings.allowAbortPomodoroProperty().addListener((observableValue, oldValue, newValue) -> {
             log.debug("allowAbortPomodoroProperty: {}", newValue);
             if (newValue) {
-                paneActions.getChildren().add(btnStop);
+                paneActionsChildren.add(btnStop);
             } else {
-                paneActions.getChildren().remove(btnStop);
+                paneActionsChildren.remove(btnStop);
             }
         });
     }
