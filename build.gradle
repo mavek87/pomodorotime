@@ -115,6 +115,12 @@ javafx {
     modules = ['javafx.controls', 'javafx.fxml', 'javafx.media']
 }
 
+task a {
+    println project.version
+    println version
+    println scmVersion.version
+}
+
 jar {
     manifest.attributes(
             'Built-By': "${author}",
@@ -122,9 +128,9 @@ jar {
                     + ' (' + System.properties['java.vendor']
                     + ' ' + System.properties['java.vm.version'] + ')',
             'Specification-Title': project.name,
-            'Specification-Version': project.version,
+            'Specification-Version': project.version.replace('-SNAPSHOT', ''),
             'Implementation-Title': project.name,
-            'Implementation-Version': project.version,
+            'Implementation-Version': project.version.replace('-SNAPSHOT', ''),
             'Main-Class': "${project.group}.${appName}.${mainName}"
     )
 }
@@ -149,7 +155,7 @@ runtime {
         targetPlatformName = currentOs.isWindows() ? 'win' : 'linux-x64'
         installerOptions += [
                 '--vendor', author,
-                '--app-version', version.replace('-', '.'),
+                '--app-version', version.replace('-SNAPSHOT', ''),
                 '--description', 'A software to set alarms',
 //                '--name', "${prettyAppName}",
                 '--icon', 'src/main/resources/icons/tomato.png',
@@ -184,6 +190,8 @@ tasks.jpackageImage.doLast {
         into "$buildDir/jpackage/$project.name/lib/app/config"
     }
 }
+
+tasks.release.dependsOn(jpackage)
 
 //task addVersionFileIntoResources (type: Task) {
 //    File versionFile = file('src/main/resources/version.txt')
