@@ -11,7 +11,7 @@
   "allow_interrupt_pomodoro": true,
   "allow_abort_pomodoro": true,
   "is_pomodoro_loop": true,
-  "is_pomodoro_pause_alert_fullscreen": true,
+  "is_pomodoro_pause_alert_fullscreen": false,
   "allow_interrupt_pause": true,
   "allow_abort_pause": true
 }
