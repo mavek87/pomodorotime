@@ -223,6 +223,8 @@ public class ControlPomodoro extends BorderPane implements Initializable, Loadab
         paneFormPomodoro.visibleProperty().bind(pomodoroModel.getIsPomodoroRunningProperty());
         btnStart.disableProperty().bind(pomodoroModel.getIsPomodoroCompletedProperty());
         btnStart.disableProperty().bind(pomodoroModel.getIsPomodoroRunningProperty());
+        btnPause.disableProperty().bind(pomodoroModel.getIsPomodoroCompletedProperty());
+        btnPause.disableProperty().bind(Bindings.not(pomodoroModel.getIsPomodoroRunningProperty()));
         btnStop.disableProperty().bind(pomodoroModel.getIsPomodoroCompletedProperty());
         btnStop.disableProperty().bind(Bindings.not(pomodoroModel.getIsPomodoroRunningProperty()));
     }

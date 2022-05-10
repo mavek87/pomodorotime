@@ -8,7 +8,7 @@
   "pomodoro_long_pause_duration_in_min": 15.0,
   "number_of_sessions_before_long_pause": 4,
   "allow_interrupt_pomodoro": true,
-  "allow_abort_pomodoro": false,
+  "allow_abort_pomodoro": true,
   "is_pomodoro_loop": true,
   "is_pomodoro_pause_alert_fullscreen": false,
   "allow_interrupt_pause": false,
