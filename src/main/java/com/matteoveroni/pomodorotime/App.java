@@ -3,6 +3,7 @@ package com.matteoveroni.pomodorotime;
 import com.dlsc.formsfx.model.util.ResourceBundleService;
 import com.matteoveroni.pomodorotime.configs.Config;
 import com.matteoveroni.pomodorotime.configs.ConfigManager;
+import com.matteoveroni.pomodorotime.configs.PropertiesConfigManager;
 import com.matteoveroni.pomodorotime.factories.ControllersFactory;
 import com.matteoveroni.pomodorotime.factories.FXLocalizationServiceFactory;
 import com.matteoveroni.pomodorotime.gui.screen.ScreenResolution;
@@ -10,7 +11,6 @@ import com.matteoveroni.pomodorotime.gui.views.View;
 import com.matteoveroni.pomodorotime.services.ResourcesService;
 import com.matteoveroni.pomodorotime.services.localization.FXLocalizationService;
 import com.matteoveroni.pomodorotime.services.localization.SupportedLocale;
-import com.matteoveroni.pomodorotime.singleton.ConfigManagerSingleton;
 import com.matteoveroni.pomodorotime.utils.FXGraphicsUtils;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
@@ -47,7 +47,7 @@ public final class App extends Application {
     @Override
     public void init() {
         resourcesService = new ResourcesService();
-        configManager = ConfigManagerSingleton.INSTANCE;
+        configManager = PropertiesConfigManager.INSTANCE;
         localizationService = new FXLocalizationServiceFactory().produce();
         config = configManager.readConfig();
         settings = new Settings();
