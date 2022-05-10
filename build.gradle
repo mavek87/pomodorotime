@@ -180,7 +180,7 @@ runtime {
 
 tasks.jpackageImage.doLast {
     copy {
-        from 'config'
+        from 'config/config.json'
         into "$buildDir/jpackage/$project.name/lib/app/config"
     }
 }
