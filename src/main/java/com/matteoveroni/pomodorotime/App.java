@@ -123,6 +123,7 @@ public final class App extends Application {
         return fxmlLoader.load();
     }
 
+    // TODO: probably should be moved to ResourcesService class
     private String readVersion() {
         String version = "";
         try (InputStream inputStream = new FileInputStream(getClass().getResource(VERSION_PROPS).getFile())) {
