@@ -1,12 +1,10 @@
 package com.matteoveroni.pomodorotime.services;
 
 import lombok.extern.slf4j.Slf4j;
-
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
-import java.util.Optional;
 import java.util.Properties;
 
 @Slf4j

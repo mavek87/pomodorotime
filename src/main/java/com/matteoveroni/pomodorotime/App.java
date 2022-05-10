@@ -20,11 +20,9 @@ import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 import lombok.extern.slf4j.Slf4j;
-
 import java.io.IOException;
 import java.util.Objects;
 import java.util.ResourceBundle;
-
 import static com.matteoveroni.pomodorotime.Settings.DEFAULT_LOCALE;
 import static com.matteoveroni.pomodorotime.Settings.DEFAULT_SCREEN_SIZE_RESOLUTION;
 

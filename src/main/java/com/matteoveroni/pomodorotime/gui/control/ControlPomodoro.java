@@ -40,24 +40,15 @@ import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import javafx.util.Duration;
 import lombok.extern.slf4j.Slf4j;
-
 import java.net.URL;
 import java.util.ResourceBundle;
+import static com.matteoveroni.pomodorotime.utils.Constants.LocalizationKeys.*;
 
 @Slf4j
 public class ControlPomodoro extends BorderPane implements Initializable, LoadableControl {
 
     public static final int PROGRESS_INDICATOR_WIDTH = 640;
     public static final int PROGRESS_INDICATOR_HEIGHT = 480;
-
-    private static final String START_POMODORO = "START_POMODORO";
-    private static final String STOP_POMODORO = "STOP_POMODORO";
-    private static final String SESSION_NUMBER = "SESSION_NUMBER";
-    private static final String REMAINING_TIME = "REMAINING_TIME";
-    private static final String ELAPSED_TIME = "ELAPSED_TIME";
-    private static final String POMODORO = "POMODORO";
-    private static final String POMODORO_PAUSE = "POMODORO_PAUSE";
-    private static final String PAUSE_POMODORO = "PAUSE_POMODORO";
 
     @FXML private ProgressIndicator progressIndicator;
     @FXML private BorderPane paneFormPomodoro;

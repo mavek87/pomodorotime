@@ -5,7 +5,6 @@ import com.matteoveroni.pomodorotime.services.localization.SupportedLocale;
 import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-
 import java.util.Arrays;
 
 public class Settings {

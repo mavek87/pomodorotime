@@ -9,52 +9,20 @@ import com.dlsc.preferencesfx.model.Setting;
 import com.matteoveroni.pomodorotime.Settings;
 import com.matteoveroni.pomodorotime.configs.Config;
 import com.matteoveroni.pomodorotime.configs.ConfigManager;
-import com.matteoveroni.pomodorotime.gui.screen.ScreenResolution;
 import com.matteoveroni.pomodorotime.services.ResourcesService;
 import com.matteoveroni.pomodorotime.services.localization.FXLocalizationService;
-import com.matteoveroni.pomodorotime.services.localization.SupportedLocale;
 import com.matteoveroni.pomodorotime.utils.FXGraphicsUtils;
 import javafx.fxml.Initializable;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 import lombok.extern.slf4j.Slf4j;
-
 import java.net.URL;
 import java.util.Locale;
 import java.util.ResourceBundle;
-
-import static com.matteoveroni.pomodorotime.Settings.DEFAULT_LOCALE;
-import static com.matteoveroni.pomodorotime.Settings.DEFAULT_SCREEN_SIZE_RESOLUTION;
+import static com.matteoveroni.pomodorotime.utils.Constants.LocalizationKeys.*;
 
 @Slf4j
 public class ControlSettings extends BorderPane implements Initializable, LoadableControl {
-
-    private static final String POMODORO = "POMODORO";
-    private static final String GRAPHICS = "GRAPHICS";
-    private static final String LOOK_AND_FEEL = "LOOK_AND_FEEL";
-    private static final String MAIN_SETTINGS = "MAIN_SETTINGS";
-    private static final String REPETITIONS = "REPETITIONS";
-    private static final String PAUSE_SETTINGS = "PAUSE_SETTINGS";
-    private static final String SCREEN = "SCREEN";
-    private static final String LANGUAGES = "LANGUAGES";
-    private static final String CHOOSE_LANGUAGE = "CHOOSE_LANGUAGE";
-    private static final String LANGUAGE = "LANGUAGE";
-    private static final String POMODORO_MAIN_SETTINGS = "POMODORO_MAIN_SETTINGS";
-    private static final String POMODORO_DURATION_MINUTES = "POMODORO_DURATION_MINUTES";
-    private static final String PAUSE_DURATION_MINUTES = "PAUSE_DURATION_MINUTES";
-    private static final String LONG_PAUSE_DURATION_MINUTES = "LONG_PAUSE_DURATION_MINUTES";
-    private static final String SESSIONS_BEFORE_LONG_PAUSE = "SESSIONS_BEFORE_LONG_PAUSE";
-    private static final String PLAY_ALARM_SOUND_AFTER_COMPLETION = "PLAY_ALARM_SOUND_AFTER_COMPLETION";
-    private static final String POMODORO_REPETITIONS = "POMODORO_REPETITIONS";
-    private static final String POMODORO_LOOP = "POMODORO_LOOP";
-    private static final String POMODORO_PAUSE = "POMODORO_PAUSE";
-    private static final String ALLOW_INTERRUPT_POMODORO = "ALLOW_INTERRUPT_POMODORO";
-    private static final String ALLOW_ABORT_POMODORO = "ALLOW_ABORT_POMODORO";
-    private static final String FULLSCREEN_PAUSE_ALERT = "FULLSCREEN_PAUSE_ALERT";
-    private static final String ALLOW_INTERRUPT_PAUSE = "ALLOW_INTERRUPT_PAUSE";
-    private static final String ALLOW_ABORT_PAUSE = "ALLOW_ABORT_PAUSE";
-    private static final String SCREEN_RESOLUTION = "SCREEN_RESOLUTION";
-    private static final String RESOLUTION = "RESOLUTION";
 
     // Color
 //    private final ObjectProperty colorProperty = new SimpleObjectProperty<>(Color.PAPAYAWHIP);
