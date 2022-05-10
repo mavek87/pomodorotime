@@ -47,6 +47,13 @@ wrapper {
     gradleVersion = '7.4.2'
 }
 
+scmVersion {
+    hooks {
+//        pre 'fileUpdate', [file: 'version.properties', pattern: {v, c -> /version: $v/}, replacement: {v, c -> "version: $v"}]
+        pre 'fileUpdate', [file: 'version.properties', pattern: {v, c -> /version: $v/}, replacement: {v, c -> "version: $v"}]
+    }
+}
+
 //java {
 //    modularity.inferModulePath.set(true)
 //}
