@@ -4,10 +4,10 @@ import com.dlsc.formsfx.model.util.ResourceBundleService;
 import com.matteoveroni.pomodorotime.configs.Config;
 import com.matteoveroni.pomodorotime.configs.ConfigManager;
 import com.matteoveroni.pomodorotime.factories.ControllersFactory;
+import com.matteoveroni.pomodorotime.factories.FXLocalizationServiceFactory;
 import com.matteoveroni.pomodorotime.gui.screen.ScreenResolution;
 import com.matteoveroni.pomodorotime.gui.views.View;
 import com.matteoveroni.pomodorotime.services.ResourcesService;
-import com.matteoveroni.pomodorotime.factories.FXLocalizationServiceFactory;
 import com.matteoveroni.pomodorotime.services.localization.FXLocalizationService;
 import com.matteoveroni.pomodorotime.services.localization.SupportedLocale;
 import com.matteoveroni.pomodorotime.singleton.ConfigManagerSingleton;
@@ -20,10 +20,12 @@ import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 import lombok.extern.slf4j.Slf4j;
-import org.kordamp.ikonli.Ikonli;
 
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Objects;
+import java.util.Properties;
 import java.util.ResourceBundle;
 
 import static com.matteoveroni.pomodorotime.Settings.DEFAULT_LOCALE;
@@ -32,6 +34,9 @@ import static com.matteoveroni.pomodorotime.Settings.DEFAULT_SCREEN_SIZE_RESOLUT
 @Slf4j
 public final class App extends Application {
 
+    public static final String VERSION_PROPS = "/version.properties";
+
+    private String version;
     private ResourcesService resourcesService;
     private ConfigManager configManager;
     private Settings settings;
@@ -46,6 +51,7 @@ public final class App extends Application {
 
     @Override
     public void init() {
+        version = readVersion();
         resourcesService = new ResourcesService();
         configManager = ConfigManagerSingleton.INSTANCE;
         localizationService = new FXLocalizationServiceFactory().produce();
@@ -61,7 +67,7 @@ public final class App extends Application {
         final Pane mainViewPane = loadFXMLMainView(controllersFactory);
         final Scene scene = new Scene(mainViewPane);
         stage.setScene(scene);
-        stage.setTitle(config.getAppName());
+        stage.setTitle(config.getAppName() + " - " + version);
         stage.getIcons().add(new Image(Objects.requireNonNull(resourcesService.getLogoIconURL().openStream())));
         stage.setWidth(config.getWindowWidth());
         stage.setHeight(config.getWindowHeight());
@@ -115,5 +121,17 @@ public final class App extends Application {
         final FXMLLoader fxmlLoader = new FXMLLoader(resourcesService.getFXMLViewURL(View.APP_VIEW.getFileName()));
         fxmlLoader.setControllerFactory(controllersFactory);
         return fxmlLoader.load();
+    }
+
+    private String readVersion() {
+        String version = "";
+        try (InputStream inputStream = new FileInputStream(getClass().getResource(VERSION_PROPS).getFile())) {
+            Properties versionProps = new Properties();
+            versionProps.load(inputStream);
+            version = versionProps.getProperty("version");
+        } catch (IOException ex) {
+            log.error("Error", ex);
+        }
+        return version;
     }
 }
