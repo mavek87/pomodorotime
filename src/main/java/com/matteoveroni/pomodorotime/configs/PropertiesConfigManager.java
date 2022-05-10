@@ -1,6 +1,6 @@
 package com.matteoveroni.pomodorotime.configs;
 
-import com.matteoveroni.pomodorotime.singleton.ExternalFolderPathSingleton;
+import com.matteoveroni.pomodorotime.utils.singleton.ExternalFolderPathSingleton;
 import lombok.extern.slf4j.Slf4j;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -14,7 +14,6 @@ public enum PropertiesConfigManager implements ConfigManager {
     INSTANCE;
 
     private static final Path CONFIG_PATH = ExternalFolderPathSingleton.INSTANCE.getPath("config", "config.properties");
-    private static final String VERSION_PROPS = "/version.properties";
 
     @Override
     public Config readConfig() {
@@ -38,7 +37,8 @@ public enum PropertiesConfigManager implements ConfigManager {
             config.setAllowInterruptPause(Boolean.parseBoolean(props.getProperty("allow_interrupt_pause")));
             config.setAllowAbortPause(Boolean.parseBoolean(props.getProperty("allow_abort_pause")));
         } catch (Exception ex) {
-            throw new RuntimeException("Error", ex);
+            log.error("Error", ex);
+            throw new RuntimeException(ex);
         }
         return config;
     }
@@ -64,19 +64,8 @@ public enum PropertiesConfigManager implements ConfigManager {
             props.setProperty("allow_abort_pause", "" + config.isAllowAbortPause());
             props.store(outputStream, null);
         } catch (Exception ex) {
-            throw new RuntimeException("Error", ex);
+            log.error("Error", ex);
+            throw new RuntimeException(ex);
         }
     }
-//    public String readVersion() throws IOException {
-//        final Properties props = readPropertiesFile(PropertiesConfigManager.class.getResource(VERSION_PROPS).getFile());
-//        return props.getProperty("version", null);
-//    }
-//
-//    private Properties readPropertiesFile(String propsFile) throws IOException {
-//        try (InputStream inputStream = new FileInputStream(propsFile)) {
-//            final Properties props = new Properties();
-//            props.load(inputStream);
-//            return props;
-//        }
-//    }
 }

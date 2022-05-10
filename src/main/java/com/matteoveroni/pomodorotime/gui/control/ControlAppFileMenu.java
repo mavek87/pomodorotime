@@ -8,12 +8,13 @@ import javafx.event.ActionEvent;
 import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.Alert;
-import javafx.scene.control.DialogPane;
-import javafx.scene.control.Hyperlink;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.control.Label;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
+import javafx.scene.control.*;
+import javafx.scene.layout.Border;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
@@ -25,17 +26,12 @@ import java.awt.*;
 import java.net.URI;
 import java.net.URL;
 import java.util.ResourceBundle;
+import static com.matteoveroni.pomodorotime.utils.Constants.AUTHOR_NAME;
+import static com.matteoveroni.pomodorotime.utils.Constants.LocalizationKeys.*;
+import static com.matteoveroni.pomodorotime.utils.Constants.WEBSITE_URL;
 
 @Slf4j
 public class ControlAppFileMenu extends BorderPane implements LoadableControl, Initializable {
-
-    private static final String HELP = "HELP";
-    private static final String POMODORO = "POMODORO";
-    private static final String SETTINGS = "SETTINGS";
-    private static final String ABOUT = "ABOUT";
-    private static final String EXIT = "EXIT";
-    private static final String AUTHOR = "AUTHOR";
-    private static final String WEBSITE = "WEBSITE";
 
     @FXML Menu menuHelp;
     @FXML MenuItem menuItemPomodoro;
@@ -45,6 +41,7 @@ public class ControlAppFileMenu extends BorderPane implements LoadableControl, I
 
     private final Stage stage;
     private final AppViewController appViewController;
+    private final ResourcesService resourcesService;
     private final ControlPomodoro controlPomodoro;
     private final ControlSettings controlSettings;
     private final FXLocalizationService localizationService;
@@ -52,6 +49,7 @@ public class ControlAppFileMenu extends BorderPane implements LoadableControl, I
     public ControlAppFileMenu(Stage stage, AppViewController appViewController, ResourcesService resourcesService, ControlPomodoro controlPomodoro, ControlSettings controlSettings, FXLocalizationService localizationService) {
         this.stage = stage;
         this.appViewController = appViewController;
+        this.resourcesService = resourcesService;
         this.controlPomodoro = controlPomodoro;
         this.controlSettings = controlSettings;
         this.localizationService = localizationService;
@@ -104,29 +102,32 @@ public class ControlAppFileMenu extends BorderPane implements LoadableControl, I
     private void showAlertAbout() {
         appViewController.setOverlayPane(true);
 
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        final Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.initStyle(StageStyle.UTILITY);
         alert.setResizable(false);
         alert.setTitle(localizationService.translateLocalizedString(ABOUT));
         alert.setHeaderText("Pomodoro-Time");
 
-        BorderPane pane = new BorderPane();
-        VBox vBox = new VBox();
-        vBox.setSpacing(15);
-        vBox.getChildren().add(new Label(localizationService.translateLocalizedString(AUTHOR) + ": Matteo Veroni"));
+        final BorderPane pane = new BorderPane();
+        final VBox vBox = new VBox();
+        vBox.setSpacing(20);
+        vBox.getChildren().add(new Label(localizationService.translateLocalizedString(AUTHOR) + ": " + AUTHOR_NAME));
 
-        HBox hBox = new HBox();
-        hBox.getChildren().add(new Label(localizationService.translateLocalizedString(WEBSITE) + ":"));
-        Hyperlink websiteHyperlink = new Hyperlink("https://github.com/mavek87/pomodorotime");
-        websiteHyperlink.visitedProperty().addListener((observable, oldValue, newValue) -> {
-            openWebPage(websiteHyperlink.getText());
-        });
+        final HBox hBox = new HBox();
+        hBox.setAlignment(Pos.CENTER);
+        hBox.getChildren().add(new Label(localizationService.translateLocalizedString(WEBSITE) + ": "));
+        final Hyperlink websiteHyperlink = new Hyperlink(WEBSITE_URL);
+        websiteHyperlink.setBorder(Border.EMPTY);
+        websiteHyperlink.setPadding(new Insets(4, 0, 4, 0));
+        websiteHyperlink.visitedProperty().addListener((observable, oldValue, newValue) -> openWebPage(websiteHyperlink.getText()));
         hBox.getChildren().add(websiteHyperlink);
         vBox.getChildren().add(hBox);
 
+        vBox.getChildren().add(new Label(localizationService.translateLocalizedString(VERSION) + ": " + resourcesService.readVersion()));
+
         pane.setCenter(vBox);
 
-        DialogPane alertDialogPane = alert.getDialogPane();
+        final DialogPane alertDialogPane = alert.getDialogPane();
         alertDialogPane.setContent(pane);
         alertDialogPane.getScene().getWindow().setOnCloseRequest(Event::consume);
 

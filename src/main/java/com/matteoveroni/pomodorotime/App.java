@@ -53,7 +53,7 @@ public final class App extends Application {
         settings = new Settings();
         initSettings();
         resourceBundleService = buildResourceBundleServicesAndBindItWithLocalizationService();
-        version = resourcesService.readVersion().orElse("");
+        version = resourcesService.readVersion();
     }
 
     @Override

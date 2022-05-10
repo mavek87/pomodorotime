@@ -20,16 +20,17 @@ public final class ResourcesService {
     private static final String FXML_EXTENSION = ".fxml";
     private static final String VERSION_PROPS = "/version.properties";
 
-    public Optional<String> readVersion() {
-        String version = null;
+    public String readVersion() {
+        String version;
         try (InputStream inputStream = new FileInputStream(getClass().getResource(VERSION_PROPS).getFile())) {
             Properties versionProps = new Properties();
             versionProps.load(inputStream);
             version = versionProps.getProperty("version", null);
         } catch (IOException ex) {
             log.error("Error", ex);
+            throw new RuntimeException(ex);
         }
-        return Optional.ofNullable(version);
+        return version;
     }
 
     public URL getLogoIconURL() {

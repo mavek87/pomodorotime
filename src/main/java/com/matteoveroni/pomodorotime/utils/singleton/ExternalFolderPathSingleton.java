@@ -1,4 +1,4 @@
-package com.matteoveroni.pomodorotime.singleton;
+package com.matteoveroni.pomodorotime.utils.singleton;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
