@@ -20,6 +20,7 @@ import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 import lombok.extern.slf4j.Slf4j;
+import org.kordamp.ikonli.Ikonli;
 
 import java.io.IOException;
 import java.util.Objects;
@@ -92,6 +93,7 @@ public final class App extends Application {
         settings.setPomodoroPause(config.getPomodoroPauseDuration());
         settings.setPomodoroLongPause(config.getPomodoroLongPauseDuration());
         settings.setNumberOfSessionsBeforeLongPause(config.getNumberOfSessionBeforeLongPause());
+        settings.setPlayAlarmSoundOnCompletion(config.isPlayAlarmSoundOnCompletion());
         settings.setAllowInterruptPomodoro(config.isAllowInterruptPomodoro());
         settings.setAllowAbortPomodoro(config.isAllowAbortPomodoro());
         settings.setIsPomodoroLoop(config.isPomodoroLoop());

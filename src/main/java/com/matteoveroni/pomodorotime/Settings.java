@@ -17,6 +17,7 @@ public class Settings {
     private final DoubleProperty pomodoroPause = new SimpleDoubleProperty(5);
     private final DoubleProperty pomodoroLongPause = new SimpleDoubleProperty(15);
     private final IntegerProperty numberOfSessionsBeforeLongPause = new SimpleIntegerProperty(4);
+    private final BooleanProperty playAlarmSoundOnCompletion = new SimpleBooleanProperty(false);
     private final BooleanProperty isPomodoroLoop = new SimpleBooleanProperty(true);
     private final BooleanProperty allowInterruptPomodoro = new SimpleBooleanProperty(false);
     private final BooleanProperty allowAbortPomodoro = new SimpleBooleanProperty(false);
@@ -74,6 +75,18 @@ public class Settings {
 
     public void setNumberOfSessionsBeforeLongPause(int numberOfSessionsBeforeLongPause) {
         this.numberOfSessionsBeforeLongPause.set(numberOfSessionsBeforeLongPause);
+    }
+
+    public boolean getPlayAlarmSoundOnCompletion() {
+        return playAlarmSoundOnCompletion.get();
+    }
+
+    public BooleanProperty playAlarmSoundOnCompletionProperty(){
+        return playAlarmSoundOnCompletion;
+    }
+
+    public void setPlayAlarmSoundOnCompletion(boolean playAlarmSoundOnCompletion) {
+        this.playAlarmSoundOnCompletion.set(playAlarmSoundOnCompletion);
     }
 
     public boolean isIsPomodoroLoop() {

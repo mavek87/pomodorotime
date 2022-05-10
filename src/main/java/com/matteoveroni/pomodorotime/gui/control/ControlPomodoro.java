@@ -23,7 +23,6 @@ import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
 import javafx.event.Event;
 import javafx.fxml.FXML;
@@ -60,18 +59,12 @@ public class ControlPomodoro extends BorderPane implements Initializable, Loadab
     private static final String POMODORO_PAUSE = "POMODORO_PAUSE";
     private static final String PAUSE_POMODORO = "PAUSE_POMODORO";
 
-    @FXML
-    private ProgressIndicator progressIndicator;
-    @FXML
-    private BorderPane paneFormPomodoro;
-    @FXML
-    private HBox paneActions;
-    @FXML
-    private Button btnStart;
-    @FXML
-    private Button btnPause;
-    @FXML
-    private Button btnStop;
+    @FXML private ProgressIndicator progressIndicator;
+    @FXML private BorderPane paneFormPomodoro;
+    @FXML private HBox paneActions;
+    @FXML private Button btnStart;
+    @FXML private Button btnPause;
+    @FXML private Button btnStop;
 
     private final Stage stage;
     private final AppViewController appViewController;
@@ -150,7 +143,6 @@ public class ControlPomodoro extends BorderPane implements Initializable, Loadab
 
     private void startPomodoro() {
         if (isPomodoroPausedProperty.get()) {
-            timeline.play();
             isPomodoroPausedProperty.set(false);
         } else {
             progressIndicator.setVisible(true);
@@ -166,7 +158,9 @@ public class ControlPomodoro extends BorderPane implements Initializable, Loadab
             timeline = new Timeline(
                     new KeyFrame(Duration.ZERO, new KeyValue(progressIndicator.progressProperty(), 0)),
                     new KeyFrame(Duration.minutes(currentConfig.getPomodoroDuration()), onCompletionEvent -> Platform.runLater(() -> {
-                        mediaPlayer.play();
+                        if (settings.getPlayAlarmSoundOnCompletion()) {
+                            mediaPlayer.play();
+                        }
 
                         stopPomodoro();
                         progressIndicator.setVisible(true);
@@ -181,8 +175,9 @@ public class ControlPomodoro extends BorderPane implements Initializable, Loadab
                         final Alert pomodoroPauseAlert = buildPomodoroPauseAlert(pomodoroPauseDuration);
                         pomodoroPauseAlert.showAndWait();
 
-                        mediaPlayer.stop();
-
+                        if (settings.getPlayAlarmSoundOnCompletion()) {
+                            mediaPlayer.stop();
+                        }
                         appViewController.setOverlayPane(false);
 
                         Platform.runLater(() -> {
@@ -202,8 +197,8 @@ public class ControlPomodoro extends BorderPane implements Initializable, Loadab
                     }), new KeyValue(progressIndicator.progressProperty(), 1))
             );
             timeline.currentTimeProperty().addListener(durationTimeChangeListener);
-            timeline.play();
         }
+        timeline.play();
     }
 
     private void pausePomodoro() {
@@ -233,7 +228,7 @@ public class ControlPomodoro extends BorderPane implements Initializable, Loadab
         btnStart.disableProperty().bind(pomodoroModel.getIsPomodoroCompletedProperty());
         btnStart.disableProperty().bind(Bindings.and(pomodoroModel.getIsPomodoroRunningProperty(), isPomodoroPausedProperty.not()));
         btnPause.disableProperty().bind(pomodoroModel.getIsPomodoroCompletedProperty());
-        btnPause.disableProperty().bind(Bindings.not(pomodoroModel.getIsPomodoroRunningProperty()));
+        btnPause.disableProperty().bind(Bindings.or(Bindings.not(pomodoroModel.getIsPomodoroRunningProperty()), isPomodoroPausedProperty));
         btnStop.disableProperty().bind(pomodoroModel.getIsPomodoroCompletedProperty());
         btnStop.disableProperty().bind(Bindings.not(pomodoroModel.getIsPomodoroRunningProperty()));
     }
@@ -241,6 +236,7 @@ public class ControlPomodoro extends BorderPane implements Initializable, Loadab
     private void unbindGraphicsToModel() {
         paneFormPomodoro.visibleProperty().unbind();
         btnStart.disableProperty().unbind();
+        btnPause.disableProperty().unbind();
         btnStop.disableProperty().unbind();
     }
 
@@ -276,7 +272,7 @@ public class ControlPomodoro extends BorderPane implements Initializable, Loadab
         alert.initOwner(stage);
         alert.setOnCloseRequest(Event::consume);
         dialogPane.getScene().getWindow().setOnCloseRequest(Event::consume);
-        dialogPane.setContent(new ControlPomodoroPause(alert, pomodoroPauseDuration, resourcesService, configManager, resourceBundleService));
+        dialogPane.setContent(new ControlPomodoroPause(alert, pomodoroPauseDuration, resourcesService, configManager, settings, resourceBundleService, localizationService));
         dialogPane.setMinHeight(Region.USE_PREF_SIZE);
         dialogPane.getButtonTypes().clear();
         dialogPane.getButtonTypes().add(ButtonType.OK);

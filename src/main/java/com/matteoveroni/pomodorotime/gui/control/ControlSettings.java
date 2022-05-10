@@ -44,6 +44,7 @@ public class ControlSettings extends BorderPane implements Initializable, Loadab
     private static final String PAUSE_DURATION_MINUTES = "PAUSE_DURATION_MINUTES";
     private static final String LONG_PAUSE_DURATION_MINUTES = "LONG_PAUSE_DURATION_MINUTES";
     private static final String SESSIONS_BEFORE_LONG_PAUSE = "SESSIONS_BEFORE_LONG_PAUSE";
+    private static final String PLAY_ALARM_SOUND_AFTER_COMPLETION = "PLAY_ALARM_SOUND_AFTER_COMPLETION";
     private static final String POMODORO_REPETITIONS = "POMODORO_REPETITIONS";
     private static final String POMODORO_LOOP = "POMODORO_LOOP";
     private static final String POMODORO_PAUSE = "POMODORO_PAUSE";
@@ -135,6 +136,12 @@ public class ControlSettings extends BorderPane implements Initializable, Loadab
             currentConfig.setNumberOfSessionBeforeLongPause(newValue.intValue());
             configManager.writeConfig(currentConfig);
         });
+        settings.playAlarmSoundOnCompletionProperty().addListener((observable, oldValue, newValue) -> {
+            log.debug("playAlarmSoundOnCompletionProperty: {}", newValue);
+            final Config currentConfig = configManager.readConfig();
+            currentConfig.setPlayAlarmSoundOnCompletion(newValue);
+            configManager.writeConfig(currentConfig);
+        });
         settings.allowInterruptPomodoroProperty().addListener((observable, oldValue, newValue) -> {
             log.debug("allowInterruptPomodoroProperty: {}", newValue);
             final Config currentConfig = configManager.readConfig();
@@ -181,7 +188,8 @@ public class ControlSettings extends BorderPane implements Initializable, Loadab
                 Setting.of(LONG_PAUSE_DURATION_MINUTES, settings.pomodoroLongPauseProperty(), 1, 60, 0),
                 Setting.of(SESSIONS_BEFORE_LONG_PAUSE, settings.numberOfSessionsBeforeLongPauseProperty()).validate(IntegerRangeValidator.atLeast(0, "Insert a positive number")),
                 Setting.of(ALLOW_INTERRUPT_POMODORO, settings.allowInterruptPomodoroProperty()),
-                Setting.of(ALLOW_ABORT_POMODORO, settings.allowAbortPomodoroProperty())
+                Setting.of(ALLOW_ABORT_POMODORO, settings.allowAbortPomodoroProperty()),
+                Setting.of(PLAY_ALARM_SOUND_AFTER_COMPLETION, settings.playAlarmSoundOnCompletionProperty())
         );
         final Group pomodoroSubGroup = Group.of(POMODORO_MAIN_SETTINGS,
                 Setting.of(POMODORO_DURATION_MINUTES, settings.pomodoroDurationProperty(), 1, 60, 0),
@@ -189,7 +197,8 @@ public class ControlSettings extends BorderPane implements Initializable, Loadab
                 Setting.of(LONG_PAUSE_DURATION_MINUTES, settings.pomodoroLongPauseProperty(), 1, 60, 0),
                 Setting.of(SESSIONS_BEFORE_LONG_PAUSE, settings.numberOfSessionsBeforeLongPauseProperty()).validate(IntegerRangeValidator.atLeast(0, "Insert a positive number")),
                 Setting.of(ALLOW_INTERRUPT_POMODORO, settings.allowInterruptPomodoroProperty()),
-                Setting.of(ALLOW_ABORT_POMODORO, settings.allowAbortPomodoroProperty())
+                Setting.of(ALLOW_ABORT_POMODORO, settings.allowAbortPomodoroProperty()),
+                Setting.of(PLAY_ALARM_SOUND_AFTER_COMPLETION, settings.playAlarmSoundOnCompletionProperty())
         );
 
         final Group pomodoroRepetitionsGroup = Group.of(POMODORO_REPETITIONS, Setting.of(POMODORO_LOOP, settings.isPomodoroLoopProperty()));

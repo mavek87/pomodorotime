@@ -20,6 +20,8 @@ public class Config {
     private double pomodoroLongPauseDuration;
     @SerializedName("number_of_sessions_before_long_pause")
     private int numberOfSessionBeforeLongPause;
+    @SerializedName("play_alarm_sound_on_completion")
+    private boolean playAlarmSoundOnCompletion;
     @SerializedName("allow_interrupt_pomodoro")
     private boolean allowInterruptPomodoro;
     @SerializedName("allow_abort_pomodoro")
@@ -95,6 +97,14 @@ public class Config {
 
     public void setNumberOfSessionBeforeLongPause(int numberOfSessionBeforeLongPause) {
         this.numberOfSessionBeforeLongPause = numberOfSessionBeforeLongPause;
+    }
+
+    public boolean isPlayAlarmSoundOnCompletion() {
+        return playAlarmSoundOnCompletion;
+    }
+
+    public void setPlayAlarmSoundOnCompletion(boolean playAlarmSoundOnCompletion) {
+        this.playAlarmSoundOnCompletion = playAlarmSoundOnCompletion;
     }
 
     public boolean isAllowInterruptPomodoro() {
