@@ -1,7 +1,13 @@
 package com.matteoveroni.pomodorotime.services;
 
 import lombok.extern.slf4j.Slf4j;
+
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
+import java.util.Optional;
+import java.util.Properties;
 
 @Slf4j
 public final class ResourcesService {
@@ -12,6 +18,19 @@ public final class ResourcesService {
     private static final String FXML_VIEWS_FOLDER = "/fxml/views/";
     private static final String FXML_CONTROLS_FOLDER = "/fxml/controls/";
     private static final String FXML_EXTENSION = ".fxml";
+    private static final String VERSION_PROPS = "/version.properties";
+
+    public Optional<String> readVersion() {
+        String version = null;
+        try (InputStream inputStream = new FileInputStream(getClass().getResource(VERSION_PROPS).getFile())) {
+            Properties versionProps = new Properties();
+            versionProps.load(inputStream);
+            version = versionProps.getProperty("version", null);
+        } catch (IOException ex) {
+            log.error("Error", ex);
+        }
+        return Optional.ofNullable(version);
+    }
 
     public URL getLogoIconURL() {
         return clazz.getResource(ICONS_FOLDER + "tomato.png");

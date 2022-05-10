@@ -21,11 +21,8 @@ import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 import lombok.extern.slf4j.Slf4j;
 
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.Objects;
-import java.util.Properties;
 import java.util.ResourceBundle;
 
 import static com.matteoveroni.pomodorotime.Settings.DEFAULT_LOCALE;
@@ -33,8 +30,6 @@ import static com.matteoveroni.pomodorotime.Settings.DEFAULT_SCREEN_SIZE_RESOLUT
 
 @Slf4j
 public final class App extends Application {
-
-    public static final String VERSION_PROPS = "/version.properties";
 
     private String version;
     private ResourcesService resourcesService;
@@ -51,7 +46,6 @@ public final class App extends Application {
 
     @Override
     public void init() {
-        version = readVersion();
         resourcesService = new ResourcesService();
         configManager = ConfigManagerSingleton.INSTANCE;
         localizationService = new FXLocalizationServiceFactory().produce();
@@ -59,6 +53,7 @@ public final class App extends Application {
         settings = new Settings();
         initSettings();
         resourceBundleService = buildResourceBundleServicesAndBindItWithLocalizationService();
+        version = resourcesService.readVersion().orElse("");
     }
 
     @Override
@@ -121,18 +116,5 @@ public final class App extends Application {
         final FXMLLoader fxmlLoader = new FXMLLoader(resourcesService.getFXMLViewURL(View.APP_VIEW.getFileName()));
         fxmlLoader.setControllerFactory(controllersFactory);
         return fxmlLoader.load();
-    }
-
-    // TODO: probably should be moved to ResourcesService class
-    private String readVersion() {
-        String version = "";
-        try (InputStream inputStream = new FileInputStream(getClass().getResource(VERSION_PROPS).getFile())) {
-            Properties versionProps = new Properties();
-            versionProps.load(inputStream);
-            version = versionProps.getProperty("version");
-        } catch (IOException ex) {
-            log.error("Error", ex);
-        }
-        return version;
     }
 }
