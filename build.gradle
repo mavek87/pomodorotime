@@ -179,6 +179,13 @@ tasks.jpackageImage.doLast {
     }
 }
 
+task addVersionFileIntoResources (type: Task) {
+    File versionFile = file('src/main/resources/version.txt')
+    versionFile.text = version
+}
+
+//tasks.release.finalizedBy(addVersionFileIntoResources)
+
 //jlink {
 //    options = ['--strip-debug', '--compress', '2', '--no-header-files', '--no-man-pages']
 //    launcher {
