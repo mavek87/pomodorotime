@@ -5,6 +5,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.util.Properties;
 
 @Slf4j
@@ -20,8 +21,8 @@ public final class ResourcesService {
 
     public String readVersion() {
         String version;
-        try (InputStream inputStream = new FileInputStream(getClass().getResource(VERSION_PROPS).getFile())) {
-            Properties versionProps = new Properties();
+        try (InputStream inputStream = ResourcesService.class.getResourceAsStream(VERSION_PROPS)) {
+            final Properties versionProps = new Properties();
             versionProps.load(inputStream);
             version = versionProps.getProperty("version", null);
         } catch (IOException ex) {
