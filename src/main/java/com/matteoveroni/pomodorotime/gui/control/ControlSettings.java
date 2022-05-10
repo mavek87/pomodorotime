@@ -85,7 +85,6 @@ public class ControlSettings extends BorderPane implements Initializable, Loadab
             currentConfig.setPomodoroDuration(newValue.intValue());
             configManager.writeConfig(currentConfig);
         });
-
         settings.pomodoroPauseProperty().addListener((observable, oldValue, newValue) -> {
             log.debug("pomodoroPauseProperty: {}", newValue);
             final Config currentConfig = configManager.readConfig();
