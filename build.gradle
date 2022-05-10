@@ -159,6 +159,7 @@ runtime {
             ]
             installerType = 'msi'
         } else if (currentOs.isLinux()) {
+            installerType = 'deb'
             installerOptions += [
                     '--resource-dir', 'src/main/resources',
                     '--linux-shortcut',
