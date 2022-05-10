@@ -115,12 +115,6 @@ javafx {
     modules = ['javafx.controls', 'javafx.fxml', 'javafx.media']
 }
 
-task a {
-    println project.version
-    println version
-    println scmVersion.version
-}
-
 jar {
     manifest.attributes(
             'Built-By': "${author}",
@@ -191,7 +185,7 @@ tasks.jpackageImage.doLast {
     }
 }
 
-tasks.release.dependsOn(jpackage)
+//tasks.release.dependsOn(jpackage)
 
 //task addVersionFileIntoResources (type: Task) {
 //    File versionFile = file('src/main/resources/version.txt')
