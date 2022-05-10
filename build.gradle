@@ -50,7 +50,7 @@ wrapper {
 scmVersion {
     hooks {
 //        pre 'fileUpdate', [file: 'version.properties', pattern: {v, c -> /version: $v/}, replacement: {v, c -> "version: $v"}]
-        pre 'fileUpdate', [file: 'version.properties', pattern: {v, c -> /version: $v/}, replacement: {v, c -> "version: $v"}]
+        pre 'fileUpdate', [file: 'src/main/resources/version.properties', pattern: {v, c -> /version: $v/}, replacement: {v, c -> "version: $v"}]
     }
 }
 
