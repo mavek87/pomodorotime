@@ -179,10 +179,10 @@ tasks.jpackageImage.doLast {
     }
 }
 
-task addVersionFileIntoResources (type: Task) {
-    File versionFile = file('src/main/resources/version.txt')
-    versionFile.text = version
-}
+//task addVersionFileIntoResources (type: Task) {
+//    File versionFile = file('src/main/resources/version.txt')
+//    versionFile.text = version
+//}
 
 //tasks.release.finalizedBy(addVersionFileIntoResources)
 
