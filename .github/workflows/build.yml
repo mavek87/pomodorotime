@@ -47,8 +47,8 @@ jobs:
           draft: false
           prerelease: false
 
-      - id: release-${{ matrix.os }}-installer
-        name: Release ${{ matrix.os }} Installer
+      - id: release-installer
+        name: Release Installer
         uses: actions/upload-release-asset@latest
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
