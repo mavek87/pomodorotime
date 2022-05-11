@@ -57,5 +57,4 @@ public class Constants {
         public static final String INTERRUPT_PAUSE = "INTERRUPT_PAUSE";
         public static final String ABORT_PAUSE = "ABORT_PAUSE";
     }
-    //TODO: add here all the localization keys
 }
