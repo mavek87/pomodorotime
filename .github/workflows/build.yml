@@ -21,7 +21,7 @@ jobs:
           distribution: 'zulu' # See 'Supported distributions' for available options
           cache: 'gradle'
       - run: ./gradlew jpackage
-      - run: mkdir -p distribution-${{ matrix.os }} && cp build/jpackage/* distribution-${{ matrix.os }}
+      - run: mkdir -p distribution-${{ matrix.os }} && cp -r build/jpackage/* distribution-${{ matrix.os }}
 
       - id: upload-installer
         name: Upload Installer
