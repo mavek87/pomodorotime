@@ -23,18 +23,19 @@ jobs:
       - run: ./gradlew jpackage
       - run: mkdir -p distribution-${{ matrix.os }} && cp build/jpackage/* distribution-${{ matrix.os }}
 
-#      - id: upload-installer
-#        name: Upload Installer
-#        uses: actions/upload-artifact@v3
-#        with:
-#          name: PomodoroTime-${{ matrix.os }}
-#          path: distribution-${{ matrix.os }}
-#
-#      - id: download-installer
-#        name: Download installer
-#        uses: actions/download-artifact@v3
-#        with:
-#          name: distribution-${{ matrix.os }}
+      - id: upload-installer
+        name: Upload Installer
+        uses: actions/upload-artifact@v3
+        with:
+          name: PomodoroTime-${{ matrix.os }}
+          path: distribution-${{ matrix.os }}
+          retention-days: 1
+
+      - id: download-installer
+        name: Download installer
+        uses: actions/download-artifact@v3
+        with:
+          name: distribution-${{ matrix.os }}
 
       - id: create-release
         name: Create GitHub Release
