@@ -43,6 +43,7 @@ jobs:
 
   release-app:
     name: Release the application
+    needs: build-app
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
