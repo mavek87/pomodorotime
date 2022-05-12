@@ -33,6 +33,7 @@ jobs:
       - id: create-distribution-folder
         name: Create Distribution Folder
         run: mkdir -p distribution-${{ matrix.os }} && cp -r build/jpackage/* distribution-${{ matrix.os }}
+        shell: bash
 
       - id: upload-installer
         name: Upload Installer
@@ -63,8 +64,8 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: release-${{ github.sha }}
-          release_name: release-${{ github.sha }}
+          tag_name: release-${{ matrix.os }}-${{ github.sha }}
+          release_name: release-${{ matrix.os }}-${{ github.sha }}
           draft: false
           prerelease: false
 
