@@ -80,9 +80,8 @@ jobs:
         uses: actions/download-artifact@v3
         with:
           name: PomodoroTime-${{ matrix.os }}
-          path: distribution-${{ matrix.os }}
 
-      #            - id: download-installer
+#            - id: download-installer
 #              name: Download installer
 #              uses: actions/download-artifact@v3
 #              with:
