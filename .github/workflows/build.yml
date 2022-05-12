@@ -4,9 +4,7 @@ on:
     tags:
       - v*
     branches:
-      - master
-    branches-ignore:
-      - "!master"
+      - main
 
 jobs:
   build-app:
