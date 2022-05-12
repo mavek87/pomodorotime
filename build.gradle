@@ -195,7 +195,8 @@ runtime {
             installerType = 'msi'
         } else if (platform == Platform.MAC) {
             installerOptions += [
-                    '--main-jar', "${appName}-${project.version}.jar",
+                    // --main-jar parameter is not compatible with --type dmg
+                    // '--main-jar', "${appName}-${project.version}.jar",
                     '--main-class', "${project.group}.${appName}.${mainName}",
                     '--mac-package-name', 'App Name in Menu'
 //                    '--icon', 'src/main/resources/icons/tomato.png'
