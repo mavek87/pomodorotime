@@ -36,12 +36,18 @@ jobs:
         run: mkdir -p distribution-${{ matrix.os }} && cp -r build/jpackage/* distribution-${{ matrix.os }}
         shell: bash
 
+      - id: zip-distribution-folder
+        name: Zip Distribution Folder
+        run: zip -r distribution-${{ matrix.os }}.zip distribution-${{ matrix.os }}
+        shell: bash
+
       - id: upload-installer
         name: Upload Installer
         uses: actions/upload-artifact@v3
         with:
-          name: PomodoroTime-${{ matrix.os }}
-          path: distribution-${{ matrix.os }}
+          name: PomodoroTime-${{ matrix.os }}.zip
+          path: distribution-${{ matrix.os }}.zip
+          asset_content_type: application/zip
 
   release-app:
     name: Release the application
@@ -61,7 +67,8 @@ jobs:
         name: Download installer
         uses: actions/download-artifact@v3
         with:
-          name: PomodoroTime-${{ matrix.os }}
+          name: PomodoroTime-${{ matrix.os }}.zip
+          asset_content_type: application/zip
 
       - id: create-release
         name: Create GitHub Release
@@ -81,6 +88,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create-release.outputs.upload_url }}
-          asset_path: distribution-${{ matrix.os }}
-          asset_name: PomodoroTime-${{ matrix.os }}
+          asset_path: distribution-${{ matrix.os }}.zip
+          asset_name: PomodoroTime-${{ matrix.os }}.zip
           asset_content_type: application/zip
