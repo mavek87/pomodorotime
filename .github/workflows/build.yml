@@ -19,28 +19,28 @@ jobs:
         name: Checkout
         uses: actions/checkout@v3
 
-      - id: setup-java
-        name: Setup Java
-        uses: actions/setup-java@v3
-        with:
-          java-version: 17
-          distribution: 'zulu'
-          cache: 'gradle'
+#      - id: setup-java
+#        name: Setup Java
+#        uses: actions/setup-java@v3
+#        with:
+#          java-version: 17
+#          distribution: 'zulu'
+#          cache: 'gradle'
 
-      - id: build-distribution
-        name: Build Distribution
-        run: ./gradlew jpackage
-        shell: bash
+#      - id: build-distribution
+#        name: Build Distribution
+#        run: ./gradlew jpackage
+#        shell: bash
 
 #      - id: create-distribution-folder
 #        name: Create Distribution Folder
 #        run: mkdir -p distribution-${{ matrix.os }} && cp -r build/jpackage/* distribution-${{ matrix.os }}
 #        shell: bash
 
-      - id: create-distribution-folder
-        name: Create Distribution Folder
-        run: mkdir -p distribution-${{ matrix.os }} && cp -r build/jpackage/* distribution-${{ matrix.os }}
-        shell: bash
+#      - id: create-distribution-folder
+#        name: Create Distribution Folder
+#        run: mkdir -p distribution-${{ matrix.os }} && cp -r build/jpackage/* distribution-${{ matrix.os }}
+#        shell: bash
 
 #      - id: zip-distribution-folder
 #        name: Zip Distribution Folder
@@ -50,6 +50,9 @@ jobs:
         shell: bash
 
       - run: cd test-${{ matrix.os }} && touch a b c
+        shell: bash
+
+      - run: ls -R
         shell: bash
 
 #      - id: upload-installer
@@ -99,10 +102,10 @@ jobs:
 #        run: echo ${{steps.download-installer.outputs.download-path}}
 #        shell: bash
 #
-#      - id: test-downloaded-installer
-#        name: Test downloaded installer
-#        run: ls -R
-#        shell: bash
+      - id: test-downloaded-installer
+        name: Test downloaded installer
+        run: ls -R
+        shell: bash
 
       - id: create-release
         name: Create GitHub Release
