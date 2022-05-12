@@ -112,6 +112,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create-release.outputs.upload_url }}
-          asset_path: distribution-${{ matrix.os }}
+          asset_path: pomodorotime
           asset_name: PomodoroTime-${{ matrix.os }}
           asset_content_type: application/zip
