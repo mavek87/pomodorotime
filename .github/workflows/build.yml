@@ -49,18 +49,18 @@ jobs:
       - run: mkdir test-${{ matrix.os }}
         shell: bash
 
-      - run: cd test-${{ matrix.os }} && touch a b c
+      - run: cd test-${{ matrix.os }} && touch a b c && cd ..
         shell: bash
 
       - run: ls -R
         shell: bash
 
-#      - id: upload-installer
-#        name: Upload Installer
-#        uses: actions/upload-artifact@v3
-#        with:
-#          name: PomodoroTime-${{ matrix.os }}
-#          path: distribution-${{ matrix.os }}
+      - id: upload-installer
+        name: Upload Installer
+        uses: actions/upload-artifact@v3
+        with:
+          name: PomodoroTime-${{ matrix.os }}
+          path: ./test-${{ matrix.os }}
 
 #            - id: upload-installer
 #                name: Upload Installer
@@ -84,12 +84,12 @@ jobs:
 #        name: Checkout
 #        uses: actions/checkout@v3
 
-#      - id: download-installer
-#        name: Download installer
-#        uses: actions/download-artifact@v3
-#        with:
-#          name: PomodoroTime-${{ matrix.os }}
-#          path: distribution-${{ matrix.os }}
+      - id: download-installer
+        name: Download installer
+        uses: actions/download-artifact@v3
+        with:
+          name: PomodoroTime-${{ matrix.os }}
+          path: ./test-${{ matrix.os }}
 
       #            - id: download-installer
 #              name: Download installer
