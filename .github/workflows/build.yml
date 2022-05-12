@@ -40,17 +40,16 @@ jobs:
         with:
           name: PomodoroTime-${{ matrix.os }}
           path: distribution-${{ matrix.os }}
-#          retention-days: 1
 
   release-app:
     name: Release the application
-    needs: build-app
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
         # os: [ macos-latest, ubuntu-latest, windows-latest ]
         os: [ ubuntu-latest, windows-latest ]
 
+    steps:
       - id: download-installer
         name: Download installer
         uses: actions/download-artifact@v3
