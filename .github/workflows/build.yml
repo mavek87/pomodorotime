@@ -59,15 +59,15 @@ jobs:
 #        name: Zip Distribution Folder
 #        run: zip -r test-${{ matrix.os }}.zip test-${{ matrix.os }}
 
-      - id: zip-distribution-folder
-        name: Zip Distribution Folder
-        run: |
-          if [ "$RUNNER_OS" == "Windows" ]; then
-            7z a test-${{ matrix.os }}.zip test-${{ matrix.os }}         
-          else
-            zip -r test-${{ matrix.os }}.zip test-${{ matrix.os }}
-          fi
-        shell: bash
+#      - id: zip-distribution-folder
+#        name: Zip Distribution Folder
+#        run: |
+#          if [ "$RUNNER_OS" == "Windows" ]; then
+#            7z a test-${{ matrix.os }}.zip test-${{ matrix.os }}
+#          else
+#            zip -r test-${{ matrix.os }}.zip test-${{ matrix.os }}
+#          fi
+#        shell: bash
 
       - id: upload-installer
         name: Upload Installer
@@ -103,7 +103,7 @@ jobs:
         uses: actions/download-artifact@v3
         with:
           name: PomodoroTime-${{ matrix.os }}
-          path: ./test-${{ matrix.os }}.zip
+          path: ./
 
       #            - id: download-installer
 #              name: Download installer
@@ -139,6 +139,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create-release.outputs.upload_url }}
-          asset_path: ./test-${{ matrix.os }}.zip
+          asset_path: test-${{ matrix.os }}.zip
           asset_name: test-${{ matrix.os }}.zip
           asset_content_type: application/zip
