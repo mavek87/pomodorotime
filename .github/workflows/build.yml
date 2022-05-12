@@ -13,15 +13,21 @@ jobs:
         name: Checkout
         uses: actions/checkout@v3
 
-      - id: build-distribution
-        name: Build Distribution
+      - id: setup-java
+        name: Setup Java
         uses: actions/setup-java@v3
         with:
           java-version: 17
-          distribution: 'zulu' # See 'Supported distributions' for available options
+          distribution: 'zulu'
           cache: 'gradle'
-      - run: ./gradlew jpackage
-      - run: mkdir -p distribution-${{ matrix.os }} && cp -r build/jpackage/* distribution-${{ matrix.os }}
+
+      - id: build-distribution
+        name: Build Distribution
+        run: ./gradlew jpackage
+
+      - id: create-distribution-folder
+        name: Create Distribution Folder
+        run: mkdir -p distribution-${{ matrix.os }} && cp -r build/jpackage/* distribution-${{ matrix.os }}
 
       - id: upload-installer
         name: Upload Installer
