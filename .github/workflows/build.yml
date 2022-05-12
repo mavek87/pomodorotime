@@ -55,9 +55,9 @@ jobs:
       - run: ls -R
         shell: bash
 
-      - id: zip-distribution-folder
-        name: Zip Distribution Folder
-        run: zip -r test-${{ matrix.os }}.zip test-${{ matrix.os }}
+#      - id: zip-distribution-folder
+#        name: Zip Distribution Folder
+#        run: zip -r test-${{ matrix.os }}.zip test-${{ matrix.os }}
 
       - id: zip-distribution-folder
         name: Zip Distribution Folder
