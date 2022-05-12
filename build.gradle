@@ -23,6 +23,7 @@ group 'com.matteoveroni'
 version = scmVersion.version
 
 def currentOs = org.gradle.internal.os.OperatingSystem.current()
+
 enum Platform {
     WIN("win"), MAC("mac"), LINUX("linux")
 
@@ -36,6 +37,7 @@ enum Platform {
         return name
     }
 }
+
 def platform
 if (currentOs.isWindows()) platform = Platform.WIN
 else if (currentOs.isMacOsX()) platform = Platform.MAC
@@ -153,7 +155,6 @@ test {
     useJUnitPlatform()
 }
 
-
 def winJDK = 'https://cdn.azul.com/zulu/bin/zulu17.34.19-ca-jdk17.0.3-win_x64.zip'
 def macJDK = 'https://cdn.azul.com/zulu/bin/zulu17.34.19-ca-jdk17.0.3-macosx_x64.zip'
 def linuxJDK = 'https://cdn.azul.com/zulu/bin/zulu17.34.19-ca-jdk17.0.3-linux_x64.zip'
@@ -177,12 +178,11 @@ runtime {
         targetPlatformName = platform.getName()
         installerOptions += [
                 '--vendor', author,
-                '--app-version', version,
-                '--description', 'A software to set alarms',
-//                '--name', "${prettyAppName}",
-                '--icon', 'src/main/resources/icons/tomato.png',
+                '--app-version', project.version,
+                '--description', 'A software to stay focused during your daily tasks',
                 '--about-url', website,
-                '--verbose'
+                '--verbose',
+                '--copyright', "Copyright ${author}"
         ]
         if (platform == Platform.WIN) {
             installerOptions += [
@@ -190,14 +190,24 @@ runtime {
                     '--win-dir-chooser',
                     '--win-menu',
                     '--win-shortcut'
+//                    '--icon', 'src/main/resources/icons/tomato.png'
             ]
             installerType = 'msi'
+        } else if (platform == Platform.MAC) {
+            installerOptions += [
+                    '--main-jar', "${appName}-${project.version}.jar",
+                    '--main-class', "${project.group}.${appName}.${mainName}",
+                    '--mac-package-name', 'App Name in Menu'
+//                    '--icon', 'src/main/resources/icons/tomato.png'
+            ]
+            installerType = 'dmg'
         } else if (platform == Platform.LINUX) {
             installerOptions += [
                     '--resource-dir', 'src/main/resources',
                     '--linux-shortcut',
                     '--linux-deb-maintainer', 'matver87@gmail.com',
-                    '--linux-rpm-license-type', 'MIT'
+                    '--linux-rpm-license-type', 'MIT',
+                    '--icon', 'src/main/resources/icons/tomato.png'
 //                    '--install-dir', '/opt/',
 //                    '--linux-package-name', 'xxx'
             ]
