@@ -23,6 +23,11 @@ group 'com.matteoveroni'
 version = scmVersion.version
 
 def currentOs = org.gradle.internal.os.OperatingSystem.current()
+def platform = ""
+if (currentOs.isWindows()) platform = "win"
+else if (currentOs.isMacOsX()) platform = "mac"
+else if (currentOs.isLinux()) platform = "linux"
+else throw new GradleException("Unknown platform")
 
 ext {
     appName = 'pomodorotime'
@@ -51,7 +56,7 @@ wrapper {
 
 scmVersion {
     hooks {
-        pre 'fileUpdate', [file: 'src/main/resources/version.properties', pattern: {v, c -> /version=$v/}, replacement: {v, c -> "version=$v"}]
+        pre 'fileUpdate', [file: 'src/main/resources/version.properties', pattern: { v, c -> /version=$v/ }, replacement: { v, c -> "version=$v" }]
         pre 'commit'
     }
 }
@@ -146,7 +151,7 @@ runtime {
     jpackage {
         jvmArgs = ['-splash:$APPDIR/splash.png']
 
-        targetPlatformName = currentOs.isWindows() ? 'win' : 'linux-x64'
+        targetPlatformName = platform
         installerOptions += [
                 '--vendor', author,
                 '--app-version', version,
@@ -156,7 +161,7 @@ runtime {
                 '--about-url', website,
                 '--verbose'
         ]
-        if (currentOs.isWindows()) {
+        if (platform = "win") {
             installerOptions += [
                     '--win-per-user-install',
                     '--win-dir-chooser',
@@ -164,7 +169,7 @@ runtime {
                     '--win-shortcut'
             ]
             installerType = 'msi'
-        } else if (currentOs.isLinux()) {
+        } else if (platform = "linux") {
             installerType = 'deb'
             installerOptions += [
                     '--resource-dir', 'src/main/resources',
