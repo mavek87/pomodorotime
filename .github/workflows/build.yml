@@ -89,9 +89,12 @@ jobs:
 #                name: PomodoroTime-${{ matrix.os }}.zip
 #                asset_content_type: application/zip
 
+      - name: 'Echo download path'
+        run: echo ${{steps.download.outputs.download-path}}
+
       - id: test-downloaded-installer
         name: Test downloaded installer
-        run: ls -R
+        run: pwd && ls -R
         shell: bash
 
       - id: create-release
