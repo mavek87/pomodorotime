@@ -29,6 +29,7 @@ jobs:
       - id: build-distribution
         name: Build Distribution
         run: ./gradlew jpackage
+        shell: bash
 
       - id: create-distribution-folder
         name: Create Distribution Folder
@@ -76,6 +77,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create-release.outputs.upload_url }}
-          asset_path: distribution-${{ matrix.os }}
+#          asset_path: distribution-${{ matrix.os }}
+          asset_path: PomodoroTime-${{ matrix.os }}
           asset_name: PomodoroTime-${{ matrix.os }}
           asset_content_type: application/zip
