@@ -54,8 +54,8 @@ jobs:
         with:
           name: PomodoroTime-ubuntu-latest
 
-      - id: download-installer-ubuntu
-        name: Download installer Ubuntu
+      - id: download-installer-windows
+        name: Download installer Windows
         uses: actions/download-artifact@v3
         with:
           name: PomodoroTime-windows-latest
