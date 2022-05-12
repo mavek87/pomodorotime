@@ -150,8 +150,8 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: release-${{ matrix.os }}-${{ github.sha }}
-          release_name: release-${{ matrix.os }}-${{ github.sha }}
+          tag_name: release-${{ matrix.os }}-${{ github.ref_name }}
+          release_name: release-${{ matrix.os }}-${{ github.ref_name }}
           draft: false
           prerelease: false
 
