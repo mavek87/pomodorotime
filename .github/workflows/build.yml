@@ -55,12 +55,31 @@ jobs:
       - run: ls -R
         shell: bash
 
+      - id: zip-distribution-folder
+        name: Zip Distribution Folder
+        run: zip -r test-${{ matrix.os }}.zip test-${{ matrix.os }}
+
+      - id: zip-distribution-folder
+        name: Zip Distribution Folder
+        run: |
+          if [ "$RUNNER_OS" == "Windows" ]; then
+            7z a test-${{ matrix.os }}.zip test-${{ matrix.os }}         
+          else
+            zip -r test-${{ matrix.os }}.zip test-${{ matrix.os }}
+#          elif [ "$RUNNER_OS" == "Windows" ]; then
+#               choco install important_windows_software
+#          else
+#               echo "$RUNNER_OS not supported"
+#               exit 1
+          fi
+        shell: bash
+
       - id: upload-installer
         name: Upload Installer
         uses: actions/upload-artifact@v3
         with:
           name: PomodoroTime-${{ matrix.os }}
-          path: ./test-${{ matrix.os }}
+          path: ./test-${{ matrix.os }}.zip
 
 #            - id: upload-installer
 #                name: Upload Installer
@@ -71,7 +90,7 @@ jobs:
 
   release-app:
     name: Release the application
-    needs: build-app
+    needs: zip-distribution
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
@@ -89,7 +108,7 @@ jobs:
         uses: actions/download-artifact@v3
         with:
           name: PomodoroTime-${{ matrix.os }}
-          path: ./test-${{ matrix.os }}
+          path: ./test-${{ matrix.os }}.zip
 
       #            - id: download-installer
 #              name: Download installer
@@ -125,6 +144,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create-release.outputs.upload_url }}
-          asset_path: ./test-${{ matrix.os }}
+          asset_path: ./test-${{ matrix.os }}.zip
           asset_name: PomodoroTime-${{ matrix.os }}
           asset_content_type: application/zip
