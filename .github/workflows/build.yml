@@ -1,5 +1,12 @@
 name: Build installer for supported OS
-on: push
+on:
+  push:
+    tags:
+      - v*
+    branches:
+      - master
+    branches-ignore:
+      - "!master"
 
 jobs:
   build-app:
