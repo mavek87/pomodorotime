@@ -85,7 +85,7 @@ jobs:
 
   release-app:
     name: Release the application
-    needs: zip-distribution
+    needs: build-app
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
