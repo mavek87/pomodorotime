@@ -90,7 +90,8 @@ jobs:
 #                asset_content_type: application/zip
 
       - name: 'Echo download path'
-        run: echo ${{steps.download.outputs.download-path}}
+        run: echo ${{steps.download-installer.outputs.download-path}}
+        shell: bash
 
       - id: test-downloaded-installer
         name: Test downloaded installer
