@@ -59,15 +59,15 @@ jobs:
 #        name: Zip Distribution Folder
 #        run: zip -r test-${{ matrix.os }}.zip test-${{ matrix.os }}
 
-#      - id: zip-distribution-folder
-#        name: Zip Distribution Folder
-#        run: |
-#          if [ "$RUNNER_OS" == "Windows" ]; then
-#            7z a test-${{ matrix.os }}.zip test-${{ matrix.os }}
-#          else
-#            zip -r test-${{ matrix.os }}.zip test-${{ matrix.os }}
-#          fi
-#        shell: bash
+      - id: zip-distribution-folder
+        name: Zip Distribution Folder
+        run: |
+          if [ "$RUNNER_OS" == "Windows" ]; then
+            7z a test-${{ matrix.os }}.zip test-${{ matrix.os }}
+          else
+            zip -r test-${{ matrix.os }}.zip test-${{ matrix.os }}
+          fi
+        shell: bash
 
       - id: upload-installer
         name: Upload Installer
