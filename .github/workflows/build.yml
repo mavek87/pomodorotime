@@ -66,11 +66,6 @@ jobs:
             7z a test-${{ matrix.os }}.zip test-${{ matrix.os }}         
           else
             zip -r test-${{ matrix.os }}.zip test-${{ matrix.os }}
-#          elif [ "$RUNNER_OS" == "Windows" ]; then
-#               choco install important_windows_software
-#          else
-#               echo "$RUNNER_OS not supported"
-#               exit 1
           fi
         shell: bash
 
