@@ -11,7 +11,8 @@ jobs:
     strategy:
       matrix:
         # os: [ macos-latest, ubuntu-latest, windows-latest ]
-        os: [ ubuntu-latest, windows-latest ]
+#        os: [ ubuntu-latest, windows-latest ]
+        os: [ windows-latest ]
 
     steps:
       - id: checkout
@@ -31,21 +32,33 @@ jobs:
         run: ./gradlew jpackage
         shell: bash
 
+#      - id: create-distribution-folder
+#        name: Create Distribution Folder
+#        run: mkdir -p distribution-${{ matrix.os }} && cp -r build/jpackage/* distribution-${{ matrix.os }}
+#        shell: bash
+
       - id: create-distribution-folder
         name: Create Distribution Folder
         run: mkdir -p distribution-${{ matrix.os }} && cp -r build/jpackage/* distribution-${{ matrix.os }}
         shell: bash
 
-      - id: zip-distribution-folder
-        name: Zip Distribution Folder
-        run: zip -r distribution-${{ matrix.os }}.zip distribution-${{ matrix.os }}
+#      - id: zip-distribution-folder
+#        name: Zip Distribution Folder
+#        run: zip -r distribution-${{ matrix.os }}.zip distribution-${{ matrix.os }}
 
       - id: upload-installer
         name: Upload Installer
         uses: actions/upload-artifact@v3
         with:
-          name: PomodoroTime-${{ matrix.os }}.zip
-          path: distribution-${{ matrix.os }}.zip
+          name: PomodoroTime-${{ matrix.os }}
+          path: distribution-${{ matrix.os }}
+
+#            - id: upload-installer
+#                name: Upload Installer
+#                uses: actions/upload-artifact@v3
+#                with:
+#                  name: PomodoroTime-${{ matrix.os }}.zip
+#                  path: distribution-${{ matrix.os }}.zip
 
   release-app:
     name: Release the application
@@ -54,19 +67,31 @@ jobs:
     strategy:
       matrix:
         # os: [ macos-latest, ubuntu-latest, windows-latest ]
-        os: [ ubuntu-latest, windows-latest ]
+#        os: [ ubuntu-latest, windows-latest ]
+        os: [ windows-latest ]
 
     steps:
-      - id: checkout
-        name: Checkout
-        uses: actions/checkout@v3
+#      - id: checkout
+#        name: Checkout
+#        uses: actions/checkout@v3
 
       - id: download-installer
         name: Download installer
         uses: actions/download-artifact@v3
         with:
-          name: PomodoroTime-${{ matrix.os }}.zip
-          asset_content_type: application/zip
+          name: PomodoroTime-${{ matrix.os }}
+
+#            - id: download-installer
+#              name: Download installer
+#              uses: actions/download-artifact@v3
+#              with:
+#                name: PomodoroTime-${{ matrix.os }}.zip
+#                asset_content_type: application/zip
+
+      - id: test-downloaded-installer
+        name: Test downloaded installer
+        run: ls -R
+        shell: bash
 
       - id: create-release
         name: Create GitHub Release
@@ -86,6 +111,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create-release.outputs.upload_url }}
-          asset_path: distribution-${{ matrix.os }}.zip
-          asset_name: PomodoroTime-${{ matrix.os }}.zip
+          asset_path: distribution-${{ matrix.os }}
+          asset_name: PomodoroTime-${{ matrix.os }}
           asset_content_type: application/zip
