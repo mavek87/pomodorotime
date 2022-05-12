@@ -23,10 +23,23 @@ group 'com.matteoveroni'
 version = scmVersion.version
 
 def currentOs = org.gradle.internal.os.OperatingSystem.current()
-def platform = ""
-if (currentOs.isWindows()) platform = "win"
-else if (currentOs.isMacOsX()) platform = "mac"
-else if (currentOs.isLinux()) platform = "linux"
+enum Platform {
+    WIN("win"), MAC("mac"), LINUX("linux")
+
+    private final String name
+
+    Platform(String name) {
+        this.name = name
+    }
+
+    String getName() {
+        return name
+    }
+}
+def platform
+if (currentOs.isWindows()) platform = Platform.WIN
+else if (currentOs.isMacOsX()) platform = Platform.MAC
+else if (currentOs.isLinux()) platform = Platform.LINUX
 else throw new GradleException("Unknown platform")
 
 ext {
@@ -140,18 +153,28 @@ test {
     useJUnitPlatform()
 }
 
+
+def winJDK = 'https://cdn.azul.com/zulu/bin/zulu17.34.19-ca-jdk17.0.3-win_x64.zip'
+def macJDK = 'https://cdn.azul.com/zulu/bin/zulu17.34.19-ca-jdk17.0.3-macosx_x64.zip'
+def linuxJDK = 'https://cdn.azul.com/zulu/bin/zulu17.34.19-ca-jdk17.0.3-linux_x64.zip'
+Map<Platform, String> jdkForPlatform = Map.of(
+        Platform.WIN, winJDK,
+        Platform.MAC, macJDK,
+        Platform.LINUX, linuxJDK
+)
+
 runtime {
     options = ['--strip-debug', '--compress', '2', '--no-header-files', '--no-man-pages']
     launcher {
         noConsole = false
     }
-    targetPlatform('linux-x64') {
-        jdkHome = jdkDownload('https://cdn.azul.com/zulu/bin/zulu17.32.13-ca-jdk17.0.2-linux_x64.zip')
+    targetPlatform(platform.getName()) {
+        jdkHome = jdkDownload(jdkForPlatform.get(platform))
     }
     jpackage {
         jvmArgs = ['-splash:$APPDIR/splash.png']
 
-        targetPlatformName = platform
+        targetPlatformName = platform.getName()
         installerOptions += [
                 '--vendor', author,
                 '--app-version', version,
@@ -161,7 +184,7 @@ runtime {
                 '--about-url', website,
                 '--verbose'
         ]
-        if (platform = "win") {
+        if (platform == Platform.WIN) {
             installerOptions += [
                     '--win-per-user-install',
                     '--win-dir-chooser',
@@ -169,8 +192,7 @@ runtime {
                     '--win-shortcut'
             ]
             installerType = 'msi'
-        } else if (platform = "linux") {
-            installerType = 'deb'
+        } else if (platform == Platform.LINUX) {
             installerOptions += [
                     '--resource-dir', 'src/main/resources',
                     '--linux-shortcut',
@@ -179,6 +201,7 @@ runtime {
 //                    '--install-dir', '/opt/',
 //                    '--linux-package-name', 'xxx'
             ]
+            installerType = 'deb'
         }
     }
 }
