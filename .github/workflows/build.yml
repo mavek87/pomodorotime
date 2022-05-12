@@ -42,11 +42,11 @@ jobs:
           path: distribution-${{ matrix.os }}
           retention-days: 1
 
-      - id: download-installer
-        name: Download installer
-        uses: actions/download-artifact@v3
-        with:
-          name: distribution-${{ matrix.os }}
+#      - id: download-installer
+#        name: Download installer
+#        uses: actions/download-artifact@v3
+#        with:
+#          name: PomodoroTime-${{ matrix.os }}
 
       - id: create-release
         name: Create GitHub Release
