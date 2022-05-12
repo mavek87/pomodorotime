@@ -14,7 +14,6 @@ jobs:
          os: [ macos-latest, ubuntu-latest, windows-latest ]
 #        os: [ ubuntu-latest, windows-latest ]
 #        os: [ windows-latest ]
-
     steps:
       - id: checkout
         name: Checkout
@@ -48,29 +47,6 @@ jobs:
             exit 1
           fi
         shell: bash
-#        run: mkdir -p distribution-${{ matrix.os }} && cp -r build/jpackage/* distribution-${{ matrix.os }}
-
-#      - id: create-distribution-folder
-#        name: Create Distribution Folder
-#        run: mkdir -p distribution-${{ matrix.os }} && cp -r build/jpackage/* distribution-${{ matrix.os }}
-#        shell: bash
-
-#      - id: zip-distribution-folder
-#        name: Zip Distribution Folder
-#        run: zip -r distribution-${{ matrix.os }}.zip distribution-${{ matrix.os }}
-
-#      - run: mkdir test-${{ matrix.os }}
-#        shell: bash
-#
-#      - run: cd test-${{ matrix.os }} && touch a b c && cd ..
-#        shell: bash
-#
-#      - run: ls -R
-#        shell: bash
-
-#      - id: zip-distribution-folder
-#        name: Zip Distribution Folder
-#        run: zip -r test-${{ matrix.os }}.zip test-${{ matrix.os }}
 
       - id: zip-distribution-folder
         name: Zip Distribution Folder
@@ -82,29 +58,12 @@ jobs:
           fi
         shell: bash
 
-#          - id: zip-distribution-folder
-#            name: Zip Distribution Folder
-#            run: |
-#              if [ "$RUNNER_OS" == "Windows" ]; then
-#                7z a test-${{ matrix.os }}.zip test-${{ matrix.os }}
-#              else
-#                zip -r test-${{ matrix.os }}.zip test-${{ matrix.os }}
-#              fi
-#            shell: bash
-
       - id: upload-installer
         name: Upload Installer
         uses: actions/upload-artifact@v3
         with:
           name: PomodoroTime-${{ matrix.os }}
           path: ./installer-${{ matrix.os }}.zip
-
-#            - id: upload-installer
-#                name: Upload Installer
-#                uses: actions/upload-artifact@v3
-#                with:
-#                  name: PomodoroTime-${{ matrix.os }}.zip
-#                  path: distribution-${{ matrix.os }}.zip
 
   release-app:
     name: Release the application
@@ -115,12 +74,7 @@ jobs:
         os: [ macos-latest, ubuntu-latest, windows-latest ]
 #        os: [ ubuntu-latest, windows-latest ]
 #        os: [ windows-latest ]
-
     steps:
-#      - id: checkout
-#        name: Checkout
-#        uses: actions/checkout@v3
-
       - id: download-installer
         name: Download Installer
         uses: actions/download-artifact@v3
@@ -128,17 +82,6 @@ jobs:
           name: PomodoroTime-${{ matrix.os }}
           path: ./
 
-      #            - id: download-installer
-#              name: Download installer
-#              uses: actions/download-artifact@v3
-#              with:
-#                name: PomodoroTime-${{ matrix.os }}.zip
-#                asset_content_type: application/zip
-
-#      - name: 'Echo download path'
-#        run: echo ${{steps.download-installer.outputs.download-path}}
-#        shell: bash
-#
       - id: test-downloaded-installer
         name: Test Downloaded Installer
         run: ls -R
