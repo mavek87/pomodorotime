@@ -39,7 +39,6 @@ jobs:
       - id: zip-distribution-folder
         name: Zip Distribution Folder
         run: zip -r distribution-${{ matrix.os }}.zip distribution-${{ matrix.os }}
-        shell: bash
 
       - id: upload-installer
         name: Upload Installer
@@ -47,7 +46,6 @@ jobs:
         with:
           name: PomodoroTime-${{ matrix.os }}.zip
           path: distribution-${{ matrix.os }}.zip
-          asset_content_type: application/zip
 
   release-app:
     name: Release the application
