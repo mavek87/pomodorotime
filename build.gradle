@@ -22,6 +22,8 @@ plugins {
 group 'com.matteoveroni'
 version = scmVersion.version
 
+def currentOs = org.gradle.internal.os.OperatingSystem.current()
+
 ext {
     appName = 'pomodorotime'
     prettyAppName = 'Pomodoro-Time'
@@ -143,8 +145,6 @@ runtime {
     }
     jpackage {
         jvmArgs = ['-splash:$APPDIR/splash.png']
-
-        def currentOs = org.gradle.internal.os.OperatingSystem.current()
 
         targetPlatformName = currentOs.isWindows() ? 'win' : 'linux-x64'
         installerOptions += [
