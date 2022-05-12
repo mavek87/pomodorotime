@@ -6,13 +6,13 @@ on:
 
 jobs:
   build-app:
+    name: Build the application
+    runs-on: ${{ matrix.os }}
     strategy:
       matrix:
         # os: [ macos-latest, ubuntu-latest, windows-latest ]
         os: [ ubuntu-latest, windows-latest ]
 
-    name: Build the application
-    runs-on: ${{ matrix.os }}
     steps:
       - id: checkout
         name: Checkout
@@ -40,30 +40,59 @@ jobs:
         with:
           name: PomodoroTime-${{ matrix.os }}
           path: distribution-${{ matrix.os }}
-          retention-days: 1
+#          retention-days: 1
 
+  release-app:
+    name: Release the application
+    needs: build-app
+    runs-on: ubuntu-latest
+
+    steps:
+      - id: download-installer-ubuntu
+        name: Download installer Ubuntu
+        uses: actions/download-artifact@v3
+        with:
+          name: PomodoroTime-ubuntu-latest
+
+      - id: download-installer-ubuntu
+        name: Download installer Ubuntu
+        uses: actions/download-artifact@v3
+        with:
+          name: PomodoroTime-windows-latest
+
+      - run: ls distribution*
+
+#  release-app:
+#    name: Release the application
+#    needs: build-app
+#    runs-on: ${{ matrix.os }}
+#    strategy:
+#      matrix:
+#        # os: [ macos-latest, ubuntu-latest, windows-latest ]
+#        os: [ ubuntu-latest, windows-latest ]
+#
 #      - id: download-installer
 #        name: Download installer
 #        uses: actions/download-artifact@v3
 #        with:
 #          name: PomodoroTime-${{ matrix.os }}
-
-      - id: create-release
-        name: Create GitHub Release
-        uses: actions/create-release@latest
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          tag_name: release-${{ github.sha }}
-          release_name: release-${{ github.sha }}
-          draft: false
-          prerelease: false
-
-      - id: release-installer
-        name: Release Installer
-        uses: actions/upload-release-asset@latest
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ steps.create-release.outputs.upload_url }}
-          asset_path: distribution-${{ matrix.os }}
+#
+#      - id: create-release
+#        name: Create GitHub Release
+#        uses: actions/create-release@latest
+#        env:
+#          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+#        with:
+#          tag_name: release-${{ github.sha }}
+#          release_name: release-${{ github.sha }}
+#          draft: false
+#          prerelease: false
+#
+#      - id: release-installer
+#        name: Release Installer
+#        uses: actions/upload-release-asset@latest
+#        env:
+#          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+#        with:
+#          upload_url: ${{ steps.create-release.outputs.upload_url }}
+#          asset_path: distribution-${{ matrix.os }}
