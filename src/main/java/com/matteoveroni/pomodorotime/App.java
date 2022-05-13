@@ -48,8 +48,7 @@ public final class App extends Application {
         configManager = JsonConfigManager.INSTANCE;
         localizationService = new FXLocalizationServiceFactory().produce();
         config = configManager.readConfig();
-        settings = new Settings();
-        initSettings();
+        settings = buildSettings();
         resourceBundleService = buildResourceBundleServicesAndBindItWithLocalizationService();
         version = resourcesService.readVersion();
     }
@@ -76,7 +75,8 @@ public final class App extends Application {
     }
 
     // TODO: extract in a class builder
-    private void initSettings() {
+    private Settings buildSettings() {
+        final Settings settings = new Settings();
         // TODO: distribute without a default locale in the config file. If the locale is not there try to use the system locale.
         // Otherwise if not found use the dafault; english (us)
         final String language = config.getLanguage();
@@ -99,6 +99,7 @@ public final class App extends Application {
         settings.setIsFullScreenPauseAlertOn(config.isPomodoroPauseAlertFullscreen());
         settings.setAllowInterruptPause(config.isAllowInterruptPause());
         settings.setAllowAbortPause(config.isAllowAbortPause());
+        return settings;
     }
 
     private ResourceBundleService buildResourceBundleServicesAndBindItWithLocalizationService() {
