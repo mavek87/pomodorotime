@@ -7,21 +7,20 @@ import java.util.Locale;
 
 public class FXLocalizationServiceFactory {
 
-    private static final Locale DEFAULT_LOCALE = Locale.US;
     private static final String LOCALE_FILES_BASE_NAME = "locale";
 
-    private final FXLocalizationService localizationService = new FXLocalizationService(DEFAULT_LOCALE);
+    private final FXLocalizationService localizationService = new FXLocalizationService(FXLocalizationService.DEFAULT_LOCALE);
 
     public FXLocalizationServiceFactory() {
         addSupportedLocalesToLocalizationService();
 
         Locale systemLocale = Locale.getDefault();
-        if (systemLocale != DEFAULT_LOCALE) {
+        if (systemLocale != FXLocalizationService.DEFAULT_LOCALE) {
             useLocaleIfSupported(systemLocale);
         }
     }
 
-    public FXLocalizationService produce() {
+    public FXLocalizationService create() {
         return localizationService;
     }
 

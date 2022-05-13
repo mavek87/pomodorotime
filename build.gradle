@@ -226,6 +226,8 @@ tasks.jpackageImage.doLast {
     }
 }
 
+// TODO: take a look to JRealeaser project. Could be interesting... (https://github.com/jreleaser/)
+
 //jlink {
 //    options = ['--strip-debug', '--compress', '2', '--no-header-files', '--no-man-pages']
 //    launcher {

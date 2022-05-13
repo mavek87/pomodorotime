@@ -10,6 +10,7 @@ import java.util.*;
 @Slf4j
 public class FXLocalizationService {
 
+    public static final Locale DEFAULT_LOCALE = Locale.US;
     public static final String NO_TRANSLATION_FOUND = "NO_TRANSLATION_FOUND";
 
     private final Map<Locale, Translations> localizationData = new HashMap<>();
@@ -39,7 +40,7 @@ public class FXLocalizationService {
     }
 
     public void useLocale(Locale locale) {
-        if (localizationData.containsKey(locale)) {
+        if (!selectedLocaleProperty.get().equals(locale) && localizationData.containsKey(locale)) {
             selectedLocaleProperty.set(locale);
             log.debug("Locale set to => " + locale);
         }
