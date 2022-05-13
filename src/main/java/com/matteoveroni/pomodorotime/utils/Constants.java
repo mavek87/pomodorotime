@@ -2,6 +2,7 @@ package com.matteoveroni.pomodorotime.utils;
 
 public class Constants {
 
+    public static final String APP_NAME = "pomodorotime";
     public static final String AUTHOR_NAME = "Matteo Veroni";
     public static final String WEBSITE_URL = "https://github.com/mavek87/pomodorotime";
     public static final double BTN_HEIGHT = 70;

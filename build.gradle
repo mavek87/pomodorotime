@@ -22,6 +22,28 @@ plugins {
 group 'com.matteoveroni'
 version = scmVersion.version
 
+ext {
+    appName = 'pomodorotime'
+    prettyAppName = 'Pomodoro-Time'
+    mainName = 'Launcher'
+    author = 'Matteo Veroni'
+    authorEmail = 'matver87@gmail.com'
+    website = 'https://github.com/mavek87/pomodorotime'
+    UTF_8 = StandardCharsets.UTF_8.name()
+
+    logbackVersion = '1.2.11'
+    lombokVersion = '1.18.24'
+    ikonliVersion = '12.3.1'
+    jupiterVersion = '5.8.2'
+    mockitoVersion = '4.5.1'
+}
+
+sourceCompatibility = JavaVersion.VERSION_17
+targetCompatibility = JavaVersion.VERSION_17
+compileJava.options.encoding = UTF_8
+compileTestJava.options.encoding = UTF_8
+javadoc.options.encoding = UTF_8
+
 def currentOs = org.gradle.internal.os.OperatingSystem.current()
 
 enum Platform {
@@ -44,27 +66,6 @@ else if (currentOs.isMacOsX()) platform = Platform.MAC
 else if (currentOs.isLinux()) platform = Platform.LINUX
 else throw new GradleException("Unknown platform")
 
-ext {
-    appName = 'pomodorotime'
-    prettyAppName = 'Pomodoro-Time'
-    mainName = 'Launcher'
-    author = 'Matteo Veroni'
-    website = 'https://github.com/mavek87/pomodorotime'
-    UTF_8 = StandardCharsets.UTF_8.name()
-
-    logbackVersion = '1.2.11'
-    lombokVersion = '1.18.24'
-    ikonliVersion = '12.3.1'
-    jupiterVersion = '5.8.2'
-    mockitoVersion = '4.5.1'
-}
-
-sourceCompatibility = JavaVersion.VERSION_17
-targetCompatibility = JavaVersion.VERSION_17
-compileJava.options.encoding = UTF_8
-compileTestJava.options.encoding = UTF_8
-javadoc.options.encoding = UTF_8
-
 wrapper {
     gradleVersion = '7.4.2'
 }
@@ -76,9 +77,9 @@ scmVersion {
     }
 }
 
-//java {
+java {
 //    modularity.inferModulePath.set(true)
-//}
+}
 
 application {
 //    mainModule = "${project.group}.${appName}"
@@ -198,7 +199,8 @@ runtime {
                     // --main-jar and --main-class parameters are not compatible with --type dmg
                     // '--main-jar', "${appName}-${project.version}.jar",
                     // '--main-class', "${project.group}.${appName}.${mainName}",
-                    '--mac-package-name', 'App Name in Menu'
+                    '--mac-package-name', prettyAppName,
+//                    '--install-dir', System.getProperty("user.home")
 //                    '--icon', 'src/main/resources/icons/tomato.png'
             ]
             installerType = 'dmg'
@@ -206,10 +208,10 @@ runtime {
             installerOptions += [
                     '--resource-dir', 'src/main/resources',
                     '--linux-shortcut',
-                    '--linux-deb-maintainer', 'matver87@gmail.com',
+                    '--linux-deb-maintainer', authorEmail,
                     '--linux-rpm-license-type', 'MIT',
-                    '--icon', 'src/main/resources/icons/tomato.png'
-//                    '--install-dir', '/opt/',
+                    '--icon', 'src/main/resources/icons/tomato.png',
+//                    '--install-dir', System.getProperty("user.home"),
 //                    '--linux-package-name', 'xxx'
             ]
             installerType = 'deb'
@@ -219,17 +221,10 @@ runtime {
 
 tasks.jpackageImage.doLast {
     copy {
-        from 'config/config.json'
-        into "$buildDir/jpackage/$project.name/lib/app/config"
+        from('config/config-template.json')
+        into("$buildDir/jpackage/$project.name/lib/app/config")
     }
 }
-
-//task addVersionFileIntoResources (type: Task) {
-//    File versionFile = file('src/main/resources/version.txt')
-//    versionFile.text = version
-//}
-
-//tasks.release.finalizedBy(addVersionFileIntoResources)
 
 //jlink {
 //    options = ['--strip-debug', '--compress', '2', '--no-header-files', '--no-man-pages']
