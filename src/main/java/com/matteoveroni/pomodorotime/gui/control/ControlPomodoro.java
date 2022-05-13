@@ -265,7 +265,7 @@ public class ControlPomodoro extends BorderPane implements Initializable, Loadab
         dialogPane.getScene().getWindow().setOnCloseRequest(Event::consume);
         dialogPane.setContent(new ControlPomodoroPause(alert, pomodoroPauseDuration, resourcesService, configManager, settings, resourceBundleService, localizationService));
         dialogPane.setMinHeight(Region.USE_PREF_SIZE);
-        dialogPane.getButtonTypes().clear();
+        dialogPane.lookupButton(ButtonType.OK).setVisible(false);
         FXGraphicsUtils.centeredAlert(alert);
         return alert;
     }

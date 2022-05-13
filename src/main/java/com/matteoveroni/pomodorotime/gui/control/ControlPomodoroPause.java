@@ -117,10 +117,10 @@ public class ControlPomodoroPause extends BorderPane implements Initializable, L
             if (newValue) {
                 paneActionsChildren.clear();
                 paneActionsChildren.add(btnResume);
-                if(settings.isAllowInterruptPause()) {
+                if (settings.isAllowInterruptPause()) {
                     paneActionsChildren.add(btnPause);
                 }
-                if(settings.isAllowAbortPause()) {
+                if (settings.isAllowAbortPause()) {
                     paneActionsChildren.add(btnStop);
                 }
             } else {
@@ -154,7 +154,7 @@ public class ControlPomodoroPause extends BorderPane implements Initializable, L
         isPauseInterruptedProperty.set(false);
         unbindButtons();
         timeline.currentTimeProperty().removeListener(durationTimeChangeListener);
-        parentAlert.setOnCloseRequest(event -> parentAlert.close());
+        parentAlert.setOnCloseRequest(event -> log.debug("Closing the control: {}", ControlPomodoroPause.class.getSimpleName()));
         parentAlert.close();
     }
 
