@@ -38,7 +38,7 @@ public enum JsonConfigManager implements ConfigManager {
         if (!Files.exists(configFile)) {
             try {
                 Files.createFile(configFile);
-                final String configTemplatePath = CONFIG_FOLDER_NAME + "/" + CONFIG_FILE_TEMPLATE_NAME;
+                final String configTemplatePath = "/" + CONFIG_FOLDER_NAME + "/" + CONFIG_FILE_TEMPLATE_NAME;
                 final String jsonConfigTemplate = FileUtils.readFromInputStream(JsonConfigManager.class.getResourceAsStream(configTemplatePath));
                 LoggerFactory.getLogger(JsonConfigManager.class).debug("read from {} jsonConfigTemplate {}", configTemplatePath, jsonConfigTemplate);
                 Files.writeString(configFile, jsonConfigTemplate, StandardOpenOption.TRUNCATE_EXISTING);

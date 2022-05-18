@@ -39,5 +39,4 @@ public class FXLocalizationServiceFactory {
         return Arrays.stream(SupportedLocale.values())
                 .anyMatch(supportedLocale -> supportedLocale.getLocale().equals(systemLocale));
     }
-
 }
