@@ -6,6 +6,7 @@ import com.matteoveroni.pomodorotime.singleton.GsonSingleton;
 import com.matteoveroni.pomodorotime.utils.Constants;
 import com.matteoveroni.pomodorotime.utils.FileUtils;
 import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.lang.reflect.Field;
@@ -93,9 +94,10 @@ public enum JsonConfigManager implements ConfigManager {
 
     private void writeDefaultJsonFromTemplateToConfigFile() {
         try {
-            LoggerFactory.getLogger(JsonConfigManager.class).info("Writing default json from template to config file");
+            final Logger logger = LoggerFactory.getLogger(JsonConfigManager.class);
+            logger.info("Writing default json from template to config file");
             final String jsonTemplate = FileUtils.readFromInputStream(JsonConfigManager.class.getResourceAsStream(CONFIG_TEMPLATE_PATH));
-            LoggerFactory.getLogger(JsonConfigManager.class).debug("read from {} jsonTemplate {}", CONFIG_TEMPLATE_PATH, jsonTemplate);
+            logger.debug("read from {} jsonTemplate {}", CONFIG_TEMPLATE_PATH, jsonTemplate);
             Files.writeString(configFile, jsonTemplate, StandardOpenOption.TRUNCATE_EXISTING);
         } catch (Exception ex) {
             throw new RuntimeException("Error: impossible to write default json to config file using the configTemplate", ex);
@@ -123,19 +125,20 @@ public enum JsonConfigManager implements ConfigManager {
     }
 
     private boolean areConfigFileDataFieldsValid(Config instance) {
+        final Logger logger = LoggerFactory.getLogger(JsonConfigManager.class);
         final Field[] fields = Config.class.getDeclaredFields();
         for (Field field : fields) {
             if (!field.isSynthetic()) {
                 try {
                     field.setAccessible(true);
-                    LoggerFactory.getLogger(JsonConfigManager.class).debug(field.getName());
+                    logger.debug(field.getName());
                     final Object fieldValue = field.get(instance);
                     if (fieldValue == null) {
-                        LoggerFactory.getLogger(JsonConfigManager.class).error("Error: '" + field.getName() + "' field in the config file is null");
+                        logger.error("Error: '" + field.getName() + "' field in the config file is null");
                         return false;
                     }
                 } catch (IllegalAccessException ex) {
-                    LoggerFactory.getLogger(JsonConfigManager.class).error("Error: illegal access exception ", ex);
+                    logger.error("Error: illegal access exception ", ex);
                 }
             }
         }
