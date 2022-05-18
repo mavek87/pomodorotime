@@ -2,9 +2,10 @@ package com.matteoveroni.pomodorotime.configs;
 
 import com.google.gson.Gson;
 import com.matteoveroni.pomodorotime.utils.Constants;
-import com.matteoveroni.pomodorotime.utils.singleton.ExternalFolderPathSingleton;
+import com.matteoveroni.pomodorotime.utils.FileUtils;
 import com.matteoveroni.pomodorotime.utils.singleton.GsonSingleton;
 import lombok.extern.slf4j.Slf4j;
+import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -37,13 +38,12 @@ public enum JsonConfigManager implements ConfigManager {
         if (!Files.exists(configFile)) {
             try {
                 Files.createFile(configFile);
-                final Path configFileTemplate = ExternalFolderPathSingleton.INSTANCE.getPath(CONFIG_FOLDER_NAME, CONFIG_FILE_TEMPLATE_NAME);
-                final String jsonConfigTemplate = Files.readString(configFileTemplate);
-                // TODO: for some reason this doesn't work even when a config-template.json file is put into the config file in the resources
-                // final String jsonConfigTemplate = Files.readString(Paths.get(JsonConfigManager.class.getResource("/config/" + CONFIG_FILE_TEMPLATE_NAME).toString()));
+                final String configTemplatePath = CONFIG_FOLDER_NAME + "/" + CONFIG_FILE_TEMPLATE_NAME;
+                final String jsonConfigTemplate = FileUtils.readFromInputStream(JsonConfigManager.class.getResourceAsStream(configTemplatePath));
+                LoggerFactory.getLogger(JsonConfigManager.class).debug("read from {} jsonConfigTemplate {}", configTemplatePath, jsonConfigTemplate);
                 Files.writeString(configFile, jsonConfigTemplate, StandardOpenOption.TRUNCATE_EXISTING);
             } catch (Exception ex) {
-                throw new RuntimeException("Error: impossible to write config file", ex);
+                throw new RuntimeException("Error: impossible to create config file using the configTemplate", ex);
             }
         }
     }

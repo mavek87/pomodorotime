@@ -69,6 +69,7 @@ public final class App extends Application {
     }
 
     public void stop() {
+        Runtime.getRuntime().addShutdownHook(new Thread(() -> log.info("Closing the app")));
     }
 
     private Pane loadFXMLMainView(ControllersFactory controllersFactory) throws IOException {

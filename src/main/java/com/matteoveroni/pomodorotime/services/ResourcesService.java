@@ -10,16 +10,16 @@ import java.util.Properties;
 public final class ResourcesService {
 
     private static final Class<ResourcesService> clazz = ResourcesService.class;
-    private static final String ICONS_FOLDER = "/icons/";
-    private static final String AUDIO_FOLDER = "/audio/";
-    private static final String FXML_VIEWS_FOLDER = "/fxml/views/";
-    private static final String FXML_CONTROLS_FOLDER = "/fxml/controls/";
+    private static final String ICONS_FOLDER = "icons/";
+    private static final String AUDIO_FOLDER = "audio/";
+    private static final String FXML_VIEWS_FOLDER = "fxml/views/";
+    private static final String FXML_CONTROLS_FOLDER = "fxml/controls/";
     private static final String FXML_EXTENSION = ".fxml";
-    private static final String VERSION_PROPS = "/version.properties";
+    private static final String VERSION_PROPS = "version.properties";
 
     public String readVersion() {
         String version;
-        try (InputStream inputStream = ResourcesService.class.getResourceAsStream(VERSION_PROPS)) {
+        try (InputStream inputStream = ResourcesService.class.getClassLoader().getResourceAsStream(VERSION_PROPS)) {
             final Properties versionProps = new Properties();
             versionProps.load(inputStream);
             version = versionProps.getProperty("version", null);
@@ -31,25 +31,25 @@ public final class ResourcesService {
     }
 
     public URL getLogoIconURL() {
-        return clazz.getResource(ICONS_FOLDER + "tomato.png");
+        return clazz.getClassLoader().getResource(ICONS_FOLDER + "tomato.png");
     }
 
     public URL getAlarmAudioURL() {
-        return clazz.getResource(AUDIO_FOLDER + "alarm.wav");
+        return clazz.getClassLoader().getResource(AUDIO_FOLDER + "alarm.wav");
     }
 
     public URL getFXMLViewURL(String fxmlViewFileName) {
         fxmlViewFileName = addFXMLExtensionIfNeeded(fxmlViewFileName);
         String fxmlViewPath = FXML_VIEWS_FOLDER + fxmlViewFileName;
         log.debug("Loading view {}", fxmlViewPath);
-        return clazz.getResource(fxmlViewPath);
+        return clazz.getClassLoader().getResource(fxmlViewPath);
     }
 
     public URL getFXMLControlURL(String fxmlControlFileName) {
         fxmlControlFileName = addFXMLExtensionIfNeeded(fxmlControlFileName);
         String fxmlControlPath = FXML_CONTROLS_FOLDER + fxmlControlFileName;
         log.debug("Loading control {}", fxmlControlPath);
-        return clazz.getResource(fxmlControlPath);
+        return clazz.getClassLoader().getResource(fxmlControlPath);
     }
 
     private String addFXMLExtensionIfNeeded(String fxmlFileName) {
