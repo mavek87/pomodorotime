@@ -197,7 +197,7 @@ runtime {
         } else if (platform == Platform.MAC) {
             installerOptions += [
                     // --main-jar and --main-class parameters are not compatible with --type dmg
-                    '--main-jar', "${appName}-${project.version}.jar",
+                    // '--main-jar', "${appName}-${project.version}.jar",
                     // '--main-class', "${project.group}.${appName}.${mainName}",
                     '--mac-package-name', prettyAppName,
 //                    '--install-dir', System.getProperty("user.home")
