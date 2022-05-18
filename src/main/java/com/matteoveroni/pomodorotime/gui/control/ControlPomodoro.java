@@ -199,6 +199,7 @@ public class ControlPomodoro extends BorderPane implements Initializable, Loadab
 
     private void stopPomodoro() {
         isPomodoroPausedProperty.set(false);
+        progressIndicator.setProgress(100);
         progressIndicator.setVisible(false);
         timeline.stop();
         timeline.currentTimeProperty().removeListener(durationTimeChangeListener);

@@ -1,11 +1,9 @@
 package com.matteoveroni.pomodorotime.services;
 
 import lombok.extern.slf4j.Slf4j;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
-import java.nio.charset.StandardCharsets;
 import java.util.Properties;
 
 @Slf4j
@@ -37,7 +35,7 @@ public final class ResourcesService {
     }
 
     public URL getAlarmAudioURL() {
-        return clazz.getResource(AUDIO_FOLDER + "alarm.mp3");
+        return clazz.getResource(AUDIO_FOLDER + "alarm.wav");
     }
 
     public URL getFXMLViewURL(String fxmlViewFileName) {

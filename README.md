@@ -2,7 +2,7 @@
 
 'Pomodoro' app to stay focused during your daily tasks
 
-### Usefull resources used:
+### Useful resources used:
 
 https://simply-how.com/custom-java-runtime
 
