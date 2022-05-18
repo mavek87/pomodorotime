@@ -208,8 +208,8 @@ runtime {
 //                    '--install-dir', System.getProperty("user.home")
 //                    '--icon', 'src/main/resources/icons/tomato.png'
             ]
-//            installerType = 'dmg'
-            installerType = 'pkg'
+            installerType = 'dmg'
+//            installerType = 'pkg'
         } else if (platform == Platform.LINUX) {
             installerOptions += [
                     '--resource-dir', 'src/main/resources',
