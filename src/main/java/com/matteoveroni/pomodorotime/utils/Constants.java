@@ -13,7 +13,7 @@ public class Constants {
     public static final String ICON_CODE_PAUSE = "far-pause-circle";
     public static final String ICON_CODE_STOP = "far-stop-circle";
 
-    public class LocalizationKeys {
+    public static class LocalizationKeys {
         public static final String POMODORO = "POMODORO";
         public static final String GRAPHICS = "GRAPHICS";
         public static final String LOOK_AND_FEEL = "LOOK_AND_FEEL";
