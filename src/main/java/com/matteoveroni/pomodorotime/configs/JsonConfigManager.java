@@ -31,14 +31,17 @@ public enum JsonConfigManager implements ConfigManager {
     private final Semaphore configFileSemaphore = new Semaphore(1);
 
     JsonConfigManager() {
+        final Logger logger = LoggerFactory.getLogger(JsonConfigManager.class);
         final Path configFolderPath = Paths.get(System.getProperty("user.home"), Constants.APP_NAME, CONFIG_FOLDER_NAME);
         createConfigFolderIfNeeded(configFolderPath);
 
         configFile = Paths.get(configFolderPath.toAbsolutePath().toString(), CONFIG_FILE_NAME);
         if (Files.exists(configFile)) {
             try {
+                logger.info("Config file {} exists", configFile.toAbsolutePath());
                 final String content = Files.readString(configFile, StandardCharsets.UTF_8);
                 if (!isConfigFileContentValid(content)) {
+                    logger.info("Config file {} contains invalid content", configFile.toAbsolutePath());
                     writeDefaultJsonFromTemplateToConfigFile();
                 }
             } catch (IOException ex) {
@@ -46,6 +49,7 @@ public enum JsonConfigManager implements ConfigManager {
             }
         } else {
             try {
+                logger.info("Config file {} doesn't exist", configFile.toAbsolutePath());
                 Files.createFile(configFile);
                 writeDefaultJsonFromTemplateToConfigFile();
             } catch (IOException ex) {
@@ -104,7 +108,7 @@ public enum JsonConfigManager implements ConfigManager {
         }
     }
 
-    private boolean isConfigFileContentValid(String content) throws IOException {
+    private boolean isConfigFileContentValid(String content) {
         if (isConfigFileContentNullOrEmpty(content)) return false;
         try {
             final Config config = gson.fromJson(content, Config.class);
