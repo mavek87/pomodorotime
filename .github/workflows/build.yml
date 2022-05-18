@@ -31,7 +31,7 @@ jobs:
 
       - id: print-jpackage-results
         name: Print JPackage Generated Files
-        run: find build/jpackage/ -name "*" -type d -not -path "*/runtime" -exec ls -lha {} \;
+        run: find build/jpackage/ -name "*" -not -path "*/runtime" -not -path "*/runtime/*" -exec echo {} \; -exec ls -lha {} \;
         shell: bash
 
       - id: print-runner-os-name
