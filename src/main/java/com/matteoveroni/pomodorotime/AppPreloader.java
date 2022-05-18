@@ -5,9 +5,11 @@ import com.matteoveroni.pomodorotime.configs.ConfigManager;
 import com.matteoveroni.pomodorotime.configs.JsonConfigManager;
 import javafx.application.Preloader;
 import javafx.stage.Stage;
-import lombok.extern.slf4j.Slf4j;
 
-@Slf4j
+/**
+ * Workaround to always set correctly the application name in all O.S. (Ubuntu included)
+ * Otherwise in some O.S. the application title is incorrectly set to the main class complete package
+ */
 public final class AppPreloader extends Preloader {
 
     @Override

@@ -1,4 +1,4 @@
-package com.matteoveroni.pomodorotime.utils.singleton;
+package com.matteoveroni.pomodorotime.singleton;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
