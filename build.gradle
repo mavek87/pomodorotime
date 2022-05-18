@@ -1,7 +1,7 @@
 import java.nio.charset.StandardCharsets
 
 /**
- * How to turn enable java modules:
+ * How to enable java modules:
  *
  * 1) switch from org.beryx.runtime to org.beryx.jlink in the "plugin" block
  * 2) uncomment java modularity in the "java" block

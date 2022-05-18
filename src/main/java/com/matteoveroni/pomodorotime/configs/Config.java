@@ -9,31 +9,31 @@ public class Config {
     @SerializedName("language")
     private String language;
     @SerializedName("window_width")
-    private double windowWidth;
+    private Double windowWidth;
     @SerializedName("window_height")
-    private double windowHeight;
+    private Double windowHeight;
     @SerializedName("pomodoro_duration_in_min")
-    private double pomodoroDuration;
+    private Double pomodoroDuration;
     @SerializedName("pomodoro_pause_duration_in_min")
-    private double pomodoroPauseDuration;
+    private Double pomodoroPauseDuration;
     @SerializedName("pomodoro_long_pause_duration_in_min")
-    private double pomodoroLongPauseDuration;
+    private Double pomodoroLongPauseDuration;
     @SerializedName("number_of_sessions_before_long_pause")
-    private int numberOfSessionBeforeLongPause;
+    private Integer numberOfSessionBeforeLongPause;
     @SerializedName("play_alarm_sound_on_completion")
-    private boolean playAlarmSoundOnCompletion;
+    private Boolean playAlarmSoundOnCompletion;
     @SerializedName("allow_interrupt_pomodoro")
-    private boolean allowInterruptPomodoro;
+    private Boolean allowInterruptPomodoro;
     @SerializedName("allow_abort_pomodoro")
-    private boolean allowAbortPomodoro;
+    private Boolean allowAbortPomodoro;
     @SerializedName("is_pomodoro_loop")
-    private boolean isPomodoroLoop;
+    private Boolean isPomodoroLoop;
     @SerializedName("is_pomodoro_pause_alert_fullscreen")
-    private boolean isPomodoroPauseAlertFullscreen;
+    private Boolean isPomodoroPauseAlertFullscreen;
     @SerializedName("allow_interrupt_pause")
-    private boolean allowInterruptPause;
+    private Boolean allowInterruptPause;
     @SerializedName("allow_abort_pause")
-    private boolean allowAbortPause;
+    private Boolean allowAbortPause;
 
     public String getAppName() {
         return appName;

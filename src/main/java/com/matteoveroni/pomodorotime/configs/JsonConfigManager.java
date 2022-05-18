@@ -1,14 +1,14 @@
 package com.matteoveroni.pomodorotime.configs;
 
 import com.google.gson.Gson;
-import com.google.gson.JsonParser;
 import com.google.gson.JsonSyntaxException;
+import com.matteoveroni.pomodorotime.singleton.GsonSingleton;
 import com.matteoveroni.pomodorotime.utils.Constants;
 import com.matteoveroni.pomodorotime.utils.FileUtils;
-import com.matteoveroni.pomodorotime.singleton.GsonSingleton;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.LoggerFactory;
 import java.io.IOException;
+import java.lang.reflect.Field;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -37,9 +37,8 @@ public enum JsonConfigManager implements ConfigManager {
         if (Files.exists(configFile)) {
             try {
                 final String content = Files.readString(configFile, StandardCharsets.UTF_8);
-                final boolean isConfigContentValid = checkIfConfigFileContentIsValid(content);
-                if (!isConfigContentValid) {
-                    writeDefaultJsonToConfigFile();
+                if (!isConfigFileContentValid(content)) {
+                    writeDefaultJsonFromTemplateToConfigFile();
                 }
             } catch (IOException ex) {
                 throw new RuntimeException(ex);
@@ -47,7 +46,7 @@ public enum JsonConfigManager implements ConfigManager {
         } else {
             try {
                 Files.createFile(configFile);
-                writeDefaultJsonToConfigFile();
+                writeDefaultJsonFromTemplateToConfigFile();
             } catch (IOException ex) {
                 throw new RuntimeException("Error: impossible to create config file using the configTemplate", ex);
             }
@@ -92,26 +91,53 @@ public enum JsonConfigManager implements ConfigManager {
         }
     }
 
-    private void writeDefaultJsonToConfigFile() {
+    private void writeDefaultJsonFromTemplateToConfigFile() {
         try {
-            final String jsonConfigTemplate = FileUtils.readFromInputStream(JsonConfigManager.class.getResourceAsStream(CONFIG_TEMPLATE_PATH));
-            LoggerFactory.getLogger(JsonConfigManager.class).debug("read from {} jsonConfigTemplate {}", CONFIG_TEMPLATE_PATH, jsonConfigTemplate);
-            Files.writeString(configFile, jsonConfigTemplate, StandardOpenOption.TRUNCATE_EXISTING);
+            LoggerFactory.getLogger(JsonConfigManager.class).info("Writing default json from template to config file");
+            final String jsonTemplate = FileUtils.readFromInputStream(JsonConfigManager.class.getResourceAsStream(CONFIG_TEMPLATE_PATH));
+            LoggerFactory.getLogger(JsonConfigManager.class).debug("read from {} jsonTemplate {}", CONFIG_TEMPLATE_PATH, jsonTemplate);
+            Files.writeString(configFile, jsonTemplate, StandardOpenOption.TRUNCATE_EXISTING);
         } catch (Exception ex) {
             throw new RuntimeException("Error: impossible to write default json to config file using the configTemplate", ex);
         }
     }
 
-    private boolean checkIfConfigFileContentIsValid(String content) throws IOException {
-        if (content == null || content.isBlank()) {
-            LoggerFactory.getLogger(JsonConfigManager.class).error("Error: config file content is null or empty");
-            return false;
-        }
+    private boolean isConfigFileContentValid(String content) throws IOException {
+        if (isConfigFileContentNullOrEmpty(content)) return false;
         try {
-            gson.fromJson(content, Config.class);
+            final Config config = gson.fromJson(content, Config.class);
+            return areConfigFileDataFieldsValid(config);
         } catch (JsonSyntaxException ex) {
             LoggerFactory.getLogger(JsonConfigManager.class).error("Error: config file content is not a valid json");
             return false;
+        }
+    }
+
+    private boolean isConfigFileContentNullOrEmpty(String content) {
+        if (content == null || content.isBlank()) {
+            LoggerFactory.getLogger(JsonConfigManager.class).error("Error: config file content is null or empty");
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    private boolean areConfigFileDataFieldsValid(Config instance) {
+        final Field[] fields = Config.class.getDeclaredFields();
+        for (Field field : fields) {
+            if (!field.isSynthetic()) {
+                try {
+                    field.setAccessible(true);
+                    LoggerFactory.getLogger(JsonConfigManager.class).debug(field.getName());
+                    final Object fieldValue = field.get(instance);
+                    if (fieldValue == null) {
+                        LoggerFactory.getLogger(JsonConfigManager.class).error("Error: '" + field.getName() + "' field in the config file is null");
+                        return false;
+                    }
+                } catch (IllegalAccessException ex) {
+                    LoggerFactory.getLogger(JsonConfigManager.class).error("Error: illegal access exception ", ex);
+                }
+            }
         }
         return true;
     }
