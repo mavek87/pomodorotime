@@ -24,9 +24,14 @@ jobs:
           distribution: 'zulu'
           cache: 'gradle'
 
-      - id: build-distribution
-        name: Build Distribution
+      - id: run-jpackage
+        name: Run JPackage
         run: ./gradlew jpackage
+        shell: bash
+
+      - id: print-jpackage-results
+        name: Print JPackage Generated Files
+        run: find build/jpackage/ -name "*" -type d -not -path "*/runtime" -exec ls -lha {} \;
         shell: bash
 
       - id: print-runner-os-name
