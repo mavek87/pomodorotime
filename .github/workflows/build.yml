@@ -29,11 +29,15 @@ jobs:
         run: ./gradlew jpackage
         shell: bash
 
+      - id: print-runner-os-name
+        name: Print Runner OS name
+        run: echo "RUNNER_OS is = $RUNNER_OS"
+        shell: bash
+
       - id: create-distribution-folder
         name: Create Distribution Folder
         run: |
           mkdir distribution-${{ matrix.os }}
-          echo "RUNNER_OS is: $RUNNER_OS"
           if [ "$RUNNER_OS" == "Windows" ]; then
             cp build/jpackage/*.msi distribution-${{ matrix.os }}
           elif [ "$RUNNER_OS" == "macOS" ]; then
