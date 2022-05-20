@@ -64,8 +64,6 @@ public final class App extends Application {
         stage.setMaxWidth(Double.MAX_VALUE);
         stage.addEventHandler(WindowEvent.WINDOW_SHOWN, event -> FXGraphicsUtils.centerStage(stage));
         stage.show();
-//        FXTrayIcon icon = new FXTrayIcon(this.stage, resourcesService.getLogoIconURL());
-//        icon.show();
     }
 
     public void stop() {
