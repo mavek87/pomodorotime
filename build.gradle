@@ -1,3 +1,5 @@
+import org.gradle.internal.os.OperatingSystem
+
 import java.nio.charset.StandardCharsets
 
 /**
@@ -13,11 +15,11 @@ import java.nio.charset.StandardCharsets
  */
 
 plugins {
-    id 'org.openjfx.javafxplugin' version '0.0.12'
-    id 'org.beryx.runtime' version '1.13.1'
+    id 'org.openjfx.javafxplugin' version '0.1.0'
+    id 'org.beryx.runtime' version '1.12.7'
 //    id 'org.beryx.jlink' version '2.25.0'
     id 'pl.allegro.tech.build.axion-release' version '1.13.6'
-    id 'com.github.johnrengelman.shadow' version '7.1.2'
+    id 'com.github.johnrengelman.shadow' version '8.1.1'
 }
 
 group 'com.matteoveroni'
@@ -32,8 +34,8 @@ ext {
     website = 'https://github.com/mavek87/pomodorotime'
     UTF_8 = StandardCharsets.UTF_8.name()
 
-    logbackVersion = '1.2.11'
-    lombokVersion = '1.18.24'
+    logbackVersion = '1.5.3'
+    lombokVersion = '1.18.32'
     ikonliVersion = '12.3.1'
     jupiterVersion = '5.10.2'
     mockitoVersion = '5.11.0'
@@ -45,7 +47,7 @@ compileJava.options.encoding = UTF_8
 compileTestJava.options.encoding = UTF_8
 javadoc.options.encoding = UTF_8
 
-def currentOs = org.gradle.internal.os.OperatingSystem.current()
+def currentOs = OperatingSystem.current()
 
 enum Platform {
     WIN("win"), MAC("mac"), LINUX("linux")
@@ -68,7 +70,7 @@ else if (currentOs.isLinux()) platform = Platform.LINUX
 else throw new GradleException("Unknown platform")
 
 wrapper {
-    gradleVersion = '7.4.2'
+    gradleVersion = '8.6'
 }
 
 scmVersion {
@@ -104,16 +106,15 @@ configurations.all {
 dependencies {
     // Logging - Sl4j, logback
     implementation 'org.slf4j:slf4j-api:2.0.12'
-    implementation "ch.qos.logback:logback-core:$logbackVersion"
     implementation "ch.qos.logback:logback-classic:$logbackVersion"
     // Lombok
     compileOnly "org.projectlombok:lombok:$lombokVersion"
     testCompileOnly "org.projectlombok:lombok:$lombokVersion"
     annotationProcessor "org.projectlombok:lombok:$lombokVersion"
     // Gson
-    implementation 'com.google.code.gson:gson:2.9.0'
+    implementation 'com.google.code.gson:gson:2.10.1'
     // FormsFX
-    implementation 'com.dlsc.formsfx:formsfx-core:11.5.0'
+    implementation 'com.dlsc.formsfx:formsfx-core:11.6.0'
     // PreferencesFX
     implementation('com.dlsc.preferencesfx:preferencesfx-core:11.17.0') {
         exclude group: 'org.openjfx', module: 'javafx-web'
@@ -135,7 +136,7 @@ dependencies {
 }
 
 javafx {
-    version = '17.0.2'
+    version = '17.0.10'
     modules = ['javafx.controls', 'javafx.fxml', 'javafx.media']
 }
 
@@ -161,9 +162,9 @@ test {
     useJUnitPlatform()
 }
 
-def winJDK = 'https://cdn.azul.com/zulu/bin/zulu17.34.19-ca-jdk17.0.3-win_x64.zip'
-def macJDK = 'https://cdn.azul.com/zulu/bin/zulu17.34.19-ca-jdk17.0.3-macosx_x64.zip'
-def linuxJDK = 'https://cdn.azul.com/zulu/bin/zulu17.34.19-ca-jdk17.0.3-linux_x64.zip'
+def winJDK = 'https://cdn.azul.com/zulu/bin/zulu17.48.15-ca-jdk17.0.10-win_x64.zip'
+def macJDK = 'https://cdn.azul.com/zulu/bin/zulu17.48.15-ca-jdk17.0.10-macosx_x64.zip'
+def linuxJDK = 'https://cdn.azul.com/zulu/bin/zulu17.48.15-ca-jdk17.0.10-linux_x64.zip'
 Map<Platform, String> jdkForPlatform = Map.of(
         Platform.WIN, winJDK,
         Platform.MAC, macJDK,
