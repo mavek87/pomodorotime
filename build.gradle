@@ -36,7 +36,7 @@ ext {
     lombokVersion = '1.18.24'
     ikonliVersion = '12.3.1'
     jupiterVersion = '5.10.2'
-    mockitoVersion = '4.5.1'
+    mockitoVersion = '5.11.0'
 }
 
 sourceCompatibility = JavaVersion.VERSION_17
