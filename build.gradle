@@ -115,7 +115,7 @@ dependencies {
     // FormsFX
     implementation 'com.dlsc.formsfx:formsfx-core:11.5.0'
     // PreferencesFX
-    implementation('com.dlsc.preferencesfx:preferencesfx-core:11.9.0') {
+    implementation('com.dlsc.preferencesfx:preferencesfx-core:11.17.0') {
         exclude group: 'org.openjfx', module: 'javafx-web'
         exclude group: 'com.google.code.gson', module: 'gson'
     }
