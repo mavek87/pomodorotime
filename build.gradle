@@ -106,7 +106,7 @@ configurations.all {
 dependencies {
     // Logging - Sl4j, logback
     implementation 'org.slf4j:slf4j-api:2.0.12'
-    implementation "ch.qos.logback:logback-classic:$logbackVersion"
+    runtimeOnly "ch.qos.logback:logback-classic:$logbackVersion"
     // Lombok
     compileOnly "org.projectlombok:lombok:$lombokVersion"
     testCompileOnly "org.projectlombok:lombok:$lombokVersion"
